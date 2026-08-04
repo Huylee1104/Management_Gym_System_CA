@@ -5,16 +5,19 @@ using Management_Gym_System.Infrastructure.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Management_Gym_System.Application.Services;
 
 namespace Management_Gym_System.Controllers
 {
     public class GymMembershipCardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IGymMembershipCardService _cardService;
 
-        public GymMembershipCardController(ApplicationDbContext context)
+        public GymMembershipCardController(ApplicationDbContext context, IGymMembershipCardService cardService)
         {
             _context = context;
+            _cardService = cardService;
         }
 
         // Giao diện chính
@@ -27,62 +30,7 @@ namespace Management_Gym_System.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCards(string? filter, string? keyword)
         {
-            var query = _context.GymMembershipCards.AsQueryable();
-
-            // Áp dụng bộ lọc
-            switch (filter)
-            {
-                case "unregistered":
-                    query = query.Where(c => string.IsNullOrEmpty(c.RFID_UID));
-                    break;
-                case "active":
-                    query = query.Where(c => c.Status == true);
-                    break;
-                case "inactive":
-                    query = query.Where(c => c.Status == false && !string.IsNullOrEmpty(c.RFID_UID));
-                    break;
-                case "all":
-                default:
-                    break;
-            }
-
-            // Tìm kiếm theo keyword
-            if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                var normalizedKeyword = StringHelper.NormalizeText(keyword);
-
-                query = query.Where(c =>
-                    EF.Functions.ILike(
-                        EF.Functions.Unaccent(c.User.FullName),
-                        $"%{normalizedKeyword}%") ||
-                    EF.Functions.ILike(
-                        c.RFID_UID,
-                        $"%{normalizedKeyword}%"));
-            }
-
-            var cards = await query
-                .OrderByDescending(c => c.ID)
-                .Include(c => c.User)
-                .Include(c => c.Product)
-                .ToListAsync();
-
-            var result = cards
-                .OrderByDescending(c => c.Status == true)
-                .ThenBy(c => c.EndDate.HasValue 
-                ? Math.Abs((c.EndDate.Value - DateTime.Now).TotalDays) 
-                : double.MaxValue)
-                .Select(c => new
-                {
-                    c.ID,
-                    c.RFID_UID,
-                    c.Status,
-                    StartDate = c.StartDate?.ToString("dd/MM/yyyy") ?? "",
-                    EndDate = c.EndDate?.ToString("dd/MM/yyyy") ?? "",
-                    PauseDate = c.PauseDate?.ToString("dd/MM/yyyy") ?? "",
-                    ResumeDate = c.ResumeDate?.ToString("dd/MM/yyyy") ?? "",
-                    UserName = c.User?.FullName ?? "Chưa đăng ký",
-                    ProductName = c.Product?.ProductName ?? "Chưa đăng ký"
-                });
+            var result = await _cardService.GetFilteredCardsAsync(filter, keyword);
 
             return Json(new { success = true, data = result });
         }
@@ -91,79 +39,51 @@ namespace Management_Gym_System.Controllers
         [HttpPost]
         public async Task<IActionResult> GenerateCards(int quantity)
         {
-            if (quantity <= 0)
+            var result = await _cardService.CreateCardQualityAsync(quantity);
+            if (!result.IsSuccess)
             {
-                return Json(new { success = false, message = "Số lượng thẻ phải lớn hơn 0." });
+                return Json(new { success = false, message = result.Message });
             }
 
-            var newCards = new List<GymMembershipCard>();
-            for (int i = 0; i < quantity; i++)
-            {
-                newCards.Add(new GymMembershipCard
-                {
-                    // Các trường khác đều null theo yêu cầu
-                    RFID_UID = null,
-                    UserID = null,
-                    ProductID = null,
-                    StartDate = null,
-                    EndDate = null,
-                    PauseDate = null,
-                    ResumeDate = null,
-                    Status = false
-                });
-            }
-
-            await _context.GymMembershipCards.AddRangeAsync(newCards);
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = $"Đã thêm thành công {quantity} thẻ trống!" });
+            return Json(new { success = true, message = result.Message });
         }
 
         // API: Đăng ký / Cập nhật RFID_UID
         [HttpPost]
         public async Task<IActionResult> UpdateRFID(long id, string rfidUid)
         {
-            var card = await _context.GymMembershipCards.FindAsync(id);
-            if (card == null) return Json(new { success = false, message = "Không tìm thấy thẻ." });
+            var result = await _cardService.UpdateCardAsync(id, rfidUid);
+            if (!result.IsSuccess)
+            {
+                return Json(new { success = false, message = result.Message });
+            }
 
-            // Kiểm tra xem mã RFID này đã được thẻ khác đăng ký chưa (nếu cần)
-            var exists = await _context.GymMembershipCards.AnyAsync(c => c.RFID_UID == rfidUid && c.ID != id);
-            if (exists) return Json(new { success = false, message = "Mã RFID này đã tồn tại trên hệ thống!" });
-
-            card.RFID_UID = rfidUid;
-            
-            // Nếu lần đầu đăng ký, có thể tự động chuyển Status sang true nếu bạn muốn
-            // card.Status = true; 
-
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = "Cập nhật mã RFID thành công!" });
+            return Json(new { success = true, message = result.Message });
         }
 
         // API: Khóa / Mở thẻ
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(long id)
         {
-            var card = await _context.GymMembershipCards.FindAsync(id);
-            if (card == null) return Json(new { success = false, message = "Không tìm thấy thẻ." });
+            var result = await _cardService.LockUnlockCardAsync(id);
+            if (!result.IsSuccess)
+            {
+                return Json(new { success = false, message = result.Message });
+            }
 
-            // Nếu Status đang true -> false. Nếu false hoặc null -> true.
-            card.Status = card.Status == true ? false : true;
-
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, message = card.Status == true ? "Đã mở khóa thẻ!" : "Đã khóa thẻ!" });
+            return Json(new { success = true, message = result.Message });
         }
 
         // API: Xóa thẻ
         [HttpPost]
         public async Task<IActionResult> DeleteCard(long id)
         {
-            var card = await _context.GymMembershipCards.FindAsync(id);
-            if (card == null) return Json(new { success = false, message = "Không tìm thấy thẻ." });
-
-            _context.GymMembershipCards.Remove(card);
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = "Đã xóa thẻ thành công!" });
+            var result = await _cardService.DeleteCardAsync(id);
+            if (!result.IsSuccess)
+            {
+                return Json(new { success = false, message = result.Message });
+            }
+            return Json(new { success = true, message = result.Message });
         }
     }
 }
