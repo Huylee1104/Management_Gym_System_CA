@@ -1,0 +1,168 @@
+@{
+    ViewData["Title"] = "Quản lý Vai trò";
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div class="input-group gap-2" style="width: 300px;">
+            <input type="text" id="txtSearch" class="form-control" placeholder="Tìm kiếm...">
+            <button type="button" class="btn btn-outline-primary" onclick="loadData()" title="Tìm kiếm">
+                <i class="ti ti-search"></i>
+            </button>
+        </div>
+        <button class="btn btn-primary " onclick="showModal()"><i class="bi bi-plus-lg"></i> Thêm mới</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive table-scrollable-cards">
+            <table class="table table-hover align-middle">
+                <thead class=" text-center text-black">
+                    <tr class="table-primary">
+                        <th>ID</th>
+                        <th>Tên vai trò</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dataModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Thêm Vai trò</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="roleId" value="0" />
+                <div class="mb-3">
+                    <label class="form-label">Tên vai trò <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="roleName" required />
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="roleStatus" checked>
+                    <label class="form-check-label" for="roleStatus">Hoạt động</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="saveData()">Lưu dữ liệu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const apiUrl = '/api/roles';
+        const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+
+        $(document).ready(() => loadData());
+
+        $('#txtSearch').on('keydown', function (e) {
+
+            if (e.keyCode == 13) {
+                loadData();
+            }
+
+        });
+
+        function loadData() {
+            let keyword = $('#txtSearch').val();
+
+            $.get(`${apiUrl}/listRoles`,
+                {
+                    keyword
+                },
+                function (res) {
+                    let html = '';
+                    res.forEach(item => {
+                        let statusBadge = item.status ? '<span class="badge bg-success">Hoạt động</span>' : '<span class="badge bg-danger">Khóa</span>';
+                        html += `<tr>
+                            <td>${item.id}</td>
+                            <td>${item.roleName}</td>
+                            <td><a href="javascript:void(0)" onclick="toggleStatus(${item.id})">${statusBadge}</a></td>
+                            <td class="text-end">
+                                <button class="btn btn-outline-info" data-item='${JSON.stringify(item)}' onclick="editData(this)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="showDeleteModal(${item.id})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    $('#tableBody').html(html);
+                });
+        }
+
+        function showModal() {
+            $('#roleId').val(0);
+            $('#roleName').val('');
+            $('#roleStatus').prop('checked', true);
+            $('#modalTitle').text('Thêm Vai trò');
+            modal.show();
+        }
+
+        function editData(btn) {
+            let item = JSON.parse($(btn).attr('data-item'));
+            $('#roleId').val(item.id);
+            $('#roleName').val(item.roleName);
+            $('#roleStatus').prop('checked', item.status);
+            $('#modalTitle').text('Sửa Vai trò');
+            modal.show();
+        }
+
+        function saveData() {
+            let id = $('#roleId').val();
+            let payload = {
+                id: parseInt(id),
+                roleName: $('#roleName').val(),
+                status: $('#roleStatus').is(':checked')
+            };
+
+            let method = id == 0 ? 'POST' : 'POST'; // Cả 2 đều POST theo API controller của bạn
+            let url = id == 0 ? apiUrl : `${apiUrl}/${id}`;
+
+            $.ajax({
+                url: url, type: method, contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function () {
+                    showToast('Lưu thành công!', 200);
+                    modal.hide();
+                    loadData();
+                },
+                error: function () { showToast('Có lỗi xảy ra!', 500); }
+            });
+        }
+
+        function toggleStatus(id) {
+            $.post(`${apiUrl}/${id}/status`, function () {
+                showToast('Đã cập nhật trạng thái', 200);
+                loadData();
+            });
+        }
+
+        function showDeleteModal(id) {
+            $('#deleteCardId').val(id);
+            $('#modal-delete-confirm').modal('show');
+        }
+
+        function submitDelete() {
+            let id = $('#deleteCardId').val();
+            $.post(`${apiUrl}/delete`, { id: id }, function (res) {
+                if (res.success) {
+                    $('#modal-delete-confirm').modal('hide');
+                    showToast("Xóa thành công!", 200);
+                    loadData();
+                } else {
+                    showToast(res.message || "Có lỗi xảy ra!", 500);
+                }
+            });
+        }
+    </script>
+}

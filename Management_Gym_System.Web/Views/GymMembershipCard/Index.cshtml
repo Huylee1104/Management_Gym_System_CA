@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Quản lý thẻ tập";
+}
+
+<div class="container-fluid">
+    <!-- Khu vực điều khiển trên cùng -->
+    <div class="row g-2 align-items-center mb-3">
+        <div class="col-auto">
+            <div class="input-group gap-2">
+                <input type="number" id="txtQuantity" class="form-control" style="width: 70px;" placeholder="Nhập SL" min="1" value="1">
+                <button type="button" class="btn btn-primary" onclick="showAddModal()" title="Thêm mới">
+                    <i class="ti ti-plus me-1"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Khoảng trống -->
+        <div class="col"></div>
+
+        <!-- Bộ lọc bên phải -->
+        <div class="col-auto d-flex align-items-center gap-2">
+            <div style="width: 250px;">
+                <select id="selectFilter" class="form-select">
+                    <option value="all" selected>Tất cả</option>
+                    <option value="unregistered">Thẻ chưa đăng ký (Trống)</option>
+                    <option value="active">Thẻ đang dùng</option>
+                    <option value="inactive">Thẻ chưa được dùng (Khóa)</option>
+                </select>
+            </div>
+            <div class="input-group gap-2" style="width: 300px;">
+                <input type="text" id="txtSearchCard" class="form-control" placeholder="Tên người dùng, mã RFID...">
+                <button type="button" class="btn btn-outline-primary" onclick="loadCards()" title="Tải lại">
+                    <i class="ti ti-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng dữ liệu thẻ -->
+    <div class="card">
+        <div class="table-responsive table-scrollable-cards">
+            <table class="table table-vcenter card-table table-striped">
+                <thead class="text-center text-black">
+                    <tr class="table-primary">
+                        <th>STT</th>
+                        <th>Mã RFID</th>
+                        <th>Người dùng</th>
+                        <th>Sản phẩm</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Ngày tạm dừng</th>
+                        <th>Ngày tiếp tục</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dữ liệu sẽ được load qua Ajax -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- Modal: Xác nhận thêm thẻ -->
+<div class="modal fade" id="modal-add-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center py-4">
+                <i class="ti ti-alert-circle text-info" style="font-size: 3rem;"></i>
+                <h3 class="mt-3">Xác nhận tạo thẻ</h3>
+                <div class="text-muted">Bạn có chắc chắn muốn tạo thêm <strong id="lblConfirmQuantity"></strong> thẻ trống?</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">Hủy</a></div>
+                        <div class="col"><button type="button" class="btn btn-info w-100" onclick="submitAddCards()">Xác nhận tạo</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Đăng ký RFID -->
+<div class="modal fade" id="modal-register-rfid" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đăng ký mã RFID</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="rfidCardId" />
+                <div class="mb-3">
+                    <label class="form-label">Mã RFID_UID</label>
+                    <input type="text" id="txtRfidUid" class="form-control" placeholder="Quẹt thẻ hoặc nhập mã RFID...">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn me-auto" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="submitRfid()">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/dist/js/GymMembershipCard.js"></script>
+}

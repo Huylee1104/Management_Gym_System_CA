@@ -1,0 +1,97 @@
+@{
+    ViewData["Title"] = "Quản lý Check-in";
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-card-checklist"></i> Lịch sử vào cửa</h6>
+                <div class="d-flex align-items-center">
+                    <label class="col-auto me-2 text-muted mb-0">Chọn ngày:</label>
+                    <input type="date" id="filterDate" class="form-control form-control" onchange="loadCheckins()" />
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 520px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center" width="100">Thời gian</th>
+                                <th width="80">Mã thẻ</th>
+                                <th>Hội viên</th>
+                                <th>Ngày hết hạn</th>
+                                <th class="text-center">Trạng thái thẻ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checkinTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-4 bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title fw-bold mb-3"><i class="bi bi-upc-scan"></i> Quét thẻ hội viên</h6>
+                <div class="mb-2 text-dark">
+                    <input type="text" id="cardIdInput" class="form-control form-control-lg text-center fw-bold" placeholder="Nhập mã thẻ..." />
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row align-items-start">
+                
+                <!-- Cột trái: Avatar + tên + SĐT -->
+                <div class="col-auto text-center">
+                    <img id="infoAvatar" src="https://placehold.co/150" class="rounded-circle shadow-sm mb-2" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #eee;" />
+                    <h4 class="fw-bold mb-1" id="infoName">Tên hội viên</h5>
+                    <p class="text-muted small mb-0"><i class="bi bi-telephone"></i> <span id="infoPhone">Số điện thoại</span></p>
+                </div>
+
+                <!-- Cột phải: Thông tin thẻ -->
+                <div class="col">
+                    <ul class="list-group list-group-flush text-start mb-3">
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Mã thẻ:</span>
+                            <strong id="infoCardId">#</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Ngày bắt đầu:</span>
+                            <strong id="infoStartDate">--/--/----</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Ngày hết hạn:</span>
+                            <strong id="infoEndDate">--/--/----</strong>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0">
+                            <span class="text-muted">Trạng thái:</span>
+                            <strong id="infoCardStatus">--</strong>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-success flex-fill" onclick="extendMembership()"><i class="bi bi-calendar-plus"></i> Gia hạn</button>
+                        <button id="btnLockToggle" class="btn btn-outline-danger flex-fill"
+                                data-status="true"
+                                onclick="lockMembership()">
+                            <i class="bi bi-shield-lock"></i> Khóa thẻ
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let tomSelectInstance;
+        let currentScannedCardId = 0;
+    </script>
+    <script src="~/dist/js/Checkin.js"></script>
+}

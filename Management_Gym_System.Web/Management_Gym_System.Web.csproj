@@ -1,0 +1,71 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".github\agents\speckit.analyze.agent.md" />
+    <None Include=".github\agents\speckit.checklist.agent.md" />
+    <None Include=".github\agents\speckit.clarify.agent.md" />
+    <None Include=".github\agents\speckit.constitution.agent.md" />
+    <None Include=".github\agents\speckit.implement.agent.md" />
+    <None Include=".github\agents\speckit.plan.agent.md" />
+    <None Include=".github\agents\speckit.specify.agent.md" />
+    <None Include=".github\agents\speckit.tasks.agent.md" />
+    <None Include=".github\agents\speckit.taskstoissues.agent.md" />
+    <None Include=".github\prompts\speckit.analyze.prompt.md" />
+    <None Include=".github\prompts\speckit.checklist.prompt.md" />
+    <None Include=".github\prompts\speckit.clarify.prompt.md" />
+    <None Include=".github\prompts\speckit.constitution.prompt.md" />
+    <None Include=".github\prompts\speckit.implement.prompt.md" />
+    <None Include=".github\prompts\speckit.plan.prompt.md" />
+    <None Include=".github\prompts\speckit.specify.prompt.md" />
+    <None Include=".github\prompts\speckit.tasks.prompt.md" />
+    <None Include=".github\prompts\speckit.taskstoissues.prompt.md" />
+    <None Include=".specify\memory\constitution.md" />
+    <None Include=".specify\scripts\powershell\check-prerequisites.ps1" />
+    <None Include=".specify\scripts\powershell\common.ps1" />
+    <None Include=".specify\scripts\powershell\create-new-feature.ps1" />
+    <None Include=".specify\scripts\powershell\setup-plan.ps1" />
+    <None Include=".specify\scripts\powershell\update-agent-context.ps1" />
+    <None Include=".specify\templates\agent-file-template.md" />
+    <None Include=".specify\templates\checklist-template.md" />
+    <None Include=".specify\templates\constitution-template.md" />
+    <None Include=".specify\templates\plan-template.md" />
+    <None Include=".specify\templates\spec-template.md" />
+    <None Include=".specify\templates\tasks-template.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\dist\data\" />
+    <Folder Include="wwwroot\dist\img\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="EPPlus" Version="7.6.0" />
+    <!-- EF Core packages aligned to 8.x for .NET 8 -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+    <PackageReference Include="QuestPDF" Version="2026.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Management_Gym_System.Application\Management_Gym_System.Application.csproj" />
+    <ProjectReference Include="..\Management_Gym_System.Infrastructure\Management_Gym_System.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

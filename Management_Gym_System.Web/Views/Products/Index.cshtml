@@ -1,0 +1,104 @@
+@{
+    ViewData["Title"] = "Quản lý Sản phẩm";
+}
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+
+        <!-- Bên trái -->
+        <div class="input-group gap-2" style="width: auto;">
+            <select id="selectFilterCategory" class="form-select" style="width: 250px; flex: none;">
+                <option value="0" selected>Tất cả</option>
+            </select>
+            <input type="text" id="txtSearch" class="form-control" style="width: 300px; flex: none;" placeholder="Tìm kiếm...">
+            <button class="btn btn-outline-primary" onclick="loadData()" title="Tìm kiếm">
+                <i class="ti ti-search"></i>
+            </button>
+        </div>
+
+        <!-- Bên phải -->
+        <button class="btn btn-primary" onclick="showModal()">
+            <i class="bi bi-plus-lg"></i> Thêm Sản phẩm
+        </button>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive table-scrollable-cards">
+            <table class="table table-hover align-middle">
+                <thead class=" text-center text-black">
+                    <tr class="table-primary">
+                        <th>Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Đơn giá</th>
+                        <th>ĐVT</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dataModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Thêm Sản phẩm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row">
+                <input type="hidden" id="prodId" value="0" />
+                
+                <div class="col-md-4 text-center mb-3">
+                    <img id="imgPreview" src="https://placehold.co/150" class="img-thumbnail mb-2" style="width:150px; height:150px; object-fit:cover;" />
+                    <input type="file" class="form-control form-control-sm" id="fileUpload" accept="image/*" onchange="encodeImageFileAsURL(this)" />
+                    <input type="hidden" id="imageBase64" />
+                </div>
+
+                <div class="col-md-8 row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="prodName" required  autocomplete="off" placeholder="Nhập tên sản phẩm"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Danh mục <span class="text-danger">*</span></label>
+                        <select id="categoryId" class="form-select" placeholder="Chọn danh mục..."></select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Thời hạn (ngày) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="thoihan"  autocomplete="off" placeholder="Chỉ nhập đối với gói tập"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Đơn giá <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="prodPrice" required  autocomplete="off" placeholder="Nhập đơn giá"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Đơn vị tính <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="prodUnit" placeholder="Gói, Lọ, Tháng..." required autocomplete="off"/>
+                    </div>
+                    <div class="col-md-12 form-check form-switch ms-3">
+                        <input class="form-check-input" type="checkbox" id="prodStatus" checked>
+                        <label class="form-check-label" for="prodStatus">Đang bán</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveData()">Lưu dữ liệu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const apiUrl = '/api/products';
+        const catApiUrl = '/api/product-categories/listCategories';
+        const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+        let categorySelect;
+        let filterCategorySelect;
+    </script>
+    <script src="~/dist/js/Product.js"></script>
+}

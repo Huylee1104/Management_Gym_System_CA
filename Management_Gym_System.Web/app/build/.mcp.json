@@ -1,0 +1,18 @@
+{
+  "servers": {
+    "figma": {
+      "command": "npx",
+      "args": ["figma-developer-mcp"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "figd_gZnS7aYr3MzwwLl-XzTEYUZzzPcGgOrzCKVNHyCl"
+      }
+    }
+  },
+  "github": {
+    "command": "npx",
+    "args": ["@modelcontextprotocol/server-github"],
+    "env": {
+      "GITHUB_TOKEN": "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"
+    }
+  }
+}

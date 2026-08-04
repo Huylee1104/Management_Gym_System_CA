@@ -1,0 +1,250 @@
+@{
+    ViewData["Title"] = "Quản lý Người dùng";
+}
+
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div class="input-group gap-2">
+            <div style="width: 250px;">
+                <select id="selectFilter" class="form-select">
+                </select>
+            </div>
+            <input type="text" id="txtSearch" class="form-control" style="max-width: 300px;" placeholder="Tìm tên ...">
+            <button type="button" class="btn btn-outline-primary" onclick="loadData()" title="Tìm kiếm">
+                <i class="ti ti-search"></i>
+            </button>
+        </div>
+        <button class="btn btn-primary" onclick="showModal()"><i class="bi bi-person-plus"></i> Thêm User</button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive table-scrollable-cards">
+            <table class="table table-hover align-middle">
+                <thead class=" text-center text-black">
+                    <tr class="table-primary"><th>Avatar</th><th>Họ và Tên</th><th>Vai trò (ID)</th><th>Gói tập</th><th>SĐT</th><th>Trạng thái</th><th>Thao tác</th></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dataModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Thêm User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row">
+                <input type="hidden" id="userId" value="0" />
+                <div class="col-md-4 text-center mb-3">
+                    <img id="imgPreview" src="https://placehold.co/150" class="img-thumbnail rounded-circle mb-2" style="width:150px; height:150px; object-fit:cover;" />
+                    <input type="file" class="form-control form-control-sm" id="fileUpload" accept="image/*" onchange="encodeImageFileAsURL(this)" />
+                    <input type="hidden" id="imageBase64" />
+                </div>
+                <div class="col-md-8 row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="fullName" required autocomplete="off" placeholder="Nhập họ và tên"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phone" required autocomplete="off" placeholder="Nhập SĐT"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Vai trò <span class="text-danger">*</span></label>
+                        <select id="roleId" class="form-select" placeholder="Chọn vai trò..."></select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Gói tập <span class="text-danger">*</span></label>
+                        <select id="planId" class="form-select" placeholder="Chọn gói tập..."></select>
+                    </div>
+                    <div class="col-md-12 form-check form-switch ms-3">
+                        <input class="form-check-input" type="checkbox" id="userStatus" checked>
+                        <label class="form-check-label" for="userStatus">Hoạt động</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="saveData()">Lưu dữ liệu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    const apiUrl = '/api/users'; // Giả định bạn có endpoint này
+    const roleApiUrl = '/api/roles/listRoles'; // Endpoint để lấy danh sách vai trò
+    const planApiUrl = '/api/products/listProducts'; // Endpoint để lấy danh sách gói tập
+    const modal = new bootstrap.Modal(document.getElementById('dataModal'));
+    let tomSelectRole;
+    let tomSelectProduct = null;
+    let tomSelectFilter = null;
+
+    $(document).ready(() => { loadRoles(); loadPlans(); loadData(); });
+
+        // 3. Lắng nghe sự kiện thay đổi bộ lọc
+    $("#selectFilter").on("change", function () {
+        loadData();
+    });
+
+    $('#txtSearch').on('keydown', function (e) {
+
+        if (e.keyCode == 13) {
+            loadData();
+        }
+
+    });
+
+    function loadRoles() {
+        $.get(roleApiUrl, function(res) {
+            let options = res.map(r => `<option value="${r.id}">${r.roleName}</option>`);
+            $('#roleId').html(options.join(''));
+            tomSelectRole = new TomSelect("#roleId", { create: false });
+        });
+    }
+
+    function loadPlans() {
+        $.get(planApiUrl, function(res) {
+
+            // chỉ lấy thoiHan != null
+            let filtered = res.filter(p => p.thoiHan != null);
+
+            let options = filtered.map(p => `
+                <option 
+                    value="${p.id}" 
+                    data-thoihan="${p.thoiHan}">
+                    ${p.productName}
+                </option>
+            `);
+
+            // Destroy trước khi re-init để tránh lỗi duplicate
+            if (tomSelectProduct) {
+                tomSelectProduct.destroy();
+                tomSelectProduct = null;
+            }
+            if (tomSelectFilter) {
+                tomSelectFilter.destroy();
+                tomSelectFilter = null;
+            }
+
+            $('#planId').html(options.join(''));
+            $('#selectFilter').html('<option value="">Tất cả</option>' + options.join(''));
+
+            tomSelectProduct = new TomSelect("#planId", {
+                create: false
+            });
+
+            tomSelectFilter = new TomSelect("#selectFilter", {
+                create: false
+            });
+        });
+    }
+
+    function loadData() {
+        let keyword = $('#txtSearch').val();
+        let filterValue = $('#selectFilter').val();
+        $.get(`${apiUrl}/listUsers`, { keyword, filterValue }, function (res) {
+            let html = '';
+            res.forEach(item => {
+                let statusBadge = item.status ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Banned</span>';
+                let imgSrc = item.avatar ? item.avatar : 'https://placehold.co/50';
+                html += `<tr>
+                    <td class="text-center"><img src="${imgSrc}" class="rounded-circle shadow-sm" style="width:45px; height:45px; object-fit:cover;"/></td>
+                    <td class="fw-bold">${item.fullName}</td>
+                    <td>${item.roleName}</td>
+                    <td>${item.goiTapName}</td> 
+                    <td class="text-center">${item.phoneNumber || 'N/A'}</td>
+                    <td class="text-center"><a href="javascript:void(0)" onclick="toggleStatus(${item.id})">${statusBadge}</a></td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-info" data-item='${JSON.stringify(item)}' onclick="editData(this)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="showDeleteModal(${item.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            });
+            $('#tableBody').html(html);
+        });
+    }
+
+    function encodeImageFileAsURL(element) {
+        let file = element.files[0];
+        if(!file) return;
+        let reader = new FileReader();
+        reader.onloadend = function() {
+            $('#imgPreview').attr('src', reader.result);
+            $('#imageBase64').val(reader.result);
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function showModal() { 
+        $('#userId').val(0); $('#fullName').val(''); $('#phone').val(''); $('#userStatus').prop('checked', true);
+        $('#imgPreview').attr('src', 'https://placehold.co/150'); $('#imageBase64').val(''); $('#fileUpload').val('');
+        tomSelectRole.clear(); modal.show(); 
+        tomSelectProduct.clear(); modal.show(); 
+    }
+
+    function editData(btn) {
+        let item = JSON.parse($(btn).attr('data-item'));
+        $('#userId').val(item.id);
+        $('#fullName').val(item.fullName);
+        $('#phone').val(item.phoneNumber);
+        $('#userStatus').prop('checked', item.status);
+        tomSelectRole.clear(true);
+        tomSelectRole.setValue(item.roleId);
+        tomSelectProduct.clear(true);
+        tomSelectProduct.setValue(item.goiTapId);
+        let imgSrc = item.avatar ? item.avatar : 'https://placehold.co/150';
+        $('#imgPreview').attr('src', imgSrc);
+        $('#imageBase64').val(item.avatar);
+        $('#fileUpload').val('');
+        modal.show();
+    }
+
+    function saveData() {
+        let id = $('#userId').val();
+        let selectedOption = $('#planId option:selected');
+        let payload = { 
+            id: parseInt(id), 
+            fullName: $('#fullName').val(), 
+            phoneNumber: $('#phone').val(), 
+            roleID: parseInt($('#roleId').val()),
+            goiTapID: parseInt($('#planId').val()),
+            thoiHan: parseInt(selectedOption.attr('data-thoihan')) || null,
+            avatar: $('#imageBase64').val(), 
+            status: $('#userStatus').is(':checked') 
+        };
+        $.ajax({
+            url: id == 0 ? apiUrl : `${apiUrl}/${id}`, type: 'POST', contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: () => { showToast('Lưu thành công!', 200); modal.hide(); loadData(); }
+        });
+    }
+
+    function toggleStatus(id) { $.post(`${apiUrl}/${id}/status`, () => { showToast('Đã cập nhật!', 200); loadData(); }); }
+
+    function showDeleteModal(id) {
+        $('#deleteCardId').val(id);
+        $('#modal-delete-confirm').modal('show');
+    }
+
+    function submitDelete() {
+        let id = $('#deleteCardId').val();
+        $.post(`${apiUrl}/delete`, { id: id }, function (res) {
+            if (res.success) {
+                $('#modal-delete-confirm').modal('hide');
+                showToast("Xóa thành công!", 200);
+                loadData();
+            } else {
+                showToast(res.message || "Có lỗi xảy ra!", 500);
+            }
+        });
+    }
+</script>
+}

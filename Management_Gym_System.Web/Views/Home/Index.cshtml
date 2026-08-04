@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Bảng điều khiển hệ thống";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3 mb-0 text-gray-800">Chào mừng Quốc Huy đến với Gym Fit Management</h1>
+            <p class="text-muted">Hệ thống quản lý phòng tập, hội viên và kho hàng.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card border-start border-primary border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Doanh thu (Tháng)</div>
+                            <div class="h5 mb-0 font-weight-bold text-dark">50,000,000đ</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-currency-dollar fs-2 text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card border-start border-success border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Hội viên mới</div>
+                            <div class="h5 mb-0 font-weight-bold text-dark">128</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people fs-2 text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3 mb-4">
+            <div class="card border-start border-info border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Check-in hôm nay</div>
+                            <div class="h5 mb-0 font-weight-bold text-dark">45</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-geo-alt fs-2 text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="card border-start border-warning border-4 shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Sắp hết hạn</div>
+                            <div class="h5 mb-0 font-weight-bold text-dark">12</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-exclamation-triangle fs-2 text-secondary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thao tác nhanh</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/checkin" class="btn btn-outline-primary"><i class="bi bi-qr-code-scan me-1"></i> Quét mã Check-in</a>
+                        <a href="/members/create" class="btn btn-outline-success"><i class="bi bi-person-plus me-1"></i> Đăng ký hội viên mới</a>
+                        <a href="/finance/invoices" class="btn btn-outline-info"><i class="bi bi-cart-plus me-1"></i> Bán hàng/Gói tập</a>
+                        <a href="/inventory/import" class="btn btn-outline-secondary"><i class="bi bi-box-arrow-in-down me-1"></i> Nhập hàng</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
