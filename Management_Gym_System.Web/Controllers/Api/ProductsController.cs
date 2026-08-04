@@ -8,119 +8,65 @@ namespace Management_Gym_System.Controllers.Api
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductsController : Controller
+    public class ProductsController : ControllerBase
     {
-        private readonly IGenericService<Product> _productService;
-        private readonly ApplicationDbContext _context;
+        private readonly IProductService _productService;
 
-        public ProductsController(IGenericService<Product> productService, ApplicationDbContext context)
+        public ProductsController(IProductService productService)
         {
             _productService = productService;
-            _context = context;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            
-            return View("~/Views/Products/Index.cshtml");
         }
 
         [HttpGet("listProducts")]
-        public async Task<IActionResult> GetProducts(long? categoryId, string? keyword)
+        public async Task<IActionResult> GetProducts([FromQuery] long? categoryId, [FromQuery] string? keyword)
         {
-            var query = _context.Products
-                .Include(p => p.Category)
-                .AsQueryable();
-
-            // Lọc category
-            if (categoryId.HasValue && categoryId.Value > 0)
-            {
-                query = query.Where(p => p.CategoryID == categoryId.Value);
-            }
-
-            // Tìm theo tên sản phẩm
-            if (!string.IsNullOrWhiteSpace(keyword))
-            {
-                var normalizedKeyword = StringHelper.NormalizeText(keyword);
-                query = query.Where(p =>
-                    EF.Functions.ILike(
-                        EF.Functions.Unaccent(p.ProductName),
-                        $"%{normalizedKeyword}%"));
-            }
-
-            var products = await query
-                .Select(p => new
-                {
-                    p.ID,
-                    p.ProductName,
-                    p.Price,
-                    p.Unit,
-                    CategoryName = p.Category.CategoryName,
-                    p.CategoryID,
-                    p.ThoiHan,
-                    p.Status,
-                    p.ImageProduct,
-                })
-                .OrderBy(p => p.ID)
-                .ToListAsync();
-
-            return Ok(products);
+            var result = await _productService.GetProductsAsync(categoryId, keyword);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
         {
-            if (product.Price <= 0) return BadRequest("Price must be greater than zero.");
-            
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            
-            await _productService.AddAsync(product);
-            return Ok(product);
+            try
+            {
+                var result = await _productService.CreateAsync(request);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> UpdateProduct(long id, [FromBody] Product product)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateProductRequest request)
         {
-            if (id != product.ID) return BadRequest();
-            if (product.Price <= 0) return BadRequest("Price must be greater than zero.");
-
-            var existing = await _productService.GetByIdAsync(id);
-            if (existing == null) return NotFound();
-
-            existing.ProductName = product.ProductName;
-            existing.CategoryID = product.CategoryID;
-            existing.Price = product.Price;
-            existing.Unit = product.Unit;
-            existing.ThoiHan = product.ThoiHan;
-            existing.Status = product.Status;
-
-            await _productService.UpdateAsync(existing);
-            return Ok(existing);
+            try
+            {
+                var success = await _productService.UpdateAsync(id, request);
+                if (!success) return NotFound();
+                return Ok(new { success = true });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPost("{id}/status")]
+        [HttpPatch("{id}/status")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
-            var existing = await _productService.GetByIdAsync(id);
-            if (existing == null) return NotFound();
-
-            existing.Status = !existing.Status;
-            await _productService.UpdateAsync(existing);
-            return Ok(existing);
+            var success = await _productService.ToggleStatusAsync(id);
+            if (!success) return NotFound();
+            return Ok(new { success = true });
         }
 
-        [HttpPost("delete")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-                return Json(new { success = false, message = "Không tìm thấy sản phẩm!" });
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true });
+            var success = await _productService.DeleteAsync(id);
+            if (!success) return NotFound(new { success = false, message = "Không tìm thấy sản phẩm!" });
+            return Ok(new { success = true });
         }
     }
 }
