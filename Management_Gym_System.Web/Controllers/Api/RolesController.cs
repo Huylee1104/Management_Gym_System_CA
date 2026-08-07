@@ -10,13 +10,11 @@ namespace Management_Gym_System.Controllers.Api
     [ApiController]
     public class RolesController : Controller
     {
-        private readonly IGenericService<UserRole> _roleService;
-        private readonly ApplicationDbContext _context;
+        private readonly IRolesService _roleService;
 
-        public RolesController(IGenericService<UserRole> roleService, ApplicationDbContext context)
+        public RolesController(IRolesService roleService)
         {
             _roleService = roleService;
-            _context = context;
         }
 
         [HttpGet]
@@ -30,18 +28,7 @@ namespace Management_Gym_System.Controllers.Api
         [HttpGet("listRoles")]
         public async Task<IActionResult> GetRoles(string? keyword)
         {
-            var query = _context.UserRoles.AsQueryable();
-
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                var normalizedKeyword = StringHelper.NormalizeText(keyword);
-                query = query.Where(r =>
-                    EF.Functions.ILike(
-                        EF.Functions.Unaccent(r.RoleName),
-                        $"%{normalizedKeyword}%"));
-            }
-
-            var roles = await query.OrderBy(r => r.ID).ToListAsync();
+            var roles = await _roleService.GetRoles(keyword);
             return Ok(roles);
         }
 
@@ -49,49 +36,47 @@ namespace Management_Gym_System.Controllers.Api
         [HttpPost]
         public async Task<IActionResult> CreateRole([FromBody] UserRole role)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            
-            await _roleService.AddAsync(role);
-            return CreatedAtAction(nameof(GetRoles), new { id = role.ID }, role);
+            if (role == null || string.IsNullOrWhiteSpace(role.RoleName))
+            {
+                return BadRequest("Invalid role data");
+            }
+            var roleId = await _roleService.CreateRole(role);
+            return Ok(new { id = roleId });
         }
 
         // POST: /api/roles/{id}
         [HttpPost("{id}")]
         public async Task<IActionResult> UpdateRole(long id, [FromBody] UserRole role)
         {
-            if (id != role.ID) return BadRequest("ID mismatch");
-
-            var existingRole = await _roleService.GetByIdAsync(id);
-            if (existingRole == null) return NotFound();
-
-            existingRole.RoleName = role.RoleName;
-            existingRole.Status = role.Status;
-            
-            await _roleService.UpdateAsync(existingRole);
-            return Ok(existingRole);
+            if (role == null || string.IsNullOrWhiteSpace(role.RoleName))
+            {
+                return BadRequest("Invalid role data");
+            }
+            var updatedRole = await _roleService.UpdateRole(id, role);
+            return Ok(updatedRole);
         }
 
         // POST: /api/roles/{id}/status
         [HttpPost("{id}/status")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
-            var existingRole = await _roleService.GetByIdAsync(id);
-            if (existingRole == null) return NotFound();
-
-            existingRole.Status = !existingRole.Status; // Đảo trạng thái
-            await _roleService.UpdateAsync(existingRole);
-            return Ok(new { Message = "Status updated", NewStatus = existingRole.Status });
+            var newStatus = await _roleService.ToggleStatus(id);
+            if (newStatus == null)
+            {
+                return NotFound("Role not found");
+            }
+            return Ok(new { Message = "Status updated", NewStatus = newStatus });
         }
 
         [HttpPost("delete")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(long id)
         {
-            var role = await _context.UserRoles.FindAsync(id);
-            if (role == null)
-                return Json(new { success = false, message = "Không tìm thấy vai trò!" });
+            var deleted = await _roleService.Delete(id);
+            if (!deleted)
+            {
+                return NotFound("Role not found");
+            }
 
-            _context.UserRoles.Remove(role);
-            await _context.SaveChangesAsync();
 
             return Json(new { success = true });
         }
