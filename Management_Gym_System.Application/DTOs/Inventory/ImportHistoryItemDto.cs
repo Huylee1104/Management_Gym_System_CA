@@ -2,8 +2,8 @@ namespace Management_Gym_System.Application.DTOs.Inventory;
 
 public class ImportRequestDto
 {
-    public string Supplier { get; set; }
-    public List<ImportDetailDto> Details { get; set; }
+    public string? Supplier { get; set; }
+    public List<ImportDetailDto>? Details { get; set; }
 }
 
 public class ImportDetailDto
