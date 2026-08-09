@@ -16,16 +16,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// 1. Cấu hình DbContext sử dụng PostgreSQL
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// 2. Đăng ký Generic Service cho Dependency Injection
+// Đăng ký Generic Service cho Dependency Injection
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 QuestPDF.Settings.License = LicenseType.Community;
