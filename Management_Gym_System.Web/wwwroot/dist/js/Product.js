@@ -127,10 +127,11 @@ function showModal() {
 }
 
 function editData(item) { 
+    console.log(item);
     $('#prodId').val(item.id); $('#prodName').val(item.productName); $('#prodPrice').val(Number(item.price).toLocaleString('en-US'));
     $('#prodUnit').val(item.unit); $('#prodStatus').prop('checked', item.status);
     categorySelect.clear(true);
-    categorySelect.setValue(item.categoryID);
+    categorySelect.setValue(item.categoryId);
     
     let imgSrc = item.imageProduct ? item.imageProduct : 'https://placehold.co/150';
     $('#imgPreview').attr('src', imgSrc);

@@ -197,9 +197,9 @@
         $('#phone').val(item.phoneNumber);
         $('#userStatus').prop('checked', item.status);
         tomSelectRole.clear(true);
-        tomSelectRole.setValue(item.roleId);
+        tomSelectRole.setValue(item.roleID);
         tomSelectProduct.clear(true);
-        tomSelectProduct.setValue(item.goiTapId);
+        tomSelectProduct.setValue(item.goiTapID);
         let imgSrc = item.avatar ? item.avatar : 'https://placehold.co/150';
         $('#imgPreview').attr('src', imgSrc);
         $('#imageBase64').val(item.avatar);

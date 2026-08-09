@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Management_Gym_System.Domain\Management_Gym_System.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" /> 
+  </ItemGroup>
+
 </Project>

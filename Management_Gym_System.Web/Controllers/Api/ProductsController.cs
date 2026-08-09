@@ -8,13 +8,19 @@ namespace Management_Gym_System.Controllers.Api
 {
     [Route("api/products")]
     [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController : Controller
     {
         private readonly IProductService _productService;
 
         public ProductsController(IProductService productService)
         {
             _productService = productService;
+        }
+
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View("~/Views/Products/Index.cshtml");
         }
 
         [HttpGet("listProducts")]

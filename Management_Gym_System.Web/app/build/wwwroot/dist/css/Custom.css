@@ -175,7 +175,7 @@
     }
 
 .table-scrollable-cards {
-    max-height: calc(100vh - 155px);
+    max-height: calc(100vh - 255px);
     overflow-y: auto;
 }
 

@@ -11,12 +11,10 @@ namespace Management_Gym_System.Controllers
 {
     public class GymMembershipCardController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IGymMembershipCardService _cardService;
 
-        public GymMembershipCardController(ApplicationDbContext context, IGymMembershipCardService cardService)
+        public GymMembershipCardController(IGymMembershipCardService cardService)
         {
-            _context = context;
             _cardService = cardService;
         }
 

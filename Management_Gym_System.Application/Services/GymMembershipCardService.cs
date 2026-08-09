@@ -19,10 +19,10 @@ public class GymMembershipCardService : IGymMembershipCardService
             ID = c.ID,
             RFID_UID = c.RFID_UID,
             Status = c.Status,
-            StartDate = c.StartDate,
-            EndDate = c.EndDate,
-            PauseDate = c.PauseDate,
-            ResumeDate = c.ResumeDate,
+            StartDate = c.StartDate?.ToString("dd-MM-yyyy") ?? "",
+            EndDate = c.EndDate?.ToString("dd-MM-yyyy") ?? "",
+            PauseDate = c.PauseDate?.ToString("dd-MM-yyyy") ?? "",
+            ResumeDate = c.ResumeDate?.ToString("dd-MM-yyyy") ?? "",
             UserName = c.User?.FullName ?? string.Empty,
             ProductName = c.Product?.ProductName ?? string.Empty
         }).ToList();

@@ -1,15 +1,10 @@
-using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Services;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Management_Gym_System.Infrastructure.Data;
-using Management_Gym_System.Domain.Interfaces;
-using Management_Gym_System.Infrastructure.Repositories; // Hoặc namespace chứa ProductCategoryRepository của bạn
-using Management_Gym_System.Application.Services;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using OfficeOpenXml;
+using Management_Gym_System.Application;
+using Management_Gym_System.Infrastructure;
 
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -28,8 +23,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // 2. Đăng ký Generic Service cho Dependency Injection
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
-builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
-builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices();
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 QuestPDF.Settings.License = LicenseType.Community;

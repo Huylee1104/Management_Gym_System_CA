@@ -8,10 +8,10 @@ namespace Management_Gym_System.Application.Services;
 public class InventoryImportService : IInventoryImportService
 {
     private readonly IInventoryImportRepository _inventoryImportRepository;
-    private readonly IInventoryQueryService _inventoryQueryService;
+    private readonly IInventoryImportQueryService _inventoryQueryService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public InventoryImportService(IInventoryImportRepository inventoryImportRepository, IInventoryQueryService inventoryQueryService, IUnitOfWork unitOfWork)
+    public InventoryImportService(IInventoryImportRepository inventoryImportRepository, IInventoryImportQueryService inventoryQueryService, IUnitOfWork unitOfWork)
     {
         _inventoryImportRepository = inventoryImportRepository;
         _inventoryQueryService = inventoryQueryService;
