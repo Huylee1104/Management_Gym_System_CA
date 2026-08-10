@@ -20,6 +20,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ExportReceiptDetail> ExportReceiptDetails { get; set; }
     public DbSet<Checkin> Checkins { get; set; }
     public DbSet<InventoryLot> InventoryLots { get; set; }
+    public DbSet<SystemFunction> SystemFunctions { get; set; }
+    public DbSet<RolePermission> RolePermissions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,6 +63,31 @@ public class ApplicationDbContext : DbContext
             .WithMany(p => p.InventoryLots)
             .HasForeignKey(il => il.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Cấu hình mới cho SystemFunction
+        modelBuilder.Entity<SystemFunction>(entity =>
+        {
+            entity.HasIndex(f => f.Code).IsUnique();
+            entity.Property(f => f.Code).HasMaxLength(100).IsRequired();
+            entity.Property(f => f.Name).HasMaxLength(200).IsRequired();
+        });
+
+        // Cấu hình mới cho RolePermission
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            // Đảm bảo 1 Role chỉ có 1 dòng cấu hình cho 1 SystemFunction
+            entity.HasIndex(rp => new { rp.RoleId, rp.FunctionId }).IsUnique();
+
+            entity.HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(rp => rp.Function)
+                .WithMany(f => f.RolePermissions)
+                .HasForeignKey(rp => rp.FunctionId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
 
     }
 }

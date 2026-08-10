@@ -14,6 +14,6 @@ public class UserRole
 
     public bool? Status { get; set; }
 
-    // Navigation property
     public ICollection<User> Users { get; set; } = new List<User>();
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

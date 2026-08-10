@@ -5,6 +5,7 @@ using QuestPDF.Infrastructure;
 using OfficeOpenXml;
 using Management_Gym_System.Application;
 using Management_Gym_System.Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -15,6 +16,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Đăng ký cookie
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+    });
 
 // Đăng ký Generic Service cho Dependency Injection
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
@@ -39,6 +50,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -31,7 +31,7 @@
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="/">
+            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
                 <i class="bi bi-activity text-warning me-2"></i>Gym Fit
             </a>
 
@@ -43,11 +43,14 @@
             <div class="collapse navbar-collapse" id="gymNavbar">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/"><i class="bi bi-house-door"></i> Tổng quan</a>
+                        <a class="nav-link active" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house-door"></i> Tổng quan
+                        </a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" href="/api/checkin" role="button" <i class="bi bi-person-badge"></i>Check-in
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="CheckIn" asp-action="Index">
+                            <i class="bi bi-person-badge"></i> Check-in
                         </a>
                     </li>
 
@@ -56,17 +59,13 @@
                             <i class="bi bi-box-seam"></i> Quản lý danh mục
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/api/users">Users</a></li>
-                            <li><a class="dropdown-item" href="/api/roles">Loại users</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/api/product-categories">Loại sản phẩm</a></li>
-                            <li><a class="dropdown-item" href="/api/products">Sản phẩm & Dịch vụ</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/GymMembershipCard">Thẻ thành viên</a></li>
+                            <li><a class="dropdown-item" asp-controller="User" asp-action="Index">Users</a></li>
+                            <li><a class="dropdown-item" asp-controller="Role" asp-action="Index">Loại users</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="ProductCategory" asp-action="Index">Loại sản phẩm</a></li>
+                            <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">Sản phẩm & Dịch vụ</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="GymMembershipCard" asp-action="Index">Thẻ thành viên</a></li>
                         </ul>
                     </li>
 
@@ -75,138 +74,88 @@
                             <i class="bi bi-wallet2"></i> Quản lý vận hành
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/inventory/export">Bán hàng</a></li>
-                            <li><a class="dropdown-item" href="/finance/financials">Tài chính</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="/api/inventory/import">Nhập kho</a></li>
-                            <li><a class="dropdown-item" href="/inventory/export">Kho vận</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-wallet2"></i> Báo cáo
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Báo cáo 1</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Báo cáo 2</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-wallet2"></i> Hệ thống
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Phân quyền</a></li>
-                            <li><a class="dropdown-item" href="#">Tài khoản</a></li>
-                            <li><a class="dropdown-item" href="#">Tiện tích</a></li>
+                            <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Export">Bán hàng</a></li>
+                            <li><a class="dropdown-item" asp-controller="Finance" asp-action="Index">Tài chính</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Import">Nhập kho</a></li>
                         </ul>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-5"></i> Admin
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile">Trang cá nhân</a></li>
-                            <li><a class="dropdown-item text-danger" href="/logout"><i
-                                class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-circle fs-5 text-warning me-1"></i>
+                                @(User.FindFirst("FullName")?.Value ?? User.Identity.Name)
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                        <i class="bi bi-person me-2"></i>Trang cá nhân
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger border-0 bg-transparent">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                                        </button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
-                    </ul>
-                </div>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập
+                            </a>
+                        </li>
+                    }
+                </ul>
             </div>
-        </nav>
-
-        <div class="container-fluid mt-4 mb-5">
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
         </div>
-        <!-- Modal: Xác nhận xóa thẻ -->
-        <div class="modal fade" id="modal-delete-confirm" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-body text-center py-4">
-                        <i class="ti ti-trash text-danger" style="font-size: 3rem;"></i>
-                        <h3 class="mt-3">Xác nhận xóa</h3>
-                        <div class="text-muted">Bạn có chắc chắn muốn xóa? Dữ liệu không thể phục hồi.</div>
-                        <input type="hidden" id="deleteCardId" />
-                    </div>
-                    <div class="modal-footer">
-                        <div class="w-100">
-                            <div class="row">
-                                <div class="col"><a href="#" class="btn w-100" data-bs-dismiss="modal">Hủy</a></div>
-                                <div class="col"><button type="button" class="btn btn-danger w-100"
-                                                             onclick="submitDelete()">Xóa thẻ</button></div>
-                                </div>
-                            </div>
+    </nav>
+
+    <div class="container-fluid mt-4 mb-5">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Modal Xác nhận xóa -->
+    <div class="modal fade" id="modal-delete-confirm" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <i class="bi bi-trash3 text-danger" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Xác nhận xóa</h4>
+                    <div class="text-muted small">Bạn có chắc chắn muốn xóa? Dữ liệu không thể phục hồi.</div>
+                    <input type="hidden" id="deleteCardId" />
+                </div>
+                <div class="modal-footer">
+                    <div class="w-100">
+                        <div class="row g-2">
+                            <div class="col"><button type="button" class="btn btn-light w-100 border" data-bs-dismiss="modal">Hủy</button></div>
+                            <div class="col"><button type="button" class="btn btn-danger w-100" onclick="submitDelete()">Xóa</button></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Modal HTML thông tin chỉ có mỗi Ok để xác nhận -->
-            <div id="modal-overlay" style="display:none; position:fixed; inset:0;
-                background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:9999;">
-                <div style="background:#fff; border-radius:12px; width:360px; overflow:hidden;">
+        </div>
+    </div>
 
-                    <div id="modal-header" class="bg-warning" style="padding:14px 16px;
-                        display:flex; align-items:center; justify-content:space-between;">
-                        <span id="modal-title" style="font-size:15px; font-weight:600; color:#fff;"></span>
-                        <button onclick="DongModal()" class="btn-close btn-close-white"></button>
-                    </div>
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
 
-                    <div style="padding:24px 16px 20px; text-align:center;">
-                        <i id="modal-icon" class="bi bi-info-circle-fill" style="font-size:48px; color:#ffc107;"></i>
-                        <div class="d-flex justify-content-center mt-3">
-                            <button onclick="DongModal()" class="btn btn-secondary px-4">OK</button>
-                        </div>
-                    </div>
+    <script src="~/dist/libs/jquery/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/dist/js/Common.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 
-                </div>
-            </div>
-
-            <!-- Modal HTML xác nhận có 2 lựa chọn: Hủy hoặc Xác nhận -->
-            <div id="modal-xn-overlay" style="display:none; position:fixed; inset:0;
-                background:rgba(0,0,0,0.45); align-items:center; justify-content:center; z-index:9999;">
-                <div style="background:#fff; border-radius:12px; width:360px; overflow:hidden;">
-
-                    <div id="modal-xn-header" class="bg-warning" style="padding:14px 16px;
-                        display:flex; align-items:center; justify-content:space-between;">
-                        <span id="modal-xn-title" style="font-size:15px; font-weight:600; color:#fff;"></span>
-                        <button onclick="DongModalXacNhan()" class="btn-close btn-close-white"></button>
-                    </div>
-
-                    <div style="padding:24px 16px 20px; text-align:center;">
-                        <i id="modal-xn-icon" class="bi bi-question-circle-fill" style="font-size:48px; color:#ffc107;"></i>
-                        <div class="d-flex justify-content-center gap-2 mt-3">
-                            <button onclick="DongModalXacNhan()" class="btn btn-secondary px-4">Đóng</button>
-                            <button onclick="XacNhanModal()" id="modal-xn-confirm" class="btn btn-warning px-4">Xác
-                                nhận</button>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Toast container -->
-                <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
-
-                <script src="~/dist/libs/jquery/jquery.min.js"></script>
-                <script src="~/dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                @* <script src="~/dist/libs/toastr/toastr.min.js"></script> *@
-                <script src="/dist/libs/tom-select/dist/js/tom-select.base.js"></script>
-                <script src="~/dist/js/Common.js"></script>
-
-                @await RenderSectionAsync("Scripts", required: false)
-            </body>
-
-        </html>
+</html>

@@ -13,6 +13,14 @@ public class User
 
     [Required]
     [StringLength(100)]
+    public string Username { get; set; } = string.Empty;
+
+    // Bổ sung PasswordHash lưu mật khẩu đã mã hóa
+    [Required]
+    public string PasswordHash { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(100)]
     public string? FullName { get; set; } = string.Empty;
 
     public string? Avatar { get; set; }

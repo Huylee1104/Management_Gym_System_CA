@@ -1,0 +1,87 @@
+@model Management_Gym_System.Web.Models.Account.ProfileViewModel
+@{
+    ViewData["Title"] = "Trang cá nhân";
+}
+
+<div class="row g-4">
+    <!-- Cột trái: Thông tin tổng quan -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm text-center p-4">
+            <div class="mb-3">
+                <div class="rounded-circle bg-warning text-dark d-inline-flex align-items-center justify-content-center fw-bold" style="width: 80px; height: 80px; font-size: 2rem;">
+                    @(string.IsNullOrEmpty(Model.FullName) ? "U" : Model.FullName.Substring(0, 1).ToUpper())
+                </div>
+            </div>
+            <h5 class="fw-bold mb-1">@Model.FullName</h5>
+            <p class="text-muted small mb-2">@@@Model.Username</p>
+            <span class="badge bg-dark px-3 py-2">@Model.RoleName</span>
+        </div>
+    </div>
+
+    <!-- Cột phải: Form cập nhật -->
+    <div class="col-md-8">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-1"></i>@TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle me-1"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold py-3">
+                <i class="bi bi-person-gear text-warning me-2"></i>Thông tin cá nhân
+            </div>
+            <div class="card-body">
+                <form asp-controller="Account" asp-action="UpdateProfile" method="post">
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label fw-semibold small text-secondary"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold small text-secondary"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+                    <button type="submit" class="btn btn-warning fw-bold px-4">
+                        <i class="bi bi-save me-1"></i> Lưu thay đổi
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold py-3">
+                <i class="bi bi-key text-warning me-2"></i>Đổi mật khẩu
+            </div>
+            <div class="card-body">
+                <form asp-controller="Account" asp-action="ChangePassword" method="post">
+                    <div class="mb-3">
+                        <label asp-for="CurrentPassword" class="form-label fw-semibold small text-secondary"></label>
+                        <input asp-for="CurrentPassword" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NewPassword" class="form-label fw-semibold small text-secondary"></label>
+                        <input asp-for="NewPassword" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmNewPassword" class="form-label fw-semibold small text-secondary"></label>
+                        <input asp-for="ConfirmNewPassword" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-outline-dark fw-semibold px-4">
+                        Cập nhật mật khẩu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
