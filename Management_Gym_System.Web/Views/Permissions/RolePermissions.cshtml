@@ -1,0 +1,360 @@
+@{
+    ViewData["Title"] = "Phân quyền";
+}
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white py-3
+                d-flex
+                justify-content-between
+                align-items-center">
+
+        <div>
+
+            <h5 class="mb-1">
+                Phân quyền
+            </h5>
+
+            <div class="text-muted">
+                Vai trò:
+                <strong id="roleName">
+                    ...
+                </strong>
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary"
+                onclick="savePermissions()">
+
+            <i class="bi bi-check-lg"></i>
+
+            Lưu phân quyền
+
+        </button>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <div id="permissionContainer">
+
+            <div class="text-center p-5">
+
+                <div class="spinner-border"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+<script>
+
+const roleId =
+    @ViewBag.RoleId;
+
+const permissionApi =
+    '/api/permissions';
+
+
+$(document).ready(function () {
+
+    loadPermissions();
+
+});
+
+
+function loadPermissions() {
+
+    $.get(
+        `${permissionApi}/roles/${roleId}`,
+        function (res) {
+
+            renderPermissions(res);
+
+        }
+    );
+
+}
+
+
+function renderPermissions(data) {
+
+    let html = '';
+
+    data.functions.forEach(function (func) {
+
+        html += `
+
+            <div class="card mb-3">
+
+                <div class="card-header
+                            bg-light
+                            d-flex
+                            align-items-center">
+
+                    <div class="form-check">
+
+                        <input
+                            class="form-check-input
+                                   function-checkbox"
+                            type="checkbox"
+                            data-function-id="${func.id}"
+                            id="function_${func.id}">
+
+                        <label
+                            class="form-check-label fw-bold"
+                            for="function_${func.id}">
+
+                            ${func.name}
+
+                        </label>
+
+                    </div>
+
+                    <code class="ms-2">
+                        ${func.code}
+                    </code>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div class="row">
+
+        `;
+
+        func.actions.forEach(function (action) {
+
+            html += `
+
+                <div class="col-md-4
+                            col-lg-3
+                            mb-3">
+
+                    <div class="form-check">
+
+                        <input
+                            class="form-check-input
+                                   action-checkbox
+                                   function-${func.id}"
+                            type="checkbox"
+                            data-action-id="${action.id}"
+                            data-function-id="${func.id}"
+                            ${
+                                action.isAllowed
+                                ? 'checked'
+                                : ''
+                            }
+                            id="action_${action.id}">
+
+                        <label
+                            class="form-check-label"
+                            for="action_${action.id}">
+
+                            ${action.displayName}
+
+                        </label>
+
+                    </div>
+
+                    <small class="text-muted ms-4">
+
+                        ${action.code}
+
+                    </small>
+
+                </div>
+
+            `;
+
+        });
+
+        html += `
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+    $('#permissionContainer')
+        .html(html);
+
+
+    bindPermissionEvents();
+
+}
+
+
+function bindPermissionEvents() {
+
+    $('.function-checkbox')
+        .on('change', function () {
+
+            const functionId =
+                $(this)
+                    .data('function-id');
+
+            const checked =
+                $(this).is(':checked');
+
+            $(`.function-${functionId}`)
+                .prop('checked', checked);
+
+        });
+
+
+    $('.action-checkbox')
+        .on('change', function () {
+
+            const functionId =
+                $(this)
+                    .data('function-id');
+
+            updateFunctionCheckbox(
+                functionId
+            );
+
+        });
+
+
+    $('.function-checkbox')
+        .each(function () {
+
+            updateFunctionCheckbox(
+                $(this).data('function-id')
+            );
+
+        });
+
+}
+
+
+function updateFunctionCheckbox(functionId) {
+
+    const actions =
+        $(`.function-${functionId}`);
+
+    const checked =
+        actions.filter(':checked')
+               .length;
+
+    const total =
+        actions.length;
+
+    const parent =
+        $(`#function_${functionId}`);
+
+
+    if (total === 0) {
+
+        parent
+            .prop('checked', false)
+            .prop('indeterminate', false);
+
+        return;
+
+    }
+
+
+    if (checked === total) {
+
+        parent
+            .prop('checked', true)
+            .prop('indeterminate', false);
+
+    }
+    else if (checked === 0) {
+
+        parent
+            .prop('checked', false)
+            .prop('indeterminate', false);
+
+    }
+    else {
+
+        parent
+            .prop('checked', false)
+            .prop('indeterminate', true);
+
+    }
+
+}
+
+
+function savePermissions() {
+
+    const permissions = [];
+
+
+    $('.action-checkbox')
+        .each(function () {
+
+            permissions.push({
+
+                actionId:
+                    parseInt(
+                        $(this)
+                            .data('action-id')
+                    ),
+
+                isAllowed:
+                    $(this).is(':checked')
+
+            });
+
+        });
+
+
+    $.ajax({
+
+        url:
+            `${permissionApi}/roles/${roleId}`,
+
+        type: 'POST',
+
+        contentType:
+            'application/json',
+
+        data:
+            JSON.stringify(permissions),
+
+        success: function (res) {
+
+            showToast(
+                res.message ||
+                'Lưu phân quyền thành công!',
+                200
+            );
+
+        },
+
+        error: function () {
+
+            showToast(
+                'Không thể lưu phân quyền!',
+                500
+            );
+
+        }
+
+    });
+
+}
+
+</script>
+
+}

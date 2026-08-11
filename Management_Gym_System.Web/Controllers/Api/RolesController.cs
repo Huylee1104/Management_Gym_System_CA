@@ -1,6 +1,7 @@
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Infrastructure.Data;
 using Management_Gym_System.Services;
+using Management_Gym_System.Web.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("ROLE_VIEW")]
         public async Task<IActionResult> Index()
         {
             
@@ -26,6 +28,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // GET: /api/roles
         [HttpGet("listRoles")]
+        [HasPermission("ROLE_VIEW")]
         public async Task<IActionResult> GetRoles(string? keyword)
         {
             var roles = await _roleService.GetRoles(keyword);
@@ -34,6 +37,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // POST: /api/roles
         [HttpPost]
+        [HasPermission("ROLE_CREATE")]
         public async Task<IActionResult> CreateRole([FromBody] UserRole role)
         {
             if (role == null || string.IsNullOrWhiteSpace(role.RoleName))
@@ -46,6 +50,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // POST: /api/roles/{id}
         [HttpPost("{id}")]
+        [HasPermission("ROLE_EDIT")]
         public async Task<IActionResult> UpdateRole(long id, [FromBody] UserRole role)
         {
             if (role == null || string.IsNullOrWhiteSpace(role.RoleName))
@@ -58,6 +63,8 @@ namespace Management_Gym_System.Controllers.Api
 
         // POST: /api/roles/{id}/status
         [HttpPost("{id}/status")]
+        ///[HasPermission("ROLE_TOGGLE_STATUS")]
+        [HasPermission("ROLE_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
             var newStatus = await _roleService.ToggleStatus(id);
@@ -69,6 +76,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost("delete")]
+        [HasPermission("ROLE_DELETE")]
         public async Task<IActionResult> Delete(long id)
         {
             var deleted = await _roleService.Delete(id);

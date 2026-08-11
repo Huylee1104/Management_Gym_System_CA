@@ -22,6 +22,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<InventoryLot> InventoryLots { get; set; }
     public DbSet<SystemFunction> SystemFunctions { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
+    public DbSet<SystemFunctionAction> SystemFunctionActions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,18 +76,49 @@ public class ApplicationDbContext : DbContext
         // Cấu hình mới cho RolePermission
         modelBuilder.Entity<RolePermission>(entity =>
         {
-            // Đảm bảo 1 Role chỉ có 1 dòng cấu hình cho 1 SystemFunction
-            entity.HasIndex(rp => new { rp.RoleId, rp.FunctionId }).IsUnique();
+            entity.HasKey(x => x.Id);
 
-            entity.HasOne(rp => rp.Role)
-                .WithMany(r => r.RolePermissions)
-                .HasForeignKey(rp => rp.RoleId)
-                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(x => new
+            {
+                x.RoleId,
+                x.ActionId
+            })
+            .IsUnique();
 
-            entity.HasOne(rp => rp.Function)
-                .WithMany(f => f.RolePermissions)
-                .HasForeignKey(rp => rp.FunctionId)
-                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Role)
+                .WithMany(x => x.RolePermissions)
+                .HasForeignKey(x => x.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Action)
+                .WithMany(x => x.RolePermissions)
+                .HasForeignKey(x => x.ActionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SystemFunctionAction>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasIndex(x => x.Code)
+                .IsUnique();
+
+            entity.Property(x => x.Code)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.ActionName)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.DisplayName)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.HasOne(x => x.Function)
+                .WithMany(x => x.Actions)
+                .HasForeignKey(x => x.FunctionId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
     }

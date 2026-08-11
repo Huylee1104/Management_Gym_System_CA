@@ -1,55 +1,64 @@
 using System.Security.Claims;
 using Management_Gym_System.Application.Interfaces;
-using Management_Gym_System.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Management_Gym_System.Web.Authorization;
 
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
+[AttributeUsage(
+    AttributeTargets.Class | AttributeTargets.Method,
+    AllowMultiple = true)]
 public class HasPermissionAttribute : TypeFilterAttribute
 {
-    public HasPermissionAttribute(string functionCode, PermissionType permissionType) 
+    public HasPermissionAttribute(string actionCode)
         : base(typeof(HasPermissionFilter))
     {
-        Arguments = new object[] { functionCode, permissionType };
+        Arguments = new object[] { actionCode };
     }
 }
 
 public class HasPermissionFilter : IAsyncAuthorizationFilter
 {
-    private readonly string _functionCode;
-    private readonly PermissionType _permissionType;
+    private readonly string _actionCode;
     private readonly IPermissionService _permissionService;
 
-    public HasPermissionFilter(string functionCode, PermissionType permissionType, IPermissionService permissionService)
+    public HasPermissionFilter(
+        string actionCode,
+        IPermissionService permissionService)
     {
-        _functionCode = functionCode;
-        _permissionType = permissionType;
+        _actionCode = actionCode;
         _permissionService = permissionService;
     }
 
-    public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+    public async Task OnAuthorizationAsync(
+        AuthorizationFilterContext context)
     {
         var user = context.HttpContext.User;
 
-        if (user?.Identity == null || !user.Identity.IsAuthenticated)
+        if (user?.Identity == null ||
+            !user.Identity.IsAuthenticated)
         {
-            context.Result = new ChallengeResult(); // Chuyển về trang Login nếu chưa xác thực
+            context.Result = new ChallengeResult();
             return;
         }
 
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userIdClaim =
+            user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         if (!long.TryParse(userIdClaim, out var userId))
         {
-            context.Result = new ForbidResult(); // 403 Forbidden
+            context.Result = new ForbidResult();
             return;
         }
 
-        var hasPermission = await _permissionService.HasPermissionAsync(userId, _functionCode, _permissionType);
+        var hasPermission =
+            await _permissionService.HasPermissionAsync(
+                userId,
+                _actionCode);
+
         if (!hasPermission)
         {
-            context.Result = new ForbidResult(); // 403 Forbidden nếu không đủ quyền
+            context.Result = new ForbidResult();
         }
     }
 }

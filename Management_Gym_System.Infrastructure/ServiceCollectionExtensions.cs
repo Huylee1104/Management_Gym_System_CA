@@ -28,7 +28,7 @@ public static class DependencyInjection
         services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<IRolesRepository, RolesRepository>();
         services.AddScoped<IInventoryImportRepository, InventoryImportRepository>();
-        services.AddScoped<IRolePermissionRepository, RolePermissionRepository>();
+        services.AddScoped<IPermissionRepository, PermissionRepository>();
 
         services.AddScoped<IInventoryImportQueryService, InventoryImportQueryService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

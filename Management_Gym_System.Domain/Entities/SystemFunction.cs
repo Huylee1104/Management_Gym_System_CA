@@ -11,5 +11,5 @@ public class SystemFunction
     public int? DisplayOrder { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
+    public virtual ICollection<SystemFunctionAction> Actions { get; set; } = new List<SystemFunctionAction>();
 }

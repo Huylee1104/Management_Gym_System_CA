@@ -1,0 +1,654 @@
+@{
+    ViewData["Title"] = "Quản lý chức năng";
+}
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-header bg-white py-3
+        d-flex justify-content-between align-items-center">
+
+        <h5 class="mb-0">
+            Quản lý chức năng
+        </h5>
+
+        <button class="btn btn-primary" onclick="showFunctionModal()">
+
+            <i class="bi bi-plus-lg"></i>
+            Thêm chức năng
+
+        </button>
+
+    </div>
+
+    <div class="card-body">
+
+        <div id="functionContainer"></div>
+
+    </div>
+
+</div>
+
+
+<!-- FUNCTION MODAL -->
+
+<div class="modal fade" id="functionModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="functionModalTitle">
+
+                    Thêm chức năng
+
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="functionId" value="0" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Code
+                    </label>
+
+                    <input type="text" class="form-control" id="functionCode" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Tên chức năng
+                    </label>
+
+                    <input type="text" class="form-control" id="functionName" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Controller
+                    </label>
+
+                    <input type="text" class="form-control" id="functionController" />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Mô tả
+                    </label>
+
+                    <textarea class="form-control" id="functionDescription">
+                    </textarea>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                    <input class="form-check-input" type="checkbox" id="functionActive" checked>
+
+                    <label class="form-check-label">
+                        Hoạt động
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+
+                    Đóng
+
+                </button>
+
+                <button class="btn btn-primary" onclick="saveFunction()">
+
+                    Lưu dữ liệu
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ACTION MODAL -->
+
+<div class="modal fade" id="actionModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Thêm Action
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="actionId" value="0">
+
+                <input type="hidden" id="actionFunctionId" value="0">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Code
+                    </label>
+
+                    <input type="text" class="form-control" id="actionCode">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Action Name
+                    </label>
+
+                    <input type="text" class="form-control" id="actionName">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Tên hiển thị
+                    </label>
+
+                    <input type="text" class="form-control" id="actionDisplayName">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Mô tả
+                    </label>
+
+                    <textarea class="form-control" id="actionDescription">
+                    </textarea>
+
+                </div>
+
+                <div class="form-check form-switch">
+
+                    <input class="form-check-input" type="checkbox" id="actionActive" checked>
+
+                    <label class="form-check-label">
+                        Hoạt động
+                    </label>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button class="btn btn-secondary" data-bs-dismiss="modal">
+
+                    Đóng
+
+                </button>
+
+                <button class="btn btn-primary" onclick="saveAction()">
+
+                    Lưu Action
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        const permissionApi = '/api/permissions';
+
+        const functionModal =
+            new bootstrap.Modal(
+                document.getElementById('functionModal')
+            );
+
+        const actionModal =
+            new bootstrap.Modal(
+                document.getElementById('actionModal')
+            );
+
+
+        $(document).ready(function () {
+
+            loadFunctions();
+
+        });
+
+
+        function loadFunctions() {
+
+            $.get(`${permissionApi}/functions`, function (res) {
+
+                let html = '';
+
+                res.forEach(function (item) {
+
+                    html += `
+                    <div class="card mb-3">
+
+                        <div class="card-header
+                                    d-flex
+                                    justify-content-between
+                                    align-items-center">
+
+                            <div>
+
+                                <strong>
+                                    ${item.name}
+                                </strong>
+
+                                <span class="text-muted ms-2">
+                                    ${item.code}
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <button class="btn
+                                               btn-sm
+                                               btn-outline-primary"
+                                        onclick="editFunction(${item.id})">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                                <button class="btn
+                                               btn-sm
+                                               btn-primary"
+                                        onclick="showActionModal(${item.id})">
+
+                                    <i class="bi bi-plus"></i>
+                                    Action
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="card-body">
+
+                            ${renderActions(
+                        item.id,
+                        item.actions
+                    )
+                        }
+
+                        </div>
+
+                    </div>
+                `;
+
+                });
+
+                $('#functionContainer').html(html);
+
+            });
+
+        }
+
+
+        function renderActions(functionId, actions) {
+
+            if (!actions || actions.length === 0) {
+
+                return `
+                <div class="text-muted">
+                    Chưa có Action.
+                </div>
+            `;
+
+            }
+
+            let html = `
+            <div class="table-responsive">
+
+                <table class="table table-sm align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Code</th>
+                            <th>Action</th>
+                            <th>Tên hiển thị</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+        `;
+
+            actions.forEach(function (action) {
+
+                html += `
+                <tr>
+
+                    <td>
+                        <code>
+                            ${action.code}
+                        </code>
+                    </td>
+
+                    <td>
+                        ${action.actionName}
+                    </td>
+
+                    <td>
+                        ${action.displayName}
+                    </td>
+
+                    <td>
+
+                        ${action.isActive
+                        ? '<span class="badge bg-success">Hoạt động</span>'
+                        : '<span class="badge bg-danger">Khóa</span>'
+                    }
+
+                    </td>
+
+                    <td class="text-end">
+
+                        <button class="btn
+                                       btn-sm
+                                       btn-outline-info"
+                                onclick='editAction(${JSON.stringify(action)})'>
+
+                            <i class="bi bi-pencil"></i>
+
+                        </button>
+
+                        <button
+                            class="btn btn-outline-primary"
+                            onclick="openPermission(${item.id})"
+                            title="Phân quyền">
+
+                            <i class="bi bi-shield-lock"></i>
+
+                        </button>
+                    </td>
+
+                </tr>
+            `;
+
+            });
+
+            html += `
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+
+            return html;
+        }
+
+
+        function showFunctionModal() {
+
+            $('#functionId').val(0);
+
+            $('#functionCode').val('');
+
+            $('#functionName').val('');
+
+            $('#functionController').val('');
+
+            $('#functionDescription').val('');
+
+            $('#functionActive').prop('checked', true);
+
+            $('#functionModalTitle')
+                .text('Thêm chức năng');
+
+            functionModal.show();
+
+        }
+
+
+        function saveFunction() {
+
+            const id =
+                parseInt($('#functionId').val());
+
+            const payload = {
+
+                code: $('#functionCode').val(),
+
+                name: $('#functionName').val(),
+
+                controller:
+                    $('#functionController').val(),
+
+                description:
+                    $('#functionDescription').val(),
+
+                isActive:
+                    $('#functionActive').is(':checked')
+
+            };
+
+            const url =
+                id === 0
+                    ? `${permissionApi}/functions`
+                    : `${permissionApi}/functions/${id}`;
+
+            $.ajax({
+
+                url: url,
+
+                type: id === 0 ? 'POST' : 'PUT',
+
+                contentType:
+                    'application/json',
+
+                data:
+                    JSON.stringify(payload),
+
+                success: function () {
+
+                    functionModal.hide();
+
+                    loadFunctions();
+
+                    showToast(
+                        'Lưu chức năng thành công!',
+                        200
+                    );
+
+                },
+
+                error: function (xhr) {
+
+                    showToast(
+                        xhr.responseText ||
+                        'Có lỗi xảy ra!',
+                        500
+                    );
+
+                }
+
+            });
+
+        }
+
+
+        function showActionModal(functionId) {
+
+            $('#actionId').val(0);
+
+            $('#actionFunctionId')
+                .val(functionId);
+
+            $('#actionCode').val('');
+
+            $('#actionName').val('');
+
+            $('#actionDisplayName').val('');
+
+            $('#actionDescription').val('');
+
+            $('#actionActive')
+                .prop('checked', true);
+
+            actionModal.show();
+
+        }
+
+
+        function saveAction() {
+
+            const id =
+                parseInt($('#actionId').val());
+
+            const payload = {
+
+                functionId:
+                    parseInt(
+                        $('#actionFunctionId').val()
+                    ),
+
+                code:
+                    $('#actionCode').val(),
+
+                actionName:
+                    $('#actionName').val(),
+
+                displayName:
+                    $('#actionDisplayName').val(),
+
+                description:
+                    $('#actionDescription').val(),
+
+                isActive:
+                    $('#actionActive').is(':checked')
+
+            };
+
+            const url =
+                id === 0
+                    ? `${permissionApi}/actions`
+                    : `${permissionApi}/actions/${id}`;
+
+            $.ajax({
+
+                url: url,
+
+                type: id === 0 ? 'POST' : 'PUT',
+
+                contentType:
+                    'application/json',
+
+                data:
+                    JSON.stringify(payload),
+
+                success: function () {
+
+                    actionModal.hide();
+
+                    loadFunctions();
+
+                    showToast(
+                        'Lưu Action thành công!',
+                        200
+                    );
+
+                },
+
+                error: function (xhr) {
+
+                    showToast(
+                        xhr.responseText ||
+                        'Có lỗi xảy ra!',
+                        500
+                    );
+
+                }
+
+            });
+
+        }
+
+
+        function editAction(action) {
+
+            $('#actionId')
+                .val(action.id);
+
+            $('#actionFunctionId')
+                .val(action.functionId);
+
+            $('#actionCode')
+                .val(action.code);
+
+            $('#actionName')
+                .val(action.actionName);
+
+            $('#actionDisplayName')
+                .val(action.displayName);
+
+            $('#actionDescription')
+                .val(action.description);
+
+            $('#actionActive')
+                .prop('checked', action.isActive);
+
+            actionModal.show();
+
+        }
+
+        function openPermission(roleId) {
+
+            window.location.href =
+                `/api/permissions/roles/${roleId}/page`;
+
+        }
+
+
+    </script>
+
+}

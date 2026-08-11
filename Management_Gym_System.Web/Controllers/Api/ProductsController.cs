@@ -3,6 +3,7 @@ using Management_Gym_System.Infrastructure.Data;
 using Management_Gym_System.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Management_Gym_System.Web.Authorization;
 
 namespace Management_Gym_System.Controllers.Api
 {
@@ -18,12 +19,14 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("PRODUCT_VIEW")]
         public IActionResult Index()
         {
             return View("~/Views/Products/Index.cshtml");
         }
 
         [HttpGet("listProducts")]
+        [HasPermission("PRODUCT_VIEW")]
         public async Task<IActionResult> GetProducts([FromQuery] long? categoryId, [FromQuery] string? keyword)
         {
             var result = await _productService.GetProductsAsync(categoryId, keyword);
@@ -31,6 +34,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost]
+        [HasPermission("PRODUCT_CREATE")]
         public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
         {
             try
@@ -45,6 +49,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPut("{id}")]
+        [HasPermission("PRODUCT_EDIT")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateProductRequest request)
         {
             try
@@ -60,6 +65,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPatch("{id}/status")]
+        [HasPermission("PRODUCT_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
             var success = await _productService.ToggleStatusAsync(id);
@@ -68,6 +74,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [HasPermission("PRODUCT_DELETE")]
         public async Task<IActionResult> Delete(long id)
         {
             var success = await _productService.DeleteAsync(id);
