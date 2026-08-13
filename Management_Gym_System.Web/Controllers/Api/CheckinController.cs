@@ -1,12 +1,13 @@
 using Management_Gym_System.Application.Services;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Infrastructure.Data;
+using Management_Gym_System.Web.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Management_Gym_System.Controllers.Api
 {
-    [Route("api/checkin")]
+    [Route("[Controller]")]
     [ApiController]
     public class CheckinController : Controller
     {
@@ -18,13 +19,15 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("CHECKIN_VIEW")]
         public async Task<IActionResult> Index()
         {
-            
+
             return View("~/Views/Checkins/Index.cshtml");
         }
 
         [HttpGet("listCheckins")]
+        [HasPermission("CHECKIN_VIEW")]
         public async Task<IActionResult> GetCheckins([FromQuery] DateTime? date)
         {
             var result = await _checkinService.GetCheckinsAsync(date);
@@ -35,6 +38,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // 3. Thực hiện Quét thẻ (Check-in)
         [HttpPost("{RFID_UID}")]
+        [HasPermission("CHECKIN_EDIT")]
         public async Task<IActionResult> DoCheckin(string RFID_UID)
         {
             var result = await _checkinService.DoCheckin(RFID_UID);
@@ -49,6 +53,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // 4. Gia hạn
         [HttpPost("extend/{cardId}")]
+        [HasPermission("CHECKIN_EDIT")]
         public async Task<IActionResult> ExtendCard(long cardId)
         {
             var newEndDate = await _checkinService.ExtendCard(cardId);
@@ -67,6 +72,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // 5. Khóa thẻ (Xóa mềm User & Card)
         [HttpPost("lock/{cardId}")]
+        [HasPermission("CHECKIN_DELETE")]
         public async Task<IActionResult> LockCard(long cardId)
         {
             var result = await _checkinService.LockCard(cardId);
@@ -79,6 +85,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // 6. Mở lại thẻ (Nếu đã khóa)
         [HttpPost("unlock/{cardId}")]
+        [HasPermission("CHECKIN_EDIT")]
         public async Task<IActionResult> UnlockCard(long cardId)
         {
             var newEndDate = await _checkinService.UnlockCard(cardId);

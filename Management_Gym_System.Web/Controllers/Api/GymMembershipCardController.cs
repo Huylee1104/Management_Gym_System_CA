@@ -9,6 +9,8 @@ using Management_Gym_System.Application.Services;
 
 namespace Management_Gym_System.Controllers
 {
+    [Route("[Controller]")]
+    [ApiController]
     public class GymMembershipCardController : Controller
     {
         private readonly IGymMembershipCardService _cardService;

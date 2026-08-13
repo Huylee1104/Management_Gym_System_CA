@@ -10,7 +10,7 @@ using Management_Gym_System.Domain.Interfaces;
 
 namespace Management_Gym_System.Controllers.Api
 {
-    [Route("api/inventory/import")]
+    [Route("[Controller]")]
     [ApiController]
     public class InventoryImportController : Controller
     {

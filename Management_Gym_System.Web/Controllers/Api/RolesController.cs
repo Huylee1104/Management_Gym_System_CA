@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Management_Gym_System.Controllers.Api
 {
-    [Route("api/roles")]
+    [Route("[Controller]")]
     [ApiController]
-    public class RolesController : Controller
+    public class RoleController : Controller
     {
         private readonly IRolesService _roleService;
 
-        public RolesController(IRolesService roleService)
+        public RoleController(IRolesService roleService)
         {
             _roleService = roleService;
         }

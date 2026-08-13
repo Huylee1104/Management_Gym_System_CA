@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Management_Gym_System.Controllers.Api;
 
-[Route("api/permissions")]
-[ApiController]
-public class PermissionsController : Controller
+    [Route("[Controller]")]
+    [ApiController]
+public class PermissionController : Controller
 {
     private readonly IPermissionService _permissionService;
 
-    public PermissionsController(
+    public PermissionController(
         IPermissionService permissionService)
     {
         _permissionService = permissionService;

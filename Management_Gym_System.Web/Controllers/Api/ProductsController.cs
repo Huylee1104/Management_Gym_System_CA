@@ -7,13 +7,13 @@ using Management_Gym_System.Web.Authorization;
 
 namespace Management_Gym_System.Controllers.Api
 {
-    [Route("api/products")]
+    [Route("[Controller]")]
     [ApiController]
-    public class ProductsController : Controller
+    public class ProductController : Controller
     {
         private readonly IProductService _productService;
 
-        public ProductsController(IProductService productService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }

@@ -8,7 +8,7 @@ $(document).ready(function () {
 });
 
 function loadProductsForSelect() {
-    $.get('/api/products/listProducts', function (res) {
+    $.get('/Product/listProducts', function (res) {
         // Chỉ lấy sản phẩm không có thời hạn
         productsList = res.filter(p => p.thoiHan == null);
         let options = productsList.map(p =>
@@ -262,7 +262,7 @@ function submitImport() {
     };
 
     $.ajax({
-        url: '/api/inventory/import',
+        url: '/InventoryImport',
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(payload),
@@ -289,7 +289,7 @@ function applyHistoryFilter() {
     };
 
     $.ajax({
-        url: '/api/inventory/import/history',
+        url: '/InventoryImport/history',
         type: 'GET',
         data: params,
         success: function (res) {

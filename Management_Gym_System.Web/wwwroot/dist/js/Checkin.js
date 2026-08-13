@@ -14,7 +14,7 @@ $('#cardIdInput').on('keypress', function(e) {
 // 2. Load danh sách Check-in theo ngày
 function loadCheckins() {
     let date = $('#filterDate').val();
-    $.get(`/api/checkin/listCheckins?date=${date}`, function (res) {
+    $.get(`/Checkin/listCheckins?date=${date}`, function (res) {
         let html = '';
         if (res.length === 0) {
             html = '<tr><td colspan="5" class="text-center text-muted py-4">Chưa có ai check-in ngày này.</td></tr>';
@@ -55,7 +55,7 @@ function performCheckin() {
         return;
     }
 
-    $.post(`/api/checkin/${RFID_UID}`)
+    $.post(`/Checkin/${RFID_UID}`)
         .done(function (res) {
             showToast(res.message, 200);
             loadCheckins(); // Reload bảng bên trái
@@ -100,7 +100,7 @@ function showMemberInfo(info) {
 }
 
 function loadLatestToday() {
-    $.get('/api/checkin/latestToday', function(res) {
+    $.get('/Checkin/latestToday', function(res) {
         if (res) {
             showMemberInfo(res);
         }
@@ -115,7 +115,7 @@ function extendMembership() {
     if (!currentScannedCardId) return;
 
     HienModalXacNhan('Bạn chắc chắn muốn gia hạn cho hội viên này?', 'bg-success', function () {
-        $.post(`/api/checkin/extend/${currentScannedCardId}`)
+        $.post(`/Checkin/extend/${currentScannedCardId}`)
             .done(function (res) {
                 showToast(res.message, 200);
                 $('#infoEndDate').text(res.newEndDate);
@@ -136,7 +136,7 @@ function lockMembership() {
     if (isLocked) {
         // Đang khóa → Mở thẻ
         HienModalXacNhan('Bạn chắc chắn muốn mở lại thẻ này?', 'bg-primary', function () {
-            $.post(`/api/checkin/unlock/${currentScannedCardId}`)
+            $.post(`/Checkin/unlock/${currentScannedCardId}`)
                 .done(function (res) {
                     showToast(res.message, 200);
                     $('#infoEndDate').text(res.newEndDate);
@@ -151,7 +151,7 @@ function lockMembership() {
     } else {
         // Đang mở → Khóa thẻ
         HienModalXacNhan('Bạn chắc chắn muốn khóa tạm thời thẻ này?', 'bg-danger', function () {
-            $.post(`/api/checkin/lock/${currentScannedCardId}`)
+            $.post(`/Checkin/lock/${currentScannedCardId}`)
                 .done(function (res) {
                     showToast(res.message, 200);
                     $('#infoCardStatus').html('<span class="badge bg-danger">Đã khóa</span>');

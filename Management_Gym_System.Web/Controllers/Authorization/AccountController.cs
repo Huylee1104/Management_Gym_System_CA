@@ -281,7 +281,7 @@ public class AccountController : Controller
         {
             ID = user.ID,
             Username = user.Username,
-            FullName = user.FullName,
+            FullName = user.FullName ?? "",
             PhoneNumber = user.PhoneNumber,
             RoleName =
                 user.Role?.RoleName ??

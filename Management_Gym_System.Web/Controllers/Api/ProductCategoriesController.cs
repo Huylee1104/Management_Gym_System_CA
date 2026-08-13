@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Management_Gym_System.Web.Controllers.Api
 {
-    [Route("api/product-categories")]
+    [Route("[Controller]")]
     [ApiController]
-    public class ProductCategoriesController : Controller
+    public class ProductCategoryController : Controller
     {
         private readonly IProductCategoryService _categoryService;
 
         // Controller CHI INJECT 1 SERVICE DUY NHẤT! Không còn DbContext hay GenericService nữa!
-        public ProductCategoriesController(IProductCategoryService categoryService)
+        public ProductCategoryController(IProductCategoryService categoryService)
         {
             _categoryService = categoryService;
         }

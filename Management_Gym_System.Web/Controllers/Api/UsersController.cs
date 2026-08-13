@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Management_Gym_System.Controllers.Api
 {
-    [Route("api/users")]
+    [Route("[Controller]")]
     [ApiController]
-    public class UsersController : Controller
+    public class UserController : Controller
     {
         private readonly IUsersService _usersService;
 
-        public UsersController(IUsersService usersService)
+        public UserController(IUsersService usersService)
         {
             _usersService = usersService;
         }

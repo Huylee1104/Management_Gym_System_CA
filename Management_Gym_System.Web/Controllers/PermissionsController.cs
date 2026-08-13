@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Management_Gym_System.Controllers;
 
-public class PermissionsController : Controller
+public class PermissionController : Controller
 {
     [HttpGet]
     public IActionResult Index()
