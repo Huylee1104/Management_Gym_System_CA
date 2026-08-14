@@ -1,5 +1,6 @@
 using Management_Gym_System.Application.Services;
 using Management_Gym_System.Domain.Entities;
+using Management_Gym_System.Web.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management_Gym_System.Web.Controllers.Api
@@ -17,12 +18,14 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("PRODUCTCATEGORY_VIEW")]
         public IActionResult Index()
         {
             return View("~/Views/Categories/Index.cshtml");
         }
 
         [HttpGet("listCategories")]
+        [HasPermission("PRODUCTCATEGORY_VIEW")]
         public async Task<IActionResult> GetCategories(string? keyword)
         {
             var categories = await _categoryService.GetCategoriesAsync(keyword);
@@ -30,6 +33,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpPost]
+        [HasPermission("PRODUCTCATEGORY_CREATE")]
         public async Task<IActionResult> CreateCategory([FromBody] ProductCategory category)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -39,6 +43,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [HasPermission("PRODUCTCATEGORY_EDIT")]
         public async Task<IActionResult> UpdateCategory(long id, [FromBody] ProductCategory category)
         {
             if (id != category.ID) return BadRequest();
@@ -50,6 +55,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpPost("{id}/status")]
+        [HasPermission("PRODUCTCATEGORY_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
             var result = await _categoryService.ToggleStatusAsync(id);
@@ -59,6 +65,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpPost("delete")]
+        [HasPermission("PRODUCTCATEGORY_DELETE")]
         public async Task<IActionResult> Delete(long id) // Đã sửa kiểu int -> long cho đồng nhất
         {
             var result = await _categoryService.DeleteCategoryAsync(id);

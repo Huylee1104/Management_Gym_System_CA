@@ -1,6 +1,7 @@
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Infrastructure.Data;
 using Management_Gym_System.Services;
+using Management_Gym_System.Web.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("USER_VIEW")]
         public async Task<IActionResult> Index()
         {
             
@@ -25,6 +27,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet("listUsers")]
+        [HasPermission("USER_VIEW")]
         public async Task<IActionResult> GetUsers(string? keyword, long? filterValue)
         {
             var users = await _usersService.GetUsers(keyword, filterValue);
@@ -33,6 +36,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost]
+        [HasPermission("USER_CREATE")]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateUpdateDto request)
         {
             if (!ModelState.IsValid)
@@ -49,6 +53,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [HasPermission("USER_EDIT")]
         public async Task<IActionResult> UpdateUser(long id, [FromBody] UserCreateUpdateDto request)
         {
             if (id != request.Id)
@@ -65,6 +70,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost("{id}/status")]
+        [HasPermission("USER_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
             var user = await _usersService.ToggleStatus(id);
@@ -75,6 +81,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost("delete")]
+        [HasPermission("USER_DELETE")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _usersService.Delete(id);

@@ -1,5 +1,6 @@
 using Management_Gym_System.Application.DTOs.Permission;
 using Management_Gym_System.Domain.Entities;
+using Management_Gym_System.Web.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management_Gym_System.Controllers.Api;
@@ -23,6 +24,7 @@ public class PermissionController : Controller
     // }
 
     [HttpGet("functions")]
+    [HasPermission("PERMISSION_VIEW")]
     public async Task<IActionResult> GetFunctions()
     {
         var result =
@@ -32,6 +34,7 @@ public class PermissionController : Controller
     }
 
     [HttpPost("functions")]
+    [HasPermission("PERMISSION_CREATE")]
     public async Task<IActionResult> CreateFunction(
         [FromBody] SystemFunction function)
     {
@@ -53,6 +56,7 @@ public class PermissionController : Controller
     }
 
     [HttpPut("functions/{id}")]
+    [HasPermission("PERMISSION_EDIT")]
     public async Task<IActionResult> UpdateFunction(
         long id,
         [FromBody] SystemFunction function)
@@ -72,6 +76,7 @@ public class PermissionController : Controller
     }
 
     [HttpPost("actions")]
+    [HasPermission("PERMISSION_CREATE")]
     public async Task<IActionResult> CreateAction(
         [FromBody] SystemFunctionAction action)
     {
@@ -95,6 +100,7 @@ public class PermissionController : Controller
     }
 
     [HttpPut("actions/{id}")]
+    [HasPermission("PERMISSION_EDIT")]
     public async Task<IActionResult> UpdateAction(
         long id,
         [FromBody] SystemFunctionAction action)
@@ -114,6 +120,7 @@ public class PermissionController : Controller
     }
 
     [HttpGet("roles/{roleId}")]
+    [HasPermission("PERMISSION_VIEW")]
     public async Task<IActionResult> GetRolePermissions(
         long roleId)
     {
@@ -125,6 +132,7 @@ public class PermissionController : Controller
     }
 
     [HttpPost("roles/{roleId}")]
+    [HasPermission("PERMISSION_CREATE")]
     public async Task<IActionResult> SaveRolePermissions(
         long roleId,
         [FromBody] List<PermissionItemRequest> permissions)

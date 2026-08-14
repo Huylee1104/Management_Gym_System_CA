@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Management_Gym_System.Application.Services;
+using Management_Gym_System.Web.Authorization;
 
 namespace Management_Gym_System.Controllers
 {
@@ -21,6 +22,7 @@ namespace Management_Gym_System.Controllers
         }
 
         // Giao diện chính
+        [HasPermission("GYMMEMBERSHIP_VIEW")]
         public IActionResult Index()
         {
             return View("~/Views/GymMembershipCard/Index.cshtml");
@@ -28,6 +30,7 @@ namespace Management_Gym_System.Controllers
 
         // API: Lấy danh sách thẻ theo bộ lọc
         [HttpGet]
+        [HasPermission("GYMMEMBERSHIP_VIEW")]
         public async Task<IActionResult> GetCards(string? filter, string? keyword)
         {
             var result = await _cardService.GetFilteredCardsAsync(filter, keyword);
@@ -37,6 +40,7 @@ namespace Management_Gym_System.Controllers
 
         // API: Thêm mới thẻ trống
         [HttpPost]
+        [HasPermission("GYMMEMBERSHIP_CREATE")]
         public async Task<IActionResult> GenerateCards(int quantity)
         {
             var result = await _cardService.CreateCardQualityAsync(quantity);
@@ -50,6 +54,7 @@ namespace Management_Gym_System.Controllers
 
         // API: Đăng ký / Cập nhật RFID_UID
         [HttpPost]
+        [HasPermission("GYMMEMBERSHIP_EDIT")]
         public async Task<IActionResult> UpdateRFID(long id, string rfidUid)
         {
             var result = await _cardService.UpdateCardAsync(id, rfidUid);
@@ -63,6 +68,7 @@ namespace Management_Gym_System.Controllers
 
         // API: Khóa / Mở thẻ
         [HttpPost]
+        [HasPermission("GYMMEMBERSHIP_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
             var result = await _cardService.LockUnlockCardAsync(id);
@@ -76,6 +82,7 @@ namespace Management_Gym_System.Controllers
 
         // API: Xóa thẻ
         [HttpPost]
+        [HasPermission("GYMMEMBERSHIP_DELETE")]
         public async Task<IActionResult> DeleteCard(long id)
         {
             var result = await _cardService.DeleteCardAsync(id);

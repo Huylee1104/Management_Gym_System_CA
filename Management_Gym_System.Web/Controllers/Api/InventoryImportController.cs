@@ -7,6 +7,7 @@ using Dapper;
 using Npgsql;
 using Management_Gym_System.Application.Services;
 using Management_Gym_System.Domain.Interfaces;
+using Management_Gym_System.Web.Authorization;
 
 namespace Management_Gym_System.Controllers.Api
 {
@@ -26,9 +27,11 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpGet]
+        [HasPermission("INVENTORYIMPORT_VIEW")]
         public IActionResult Index() => View("~/Views/Imports/Index.cshtml");
 
         [HttpGet("listImports")]
+        [HasPermission("INVENTORYIMPORT_VIEW")]
         public async Task<IActionResult> GetImports()
         {
             return Ok(await _inventoryImportRepository.GetImportsAsync());
@@ -36,6 +39,7 @@ namespace Management_Gym_System.Controllers.Api
 
         #region Tạo phiếu nhập kho mới
         [HttpPost]
+        [HasPermission("INVENTORYIMPORT_CREATE")]
         public async Task<IActionResult> CreateImport([FromBody] ImportRequestDto request)
         {
             var result = await _inventoryImportService.CreateImport(request);
@@ -48,6 +52,7 @@ namespace Management_Gym_System.Controllers.Api
 
         #region Lấy lịch sử phiếu nhập kho
         [HttpGet("history")]
+        [HasPermission("INVENTORYIMPORT_VIEW")]
         public async Task<IActionResult> GetImportHistory([FromQuery] ImportHistoryFilterDto filter)
         {
             try
