@@ -235,7 +235,7 @@
 
     <script>
 
-        const permissionApi = '/api/permissions';
+        const permissionApi = '/permission';
 
         const functionModal =
             new bootstrap.Modal(
@@ -403,7 +403,7 @@
 
                         <button
                             class="btn btn-outline-primary"
-                            onclick="openPermission(${item.id})"
+                            onclick="openPermission(${functionId})"
                             title="Phân quyền">
 
                             <i class="bi bi-shield-lock"></i>
@@ -644,7 +644,7 @@
         function openPermission(roleId) {
 
             window.location.href =
-                `/api/permissions/roles/${roleId}/page`;
+                `/permission/roles/${roleId}/page`;
 
         }
 

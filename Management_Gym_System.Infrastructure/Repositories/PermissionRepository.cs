@@ -1,3 +1,4 @@
+using Management_Gym_System.Application.DTOs.SystemFunction;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,6 @@ public class PermissionRepository : IPermissionRepository
     public PermissionRepository(ApplicationDbContext context)
     {
         _context = context;
-    }
-
-    public async Task<List<SystemFunction>> GetFunctionsAsync()
-    {
-        return await _context.SystemFunctions
-            .Include(x => x.Actions)
-            .OrderBy(x => x.DisplayOrder)
-            .ThenBy(x => x.Name)
-            .ToListAsync();
     }
 
     public async Task<SystemFunction?> GetFunctionByIdAsync(long id)

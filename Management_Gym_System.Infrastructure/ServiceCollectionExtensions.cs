@@ -32,6 +32,7 @@ public static class DependencyInjection
 
         services.AddScoped<IInventoryImportQueryService, InventoryImportQueryService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ISystemFunctionQueryService, SystemFunctionQueryService>();
 
         return services;
     }

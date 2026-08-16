@@ -101,7 +101,7 @@
                                 "ROLE_VIEW")
                             || User.HasClaim(
                                 "Permission",
-                                "FUNCTION_VIEW"))
+                                "PERMISSION_VIEW"))
                             {
                                 <li class="nav-item dropdown">
 
@@ -144,7 +144,7 @@
 
                                         @if (User.HasClaim(
                                                 "Permission",
-                                                "FUNCTION_VIEW"))
+                                                "PERMISSION_VIEW"))
                                         {
                                             <li>
                                                 <a class="dropdown-item" asp-controller="Permission" asp-action="Index">

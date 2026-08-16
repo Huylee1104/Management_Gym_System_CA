@@ -1,18 +1,22 @@
 using Management_Gym_System.Application.DTOs.Permission;
+using Management_Gym_System.Application.DTOs.SystemFunction;
+using Management_Gym_System.Application.Interfaces;
 using Management_Gym_System.Domain.Entities;
 
 public class PermissionService : IPermissionService
 {
     private readonly IPermissionRepository _repository;
+    private readonly ISystemFunctionQueryService _systemFunctionQueryService;
 
-    public PermissionService(IPermissionRepository repository)
+    public PermissionService(IPermissionRepository repository, ISystemFunctionQueryService systemFunctionQueryService)
     {
         _repository = repository;
+        _systemFunctionQueryService = systemFunctionQueryService;
     }
 
-    public async Task<List<SystemFunction>> GetFunctionsAsync()
+    public async Task<List<SystemFunctionDto>> GetFunctionsAsync()
     {
-        return await _repository.GetFunctionsAsync();
+        return await _systemFunctionQueryService.GetFunctionsAsync();
     }
 
     public async Task<long> CreateFunctionAsync(

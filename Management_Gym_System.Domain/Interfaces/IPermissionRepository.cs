@@ -2,8 +2,6 @@ using Management_Gym_System.Domain.Entities;
 
 public interface IPermissionRepository
 {
-    Task<List<SystemFunction>> GetFunctionsAsync();
-
     Task<SystemFunction?> GetFunctionByIdAsync(long id);
 
     Task AddFunctionAsync(SystemFunction function);

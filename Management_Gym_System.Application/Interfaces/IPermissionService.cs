@@ -1,9 +1,10 @@
 using Management_Gym_System.Application.DTOs.Permission;
+using Management_Gym_System.Application.DTOs.SystemFunction;
 using Management_Gym_System.Domain.Entities;
 
 public interface IPermissionService
 {
-    Task<List<SystemFunction>> GetFunctionsAsync();
+    Task<List<SystemFunctionDto>> GetFunctionsAsync();
 
     Task<long> CreateFunctionAsync(SystemFunction function);
 
