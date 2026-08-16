@@ -60,7 +60,7 @@
                         Code
                     </label>
 
-                    <input type="text" class="form-control" id="functionCode" />
+                    <input type="text" class="form-control" id="functionCode" placeholder="Nhập code, Ví dụ: QL_USER"/>
 
                 </div>
 
@@ -70,7 +70,7 @@
                         Tên chức năng
                     </label>
 
-                    <input type="text" class="form-control" id="functionName" />
+                    <input type="text" class="form-control" id="functionName" placeholder="Nhập tên chức năng"/>
 
                 </div>
 
@@ -80,7 +80,7 @@
                         Controller
                     </label>
 
-                    <input type="text" class="form-control" id="functionController" />
+                    <input type="text" class="form-control" id="functionController" placeholder="Nhập tên của controller, Ví dụ: User, Role, ..."/>
 
                 </div>
 
@@ -90,7 +90,7 @@
                         Mô tả
                     </label>
 
-                    <textarea class="form-control" id="functionDescription">
+                    <textarea class="form-control" id="functionDescription" placeholder="Nhập mô tả chức năng">
                     </textarea>
 
                 </div>
@@ -161,7 +161,7 @@
                         Code
                     </label>
 
-                    <input type="text" class="form-control" id="actionCode">
+                    <input type="text" class="form-control" id="actionCode" placeholder="Nhập code, Ví dụ: USER_VIEW"/>
 
                 </div>
 
@@ -171,7 +171,7 @@
                         Action Name
                     </label>
 
-                    <input type="text" class="form-control" id="actionName">
+                    <input type="text" class="form-control" id="actionName" placeholder="Nhập actions, Ví dụ: Create, view, ...">
 
                 </div>
 
@@ -181,7 +181,7 @@
                         Tên hiển thị
                     </label>
 
-                    <input type="text" class="form-control" id="actionDisplayName">
+                    <input type="text" class="form-control" id="actionDisplayName" placeholder="Nhập tên hiển thị">
 
                 </div>
 
@@ -191,7 +191,7 @@
                         Mô tả
                     </label>
 
-                    <textarea class="form-control" id="actionDescription">
+                    <textarea class="form-control" id="actionDescription" placeholder="Nhập mô tả của hành động">
                     </textarea>
 
                 </div>
@@ -236,6 +236,7 @@
     <script>
 
         const permissionApi = '/permission';
+        let functions = [];
 
         const functionModal =
             new bootstrap.Modal(
@@ -260,66 +261,67 @@
             $.get(`${permissionApi}/functions`, function (res) {
 
                 let html = '';
+                functions = res;
 
                 res.forEach(function (item) {
 
                     html += `
-                    <div class="card mb-3">
+                        <div class="card mb-3">
 
-                        <div class="card-header
-                                    d-flex
-                                    justify-content-between
-                                    align-items-center">
+                            <div class="card-header
+                                        d-flex
+                                        justify-content-between
+                                        align-items-center">
 
-                            <div>
+                                <div>
 
-                                <strong>
-                                    ${item.name}
-                                </strong>
+                                    <strong>
+                                        ${item.name}
+                                    </strong>
 
-                                <span class="text-muted ms-2">
-                                    ${item.code}
-                                </span>
+                                    <span class="text-muted ms-2">
+                                        ${item.code}
+                                    </span>
+
+                                </div>
+
+                                <div>
+
+                                    <button class="btn
+                                                   btn-sm
+                                                   btn-outline-primary"
+                                            onclick="editFunction(${item.id})">
+
+                                        <i class="bi bi-pencil"></i>
+
+                                    </button>
+
+                                    <button class="btn
+                                                   btn-sm
+                                                   btn-primary"
+                                            onclick="showActionModal(${item.id})">
+
+                                        <i class="bi bi-plus"></i>
+                                        Action
+
+                                    </button>
+
+                                </div>
 
                             </div>
 
-                            <div>
+                            <div class="card-body">
 
-                                <button class="btn
-                                               btn-sm
-                                               btn-outline-primary"
-                                        onclick="editFunction(${item.id})">
-
-                                    <i class="bi bi-pencil"></i>
-
-                                </button>
-
-                                <button class="btn
-                                               btn-sm
-                                               btn-primary"
-                                        onclick="showActionModal(${item.id})">
-
-                                    <i class="bi bi-plus"></i>
-                                    Action
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <div class="card-body">
-
-                            ${renderActions(
+                                ${renderActions(
                         item.id,
                         item.actions
                     )
                         }
 
-                        </div>
+                            </div>
 
-                    </div>
-                `;
+                        </div>
+                    `;
 
                 });
 
@@ -335,96 +337,127 @@
             if (!actions || actions.length === 0) {
 
                 return `
-                <div class="text-muted">
-                    Chưa có Action.
-                </div>
-            `;
+                    <div class="text-muted">
+                        Chưa có Action.
+                    </div>
+                `;
 
             }
 
             let html = `
-            <div class="table-responsive">
+                <div class="table-responsive">
 
-                <table class="table table-sm align-middle">
+                    <table class="table table-sm align-middle">
 
-                    <thead>
+                        <thead>
 
-                        <tr>
-                            <th>Code</th>
-                            <th>Action</th>
-                            <th>Tên hiển thị</th>
-                            <th>Trạng thái</th>
-                            <th></th>
-                        </tr>
+                            <tr>
+                                <th>Code</th>
+                                <th>Action</th>
+                                <th>Tên hiển thị</th>
+                                <th>Trạng thái</th>
+                                <th></th>
+                            </tr>
 
-                    </thead>
+                        </thead>
 
-                    <tbody>
-        `;
+                        <tbody>
+            `;
 
             actions.forEach(function (action) {
 
                 html += `
-                <tr>
+                    <tr>
 
-                    <td>
-                        <code>
-                            ${action.code}
-                        </code>
-                    </td>
+                        <td>
+                            <code>
+                                ${action.code}
+                            </code>
+                        </td>
 
-                    <td>
-                        ${action.actionName}
-                    </td>
+                        <td>
+                            ${action.actionName}
+                        </td>
 
-                    <td>
-                        ${action.displayName}
-                    </td>
+                        <td>
+                            ${action.displayName}
+                        </td>
 
-                    <td>
+                        <td>
 
-                        ${action.isActive
+                            ${action.isActive
                         ? '<span class="badge bg-success">Hoạt động</span>'
                         : '<span class="badge bg-danger">Khóa</span>'
                     }
 
-                    </td>
+                        </td>
 
-                    <td class="text-end">
+                        <td class="text-end">
 
-                        <button class="btn
-                                       btn-sm
-                                       btn-outline-info"
-                                onclick='editAction(${JSON.stringify(action)})'>
+                            <button class="btn
+                                           btn-sm
+                                           btn-outline-info"
+                                    onclick='editAction(${JSON.stringify(action)})'>
 
-                            <i class="bi bi-pencil"></i>
+                                <i class="bi bi-pencil"></i>
 
-                        </button>
+                            </button>
 
-                        <button
-                            class="btn btn-outline-primary"
-                            onclick="openPermission(${functionId})"
-                            title="Phân quyền">
+                            <button
+                                class="btn btn-outline-primary"
+                                onclick="openPermission(${functionId})"
+                                title="Phân quyền">
 
-                            <i class="bi bi-shield-lock"></i>
+                                <i class="bi bi-shield-lock"></i>
 
-                        </button>
-                    </td>
+                            </button>
+                        </td>
 
-                </tr>
-            `;
+                    </tr>
+                `;
 
             });
 
             html += `
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
 
-            </div>
-        `;
+                </div>
+            `;
 
             return html;
+        }
+
+        function editFunction(id) {
+
+            const item = functions.find(x => x.id === id);
+
+            if (!item) {
+                showToast(
+                    'Không tìm thấy chức năng!',
+                    500
+                );
+                return;
+            }
+
+            $('#functionId').val(item.id);
+
+            $('#functionCode').val(item.code);
+
+            $('#functionName').val(item.name);
+
+            $('#functionController').val(item.controller);
+
+            $('#functionDescription').val(item.description);
+
+            $('#functionActive')
+                .prop('checked', item.isActive);
+
+            $('#functionModalTitle')
+                .text('Sửa chức năng');
+
+            functionModal.show();
         }
 
 
