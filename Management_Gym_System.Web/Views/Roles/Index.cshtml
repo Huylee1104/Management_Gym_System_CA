@@ -2,32 +2,234 @@
     ViewData["Title"] = "Quản lý Vai trò";
 }
 
-<div class="card shadow-sm border-0 mb-4">
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <div class="input-group gap-2" style="width: 300px;">
-            <input type="text" id="txtSearch" class="form-control" placeholder="Tìm kiếm...">
-            <button type="button" class="btn btn-outline-primary" onclick="loadData()" title="Tìm kiếm">
-                <i class="ti ti-search"></i>
-            </button>
+<style>
+
+    .role-item {
+        padding: 14px;
+        margin: 4px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all .15s ease;
+        border: 1px solid transparent;
+    }
+
+    .role-item:hover {
+        background-color: #f5f7fa;
+    }
+
+    .role-item.active {
+        background-color: #e9f2ff;
+        border-color: #b6d4fe;
+    }
+
+    .role-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #eef4ff;
+        color: #0d6efd;
+        font-size: 18px;
+    }
+
+    .permission-function {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .function-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        background-color: #f8f9fa;
+    }
+
+    .function-actions {
+        padding: 8px 16px 10px 42px;
+    }
+
+    .action-item {
+        padding: 7px 0;
+    }
+
+    .permission-count {
+        font-size: 13px;
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    #roleList {
+        max-height: calc(100vh - 260px);
+        overflow-y: auto;
+    }
+
+    #permissionContainer {
+        max-height: calc(100vh - 260px);
+        overflow-y: auto;
+    }
+
+</style>
+
+<div class="row g-3">
+
+    <!-- =========================
+         LEFT: QUẢN LÝ VAI TRÒ
+         ========================= -->
+    <div class="col-lg-5">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-header bg-white py-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div class="input-group gap-2"
+                         style="width: 300px;">
+
+                        <input type="text"
+                               id="txtSearch"
+                               class="form-control"
+                               placeholder="Tìm kiếm...">
+
+                        <button type="button"
+                                class="btn btn-outline-primary"
+                                onclick="loadData()"
+                                title="Tìm kiếm">
+
+                            <i class="ti ti-search"></i>
+
+                        </button>
+
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            onclick="showModal()">
+
+                        <i class="bi bi-plus-lg"></i>
+                        Thêm mới
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="table-responsive table-scrollable-cards">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="text-center text-black">
+
+                            <tr class="table-primary">
+
+                                <th>ID</th>
+
+                                <th>Tên vai trò</th>
+
+                                <th>Trạng thái</th>
+
+                                <th>Thao tác</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tableBody">
+
+                            <!-- JS render role ở đây -->
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
         </div>
-        <button class="btn btn-primary " onclick="showModal()"><i class="bi bi-plus-lg"></i> Thêm mới</button>
+
     </div>
-    <div class="card-body">
-        <div class="table-responsive table-scrollable-cards">
-            <table class="table table-hover align-middle">
-                <thead class=" text-center text-black">
-                    <tr class="table-primary">
-                        <th>ID</th>
-                        <th>Tên vai trò</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                </tbody>
-            </table>
+
+
+    <!-- =========================
+         RIGHT: PHÂN QUYỀN
+         ========================= -->
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-header bg-white py-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h5 class="mb-1"
+                            id="permissionTitle">
+
+                            Phân quyền
+
+                        </h5>
+
+                        <small class="text-muted"
+                               id="permissionSubtitle">
+
+                            Chọn một vai trò để xem quyền
+
+                        </small>
+
+                    </div>
+
+                    <button type="button"
+                            id="btnSavePermissions"
+                            class="btn btn-primary"
+                            onclick="savePermissions()"
+                            disabled>
+
+                        <i class="bi bi-check-lg me-1"></i>
+
+                        Lưu phân quyền
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div id="permissionContainer">
+
+                    <div class="text-center text-muted py-5">
+
+                        <i class="bi bi-shield-lock fs-1"></i>
+
+                        <div class="mt-3">
+
+                            Chọn một vai trò bên trái
+                            để xem và quản lý quyền.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
 
 <div class="modal fade" id="dataModal" tabindex="-1">
@@ -58,111 +260,7 @@
 
 @section Scripts {
     <script>
-        const apiUrl = '/Role';
-        const modal = new bootstrap.Modal(document.getElementById('dataModal'));
-
-        $(document).ready(() => loadData());
-
-        $('#txtSearch').on('keydown', function (e) {
-
-            if (e.keyCode == 13) {
-                loadData();
-            }
-
-        });
-
-        function loadData() {
-            let keyword = $('#txtSearch').val();
-
-            $.get(`${apiUrl}/listRoles`,
-                {
-                    keyword
-                },
-                function (res) {
-                    let html = '';
-                    res.forEach(item => {
-                        let statusBadge = item.status ? '<span class="badge bg-success">Hoạt động</span>' : '<span class="badge bg-danger">Khóa</span>';
-                        html += `<tr>
-                            <td>${item.id}</td>
-                            <td>${item.roleName}</td>
-                            <td><a href="javascript:void(0)" onclick="toggleStatus(${item.id})">${statusBadge}</a></td>
-                            <td class="text-end">
-                                <button class="btn btn-outline-info" data-item='${JSON.stringify(item)}' onclick="editData(this)">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-outline-danger" onclick="showDeleteModal(${item.id})">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>`;
-                    });
-                    $('#tableBody').html(html);
-                });
-        }
-
-        function showModal() {
-            $('#roleId').val(0);
-            $('#roleName').val('');
-            $('#roleStatus').prop('checked', true);
-            $('#modalTitle').text('Thêm Vai trò');
-            modal.show();
-        }
-
-        function editData(btn) {
-            let item = JSON.parse($(btn).attr('data-item'));
-            $('#roleId').val(item.id);
-            $('#roleName').val(item.roleName);
-            $('#roleStatus').prop('checked', item.status);
-            $('#modalTitle').text('Sửa Vai trò');
-            modal.show();
-        }
-
-        function saveData() {
-            let id = $('#roleId').val();
-            let payload = {
-                id: parseInt(id),
-                roleName: $('#roleName').val(),
-                status: $('#roleStatus').is(':checked')
-            };
-
-            let method = id == 0 ? 'POST' : 'POST'; // Cả 2 đều POST theo API controller của bạn
-            let url = id == 0 ? apiUrl : `${apiUrl}/${id}`;
-
-            $.ajax({
-                url: url, type: method, contentType: 'application/json',
-                data: JSON.stringify(payload),
-                success: function () {
-                    showToast('Lưu thành công!', 200);
-                    modal.hide();
-                    loadData();
-                },
-                error: function () { showToast('Có lỗi xảy ra!', 500); }
-            });
-        }
-
-        function toggleStatus(id) {
-            $.post(`${apiUrl}/${id}/status`, function () {
-                showToast('Đã cập nhật trạng thái', 200);
-                loadData();
-            });
-        }
-
-        function showDeleteModal(id) {
-            $('#deleteCardId').val(id);
-            $('#modal-delete-confirm').modal('show');
-        }
-
-        function submitDelete() {
-            let id = $('#deleteCardId').val();
-            $.post(`${apiUrl}/delete`, { id: id }, function (res) {
-                if (res.success) {
-                    $('#modal-delete-confirm').modal('hide');
-                    showToast("Xóa thành công!", 200);
-                    loadData();
-                } else {
-                    showToast(res.message || "Có lỗi xảy ra!", 500);
-                }
-            });
-        }
+        //const apiUrl = '/Role';
     </script>
+    <script src="~/dist/js/Role.js"></script>
 }

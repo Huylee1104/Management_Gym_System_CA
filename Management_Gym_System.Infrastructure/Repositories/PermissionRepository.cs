@@ -135,4 +135,28 @@ public class PermissionRepository : IPermissionRepository
             .Distinct()
             .ToListAsync();
     }
+
+    public async Task<bool> RoleExistsAsync(long roleId)
+    {
+        return await _context.UserRoles
+            .AnyAsync(x => x.ID == roleId);
+    }
+
+    public async Task<List<long>> GetActiveActionIdsAsync(
+        IEnumerable<long> actionIds)
+    {
+        var ids = actionIds
+            .Distinct()
+            .ToList();
+
+        if (ids.Count == 0)
+            return new List<long>();
+
+        return await _context.SystemFunctionActions
+            .Where(x =>
+                ids.Contains(x.Id) &&
+                x.IsActive)
+            .Select(x => x.Id)
+            .ToListAsync();
+    }
 }

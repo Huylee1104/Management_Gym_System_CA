@@ -29,7 +29,7 @@ public class SystemFunctionAction
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public virtual SystemFunction Function { get; set; } = null!;
+    public virtual SystemFunction? Function { get; set; }
 
     public virtual ICollection<RolePermission> RolePermissions { get; set; }
         = new List<RolePermission>();

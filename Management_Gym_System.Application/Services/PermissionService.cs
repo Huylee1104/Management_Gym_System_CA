@@ -123,18 +123,47 @@ public class PermissionService : IPermissionService
     }
 
     public async Task SaveRolePermissionsAsync(
-        long roleId,
-        List<PermissionItemRequest> permissions)
+    long roleId,
+    List<PermissionItemRequest> permissions)
     {
-        var entities = permissions.Select(x =>
-            new RolePermission
+        if (roleId <= 0)
+            throw new ArgumentException("RoleId không hợp lệ.");
+
+        var roleExists =
+            await _repository.RoleExistsAsync(roleId);
+
+        if (!roleExists)
+            throw new KeyNotFoundException(
+                "Không tìm thấy vai trò.");
+
+        permissions ??= new List<PermissionItemRequest>();
+
+        var distinctPermissions = permissions
+            .GroupBy(x => x.ActionId)
+            .Select(g => g.Last())
+            .ToList();
+
+        var actionIds = distinctPermissions
+            .Select(x => x.ActionId)
+            .ToList();
+
+        var validActionIds =
+            await _repository.GetActiveActionIdsAsync(actionIds);
+
+        var validActionIdSet =
+            validActionIds.ToHashSet();
+
+        var entities = distinctPermissions
+            .Where(x => validActionIdSet.Contains(x.ActionId))
+            .Select(x => new RolePermission
             {
                 RoleId = roleId,
                 ActionId = x.ActionId,
                 IsAllowed = x.IsAllowed,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
-            }).ToList();
+            })
+            .ToList();
 
         await _repository.SaveRolePermissionsAsync(
             roleId,

@@ -15,13 +15,11 @@ namespace Management_Gym_System.Controllers.Api
     [ApiController]
     public class InventoryImportController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IInventoryImportService _inventoryImportService;
         private readonly IInventoryImportRepository _inventoryImportRepository;
 
-        public InventoryImportController(ApplicationDbContext context, IInventoryImportService inventoryImportService, IInventoryImportRepository inventoryImportRepository)
+        public InventoryImportController(IInventoryImportService inventoryImportService, IInventoryImportRepository inventoryImportRepository)
         {
-            _context = context;
             _inventoryImportService = inventoryImportService;
             _inventoryImportRepository = inventoryImportRepository;
         }

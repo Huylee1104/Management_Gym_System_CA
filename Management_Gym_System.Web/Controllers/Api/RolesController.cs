@@ -1,3 +1,4 @@
+using Management_Gym_System.Application.DTOs.Permission;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Infrastructure.Data;
 using Management_Gym_System.Services;
@@ -12,17 +13,19 @@ namespace Management_Gym_System.Controllers.Api
     public class RoleController : Controller
     {
         private readonly IRolesService _roleService;
+        private readonly IPermissionService _permissionService;
 
-        public RoleController(IRolesService roleService)
+        public RoleController(IRolesService roleService, IPermissionService permissionService)
         {
             _roleService = roleService;
+            _permissionService = permissionService;
         }
 
         [HttpGet]
         [HasPermission("ROLE_VIEW")]
         public async Task<IActionResult> Index()
         {
-            
+
             return View("~/Views/Roles/Index.cshtml");
         }
 
@@ -87,6 +90,62 @@ namespace Management_Gym_System.Controllers.Api
 
 
             return Json(new { success = true });
+        }
+
+        [HttpGet("{id}/permissions")]
+        [HasPermission("ROLE_VIEW")]
+        public async Task<IActionResult> GetRolePermissions(long id)
+        {
+            try
+            {
+                var result =
+                    await _permissionService.GetPermissionTreeAsync(id);
+
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new
+                {
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("{id}/permissions")]
+        [HasPermission("ROLE_EDIT")]
+        public async Task<IActionResult> SaveRolePermissions(
+            long id,
+            [FromBody] List<PermissionItemRequest> permissions)
+        {
+            try
+            {
+                await _permissionService.SaveRolePermissionsAsync(
+                    id,
+                    permissions ?? new List<PermissionItemRequest>());
+
+                return Ok(new
+                {
+                    success = true,
+                    message = "Lưu phân quyền thành công."
+                });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
         }
     }
 }

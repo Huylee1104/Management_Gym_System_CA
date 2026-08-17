@@ -27,5 +27,9 @@ public interface IPermissionRepository
     Task<bool> HasPermissionAsync(long userId, string actionCode);
     Task<List<string>> GetUserPermissionsAsync(long userId);
 
+    Task<bool> RoleExistsAsync(long roleId);
+
+    Task<List<long>> GetActiveActionIdsAsync(IEnumerable<long> actionIds);
+
     Task SaveChangesAsync();
 }
