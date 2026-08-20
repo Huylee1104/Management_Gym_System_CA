@@ -87,13 +87,17 @@
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
-                                        <li><a class="dropdown-item" asp-controller="InventoryImport" asp-action="Index">Nhập kho</a>
+                                        <li><a class="dropdown-item" asp-controller="InventoryImport" asp-action="Index">Nhập
+                                            kho</a>
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
 
-                            @if (User.HasClaim(
+                            
+
+                            <ul class="navbar-nav ms-auto">
+                                @if (User.HasClaim(
                                 "Permission",
                                 "USER_VIEW")
                             || User.HasClaim(
@@ -102,66 +106,64 @@
                             || User.HasClaim(
                                 "Permission",
                                 "PERMISSION_VIEW"))
-                            {
-                                <li class="nav-item dropdown">
+                                {
+                                    <li class="nav-item dropdown">
 
-                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
 
-                                        <i class="bi bi-shield-lock"></i>
-                                        Quản trị hệ thống
+                                            <i class="bi bi-shield-lock"></i>
+                                            Quản trị hệ thống
 
-                                    </a>
+                                        </a>
 
-                                    <ul class="dropdown-menu">
+                                        <ul class="dropdown-menu">
 
-                                        @if (User.HasClaim(
-                                                "Permission",
-                                                "USER_VIEW"))
-                                        {
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="User" asp-action="Index">
+                                            @if (User.HasClaim(
+                                                    "Permission",
+                                                    "USER_VIEW"))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="User" asp-action="Index">
 
-                                                    <i class="bi bi-people me-2"></i>
-                                                    Người dùng
+                                                        <i class="bi bi-people me-2"></i>
+                                                        Người dùng
 
-                                                </a>
-                                            </li>
-                                        }
+                                                    </a>
+                                                </li>
+                                            }
 
-                                        @if (User.HasClaim(
-                                                "Permission",
-                                                "ROLE_VIEW"))
-                                        {
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Role" asp-action="Index">
+                                            @if (User.HasClaim(
+                                                    "Permission",
+                                                    "ROLE_VIEW"))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="Role" asp-action="Index">
 
-                                                    <i class="bi bi-person-badge me-2"></i>
-                                                    Quản lý vai trò
+                                                        <i class="bi bi-person-badge me-2"></i>
+                                                        Quản lý vai trò
 
-                                                </a>
-                                            </li>
-                                        }
+                                                    </a>
+                                                </li>
+                                            }
 
-                                        @if (User.HasClaim(
-                                                "Permission",
-                                                "PERMISSION_VIEW"))
-                                        {
-                                            <li>
-                                                <a class="dropdown-item" asp-controller="Permission" asp-action="Index">
+                                            @if (User.HasClaim(
+                                                    "Permission",
+                                                    "PERMISSION_VIEW"))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="Permission" asp-action="Index">
 
-                                                    <i class="bi bi-shield-check me-2"></i>
-                                                    Quản lý chức năng
+                                                        <i class="bi bi-shield-check me-2"></i>
+                                                        Quản lý chức năng
 
-                                                </a>
-                                            </li>
-                                        }
+                                                    </a>
+                                                </li>
+                                            }
 
-                                    </ul>
+                                        </ul>
 
-                                </li>
-                            }
-
-                            <ul class="navbar-nav ms-auto">
+                                    </li>
+                                }
                                 @if (User.Identity?.IsAuthenticated == true)
                                 {
                                     <li class="nav-item dropdown">
@@ -237,7 +239,8 @@
 
                         <script src="~/dist/libs/jquery/jquery.min.js"></script>
                         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-                        <script src="~/dist/js/Common.js"></script>
+                        <script src="/dist/libs/tom-select/dist/js/tom-select.base.js"></script>
+                        <script src="~/dist/js/Common.js" asp-append-version="true"></script>
                         @await RenderSectionAsync("Scripts", required: false)
                     </body>
 

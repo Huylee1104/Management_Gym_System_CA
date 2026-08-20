@@ -19,10 +19,56 @@ public class PermissionService : IPermissionService
         return await _systemFunctionQueryService.GetFunctionsAsync();
     }
 
-    public async Task<long> CreateFunctionAsync(
-        SystemFunction function)
+    public async Task<long> CreateFunctionAsync(SystemFunction function)
     {
         await _repository.AddFunctionAsync(function);
+        await _repository.SaveChangesAsync();
+
+        var prefix = function.Code.StartsWith("QL_", StringComparison.OrdinalIgnoreCase)
+            ? function.Code[3..]
+            : function.Code;
+
+        var displayName = function.Name.StartsWith("Quản lý ", StringComparison.OrdinalIgnoreCase)
+            ? function.Name[9..]
+            : function.Name;
+
+        var actions = new[]
+        {
+            new SystemFunctionAction
+            {
+                FunctionId = function.Id,
+                Code = $"{prefix}_VIEW",
+                ActionName = "Index",
+                DisplayName = $"Xem {displayName}"
+            },
+            new SystemFunctionAction
+            {
+                FunctionId = function.Id,
+                Code = $"{prefix}_CREATE",
+                ActionName = "Create",
+                DisplayName = $"Thêm {displayName}"
+            },
+            new SystemFunctionAction
+            {
+                FunctionId = function.Id,
+                Code = $"{prefix}_EDIT",
+                ActionName = "Edit",
+                DisplayName = $"Sửa {displayName}"
+            },
+            new SystemFunctionAction
+            {
+                FunctionId = function.Id,
+                Code = $"{prefix}_DELETE",
+                ActionName = "Delete",
+                DisplayName = $"Xóa {displayName}"
+            }
+        };
+
+        foreach (var action in actions)
+        {
+            await _repository.AddActionAsync(action);
+        }
+
         await _repository.SaveChangesAsync();
 
         return function.Id;

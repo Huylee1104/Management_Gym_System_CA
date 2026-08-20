@@ -6,5 +6,5 @@ public interface IUsersService
     Task<User> CreateUser(UserCreateUpdateDto request);
     Task<bool> UpdateUser(long id,UserCreateUpdateDto request);
     Task<User> ToggleStatus(long id);
-    Task<bool> Delete(int id);
+    Task<bool> Delete(long id);
 }

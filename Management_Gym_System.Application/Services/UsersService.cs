@@ -63,8 +63,9 @@ public class UsersService : IUsersService
                 ? startDate.AddDays(request.ThoiHan.Value)
                 : null;
 
-            await _usersRepo.SaveChangesAsync();
+            await _usersRepo.AddAsync(membership);
         }
+        await _usersRepo.SaveChangesAsync();
 
         return user;
     }
@@ -82,6 +83,7 @@ public class UsersService : IUsersService
         existingUser.Status = request.Status ?? existingUser.Status;
 
         await _usersRepo.UpdateAsync(existingUser);
+        await _usersRepo.SaveChangesAsync();
         return true;
     }
 
@@ -93,16 +95,18 @@ public class UsersService : IUsersService
 
         existingUser.Status = !existingUser.Status;
         await _usersRepo.UpdateAsync(existingUser);
+        await _usersRepo.SaveChangesAsync();
         return existingUser;
     }
 
-    public async Task<bool> Delete(int id)
+    public async Task<bool> Delete(long id)
     {
         var existingUser = await _usersRepo.GetUserByIdAsync(id);
         if (existingUser == null)
             return false;
 
         await _usersRepo.DeleteAsync(existingUser);
+        await _usersRepo.SaveChangesAsync();
         return true;
     }
 }

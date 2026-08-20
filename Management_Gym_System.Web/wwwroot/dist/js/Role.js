@@ -91,9 +91,10 @@ function loadData() {
                                 <button type="button"
                                         class="btn btn-sm btn-outline-primary"
                                         title="Sửa"
+                                        data-item='${JSON.stringify(item)}'
                                         onclick="
                                             event.stopPropagation();
-                                            editRole(${item.id});
+                                            editData(this);
                                         ">
 
                                     <i class="bi bi-pencil"></i>
@@ -109,11 +110,10 @@ function loadData() {
                                             toggleStatus(${item.id});
                                         ">
 
-                                    <i class="bi ${
-                                        item.status
-                                            ? 'bi-toggle-on'
-                                            : 'bi-toggle-off'
-                                    }"></i>
+                                    <i class="bi ${item.status
+                        ? 'bi-toggle-on'
+                        : 'bi-toggle-off'
+                    }"></i>
 
                                 </button>
 
@@ -123,7 +123,7 @@ function loadData() {
                                         title="Xóa"
                                         onclick="
                                             event.stopPropagation();
-                                            deleteRole(${item.id});
+                                            showDeleteModal(${item.id});
                                         ">
 
                                     <i class="bi bi-trash"></i>
@@ -324,9 +324,10 @@ function renderPermissionTree(data) {
         html += `
             <div class="permission-function mb-3">
 
-                <div class="function-header">
+                <div class="function-header" style="cursor: pointer;"
+                     onclick="togglePermissionFunction(${func.id})">
 
-                    <div class="form-check mb-0">
+                    <div class="form-check mb-0" onclick="event.stopPropagation();">
 
                         <input
                             class="form-check-input
@@ -354,7 +355,8 @@ function renderPermissionTree(data) {
                     </span>
 
                 </div>
-
+                <div id="permission-actions-${func.id}"
+                     class="function-actions" style="display: none;">
                 <div class="function-actions">
         `;
 
@@ -403,6 +405,12 @@ function renderPermissionTree(data) {
     $('#permissionContainer').html(html);
 
     initializePermissionCheckboxes();
+}
+
+function togglePermissionFunction(functionId) {
+    const actions = $(`#permission-actions-${functionId}`);
+
+    actions.slideToggle(150);
 }
 
 function initializePermissionCheckboxes() {

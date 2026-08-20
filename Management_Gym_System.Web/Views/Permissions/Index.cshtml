@@ -60,7 +60,7 @@
                         Code
                     </label>
 
-                    <input type="text" class="form-control" id="functionCode" placeholder="Nhập code, Ví dụ: QL_USER"/>
+                    <input type="text" class="form-control" id="functionCode" placeholder="Nhập code, Ví dụ: QL_USER" />
 
                 </div>
 
@@ -70,7 +70,7 @@
                         Tên chức năng
                     </label>
 
-                    <input type="text" class="form-control" id="functionName" placeholder="Nhập tên chức năng"/>
+                    <input type="text" class="form-control" id="functionName" placeholder="Nhập tên chức năng" />
 
                 </div>
 
@@ -80,7 +80,8 @@
                         Controller
                     </label>
 
-                    <input type="text" class="form-control" id="functionController" placeholder="Nhập tên của controller, Ví dụ: User, Role, ..."/>
+                    <input type="text" class="form-control" id="functionController"
+                           placeholder="Nhập tên của controller, Ví dụ: User, Role, ..." />
 
                 </div>
 
@@ -161,7 +162,7 @@
                         Code
                     </label>
 
-                    <input type="text" class="form-control" id="actionCode" placeholder="Nhập code, Ví dụ: USER_VIEW"/>
+                    <input type="text" class="form-control" id="actionCode" placeholder="Nhập code, Ví dụ: USER_VIEW" />
 
                 </div>
 
@@ -171,7 +172,8 @@
                         Action Name
                     </label>
 
-                    <input type="text" class="form-control" id="actionName" placeholder="Nhập actions, Ví dụ: Create, view, ...">
+                    <input type="text" class="form-control" id="actionName"
+                           placeholder="Nhập actions, Ví dụ: Create, view, ...">
 
                 </div>
 
@@ -257,78 +259,67 @@
 
 
         function loadFunctions() {
-
             $.get(`${permissionApi}/functions`, function (res) {
-
                 let html = '';
                 functions = res;
 
                 res.forEach(function (item) {
-
                     html += `
-                        <div class="card mb-3">
+                    <div class="card mb-3">
 
-                            <div class="card-header
-                                        d-flex
-                                        justify-content-between
-                                        align-items-center">
+                        <div class="card-header d-flex justify-content-between align-items-center"
+                             style="cursor: pointer;"
+                             onclick="toggleFunction(${item.id})">
 
-                                <div>
+                            <div>
+                                <strong>${item.name}</strong>
 
-                                    <strong>
-                                        ${item.name}
-                                    </strong>
-
-                                    <span class="text-muted ms-2">
-                                        ${item.code}
-                                    </span>
-
-                                </div>
-
-                                <div>
-
-                                    <button class="btn
-                                                   btn-sm
-                                                   btn-outline-primary"
-                                            onclick="editFunction(${item.id})">
-
-                                        <i class="bi bi-pencil"></i>
-
-                                    </button>
-
-                                    <button class="btn
-                                                   btn-sm
-                                                   btn-primary"
-                                            onclick="showActionModal(${item.id})">
-
-                                        <i class="bi bi-plus"></i>
-                                        Action
-
-                                    </button>
-
-                                </div>
-
+                                <span class="text-muted ms-2">
+                                    ${item.code}
+                                </span>
                             </div>
 
-                            <div class="card-body">
+                            <div onclick="event.stopPropagation();">
 
-                                ${renderActions(
-                        item.id,
-                        item.actions
-                    )
-                        }
+                                <button class="btn btn-sm btn-outline-primary"
+                                        onclick="editFunction(${item.id})">
+
+                                    <i class="bi bi-pencil"></i>
+
+                                </button>
+
+                                <button class="btn btn-sm btn-primary"
+                                        onclick="showActionModal(${item.id})">
+
+                                    <i class="bi bi-plus"></i>
+                                    Action
+
+                                </button>
 
                             </div>
 
                         </div>
-                    `;
 
+                        <div id="function-body-${item.id}"
+                             class="card-body"
+                             style="display: none;">
+
+                            ${renderActions(item.id, item.actions)}
+
+                        </div>
+
+                    </div>
+                `;
                 });
 
                 $('#functionContainer').html(html);
-
             });
+        }
 
+        function toggleFunction(functionId) {
+            const body = $(`#function-body-${functionId}`);
+
+            body.slideToggle(150);
         }
 
 
@@ -337,94 +328,94 @@
             if (!actions || actions.length === 0) {
 
                 return `
-                    <div class="text-muted">
-                        Chưa có Action.
-                    </div>
-                `;
+                        <div class="text-muted">
+                            Chưa có Action.
+                        </div>
+                    `;
 
             }
 
             let html = `
-                <div class="table-responsive">
+                    <div class="table-responsive">
 
-                    <table class="table table-sm align-middle">
+                        <table class="table table-sm align-middle">
 
-                        <thead>
+                            <thead>
 
-                            <tr>
-                                <th>Code</th>
-                                <th>Action</th>
-                                <th>Tên hiển thị</th>
-                                <th>Trạng thái</th>
-                                <th></th>
-                            </tr>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Action</th>
+                                    <th>Tên hiển thị</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
 
-                        </thead>
+                            </thead>
 
-                        <tbody>
-            `;
+                            <tbody>
+                `;
 
             actions.forEach(function (action) {
 
                 html += `
-                    <tr>
+                        <tr>
 
-                        <td>
-                            <code>
-                                ${action.code}
-                            </code>
-                        </td>
+                            <td>
+                                <code>
+                                    ${action.code}
+                                </code>
+                            </td>
 
-                        <td>
-                            ${action.actionName}
-                        </td>
+                            <td>
+                                ${action.actionName}
+                            </td>
 
-                        <td>
-                            ${action.displayName}
-                        </td>
+                            <td>
+                                ${action.displayName}
+                            </td>
 
-                        <td>
+                            <td>
 
-                            ${action.isActive
+                                ${action.isActive
                         ? '<span class="badge bg-success">Hoạt động</span>'
                         : '<span class="badge bg-danger">Khóa</span>'
                     }
 
-                        </td>
+                            </td>
 
-                        <td class="text-end">
+                            <td class="text-end">
 
-                            <button class="btn
-                                           btn-sm
-                                           btn-outline-info"
-                                    onclick='editAction(${JSON.stringify(action)})'>
+                                <button class="btn
+                                               btn-sm
+                                               btn-outline-info"
+                                        onclick='editAction(${JSON.stringify(action)})'>
 
-                                <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil"></i>
 
-                            </button>
+                                </button>
 
-                            <button
-                                class="btn btn-outline-primary"
-                                onclick="openPermission(${functionId})"
-                                title="Phân quyền">
+                                <button
+                                    class="btn btn-outline-primary"
+                                    onclick="openPermission(${functionId})"
+                                    title="Phân quyền">
 
-                                <i class="bi bi-shield-lock"></i>
+                                    <i class="bi bi-shield-lock"></i>
 
-                            </button>
-                        </td>
+                                </button>
+                            </td>
 
-                    </tr>
-                `;
+                        </tr>
+                    `;
 
             });
 
             html += `
-                        </tbody>
+                            </tbody>
 
-                    </table>
+                        </table>
 
-                </div>
-            `;
+                    </div>
+                `;
 
             return html;
         }

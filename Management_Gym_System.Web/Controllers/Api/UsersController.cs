@@ -82,7 +82,7 @@ namespace Management_Gym_System.Controllers.Api
 
         [HttpPost("delete")]
         [HasPermission("USER_DELETE")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromForm]long id)
         {
             var result = await _usersService.Delete(id);
             if (!result)

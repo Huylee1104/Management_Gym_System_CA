@@ -80,7 +80,7 @@ namespace Management_Gym_System.Controllers.Api
 
         [HttpPost("delete")]
         [HasPermission("ROLE_DELETE")]
-        public async Task<IActionResult> Delete(long id)
+        public async Task<IActionResult> Delete([FromForm]long id)
         {
             var deleted = await _roleService.Delete(id);
             if (!deleted)

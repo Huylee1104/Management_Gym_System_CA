@@ -3,7 +3,6 @@
 }
 
 <style>
-
     .role-item {
         padding: 14px;
         margin: 4px;
@@ -71,7 +70,6 @@
         max-height: calc(100vh - 260px);
         overflow-y: auto;
     }
-
 </style>
 
 <div class="row g-3">
@@ -84,39 +82,20 @@
         <div class="card shadow-sm border-0 h-100">
 
             <div class="card-header bg-white py-3">
+                <div class="d-flex align-items-center gap-2">
 
-                <div class="d-flex justify-content-between align-items-center">
+                    <input type="text" id="txtSearch" class="form-control flex-grow-1" placeholder="Tìm kiếm...">
 
-                    <div class="input-group gap-2"
-                         style="width: 300px;">
+                    <button type="button" class="btn btn-outline-primary" onclick="loadData()" title="Tìm kiếm">
+                        <i class="ti ti-search"></i>
+                    </button>
 
-                        <input type="text"
-                               id="txtSearch"
-                               class="form-control"
-                               placeholder="Tìm kiếm...">
-
-                        <button type="button"
-                                class="btn btn-outline-primary"
-                                onclick="loadData()"
-                                title="Tìm kiếm">
-
-                            <i class="ti ti-search"></i>
-
-                        </button>
-
-                    </div>
-
-                    <button type="button"
-                            class="btn btn-primary"
-                            onclick="showModal()">
-
+                    <button type="button" class="btn btn-primary text-nowrap" onclick="showModal()">
                         <i class="bi bi-plus-lg"></i>
                         Thêm mới
-
                     </button>
 
                 </div>
-
             </div>
 
 
@@ -166,21 +145,19 @@
 
         <div class="card shadow-sm border-0 h-100">
 
-            <div class="card-header bg-white py-3">
+            <div class="w-100 bg-white py-3 p-3">
 
-                <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex row">
 
-                    <div>
+                    <div class="col-10">
 
-                        <h5 class="mb-1"
-                            id="permissionTitle">
+                        <h5 class="mb-1" id="permissionTitle">
 
                             Phân quyền
 
                         </h5>
 
-                        <small class="text-muted"
-                               id="permissionSubtitle">
+                        <small class="text-muted" id="permissionSubtitle">
 
                             Chọn một vai trò để xem quyền
 
@@ -188,11 +165,8 @@
 
                     </div>
 
-                    <button type="button"
-                            id="btnSavePermissions"
-                            class="btn btn-primary"
-                            onclick="savePermissions()"
-                            disabled>
+                    <button type="button" id="btnSavePermissions" class="btn btn-primary col-2"
+                            onclick="savePermissions()" disabled>
 
                         <i class="bi bi-check-lg me-1"></i>
 
@@ -262,5 +236,5 @@
     <script>
         //const apiUrl = '/Role';
     </script>
-    <script src="~/dist/js/Role.js"></script>
+    <script src="~/dist/js/Role.js" asp-append-version="true"></script>
 }
