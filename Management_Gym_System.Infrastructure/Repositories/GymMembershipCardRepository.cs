@@ -21,7 +21,9 @@ public class GymMembershipCardRepository : IGymMembershipCardRepository
 
     public async Task<List<GymMembershipCard>> GetFilteredCardsAsync(string? filter, string? keyword)
     {
-        var query = _context.GymMembershipCards.AsQueryable();
+        var query = _context.GymMembershipCards
+            .Include(x => x.Product)
+            .Include(x => x.User).AsQueryable();
 
         switch (filter)
             {
@@ -32,7 +34,7 @@ public class GymMembershipCardRepository : IGymMembershipCardRepository
                     query = query.Where(c => c.Status == true);
                     break;
                 case "inactive":
-                    query = query.Where(c => c.Status == false && !string.IsNullOrEmpty(c.RFID_UID));
+                    query = query.Where(c => c.Status == true && c.UserID == null);
                     break;
                 case "all":
                 default:

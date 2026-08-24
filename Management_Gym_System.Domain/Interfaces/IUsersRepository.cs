@@ -8,9 +8,10 @@ public interface IUsersRepository
     Task<User?> GetUserByIdAsync(long id);
     Task<GymMembershipCard?> GetGymMembershipCardByIdAsync();
     Task AddAsync(User user);
-    Task AddAsync(GymMembershipCard membershipCard);
+    Task UpdateAsync(GymMembershipCard membershipCard);
 
     Task UpdateAsync(User user);
     Task DeleteAsync(User user);
+    Task<bool> UpdateGymMembershipCard(long id);
     Task SaveChangesAsync();
 }

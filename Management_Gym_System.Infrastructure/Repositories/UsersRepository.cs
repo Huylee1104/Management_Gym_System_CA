@@ -57,9 +57,9 @@ public class UsersRepository : IUsersRepository
         await _context.Users.AddAsync(user);
     }
 
-    public async Task AddAsync(GymMembershipCard membershipCard)
+    public async Task UpdateAsync(GymMembershipCard membershipCard)
     {
-        await _context.GymMembershipCards.AddAsync(membershipCard);
+         _context.GymMembershipCards.Update(membershipCard);
     }
 
     public async Task UpdateAsync(User user)
@@ -70,6 +70,23 @@ public class UsersRepository : IUsersRepository
     public async Task DeleteAsync(User user)
     {
         _context.Users.Remove(user);
+    }
+
+    public async Task<bool> UpdateGymMembershipCard(long id)
+    {
+        var card = await _context.GymMembershipCards.FirstOrDefaultAsync(x => x.UserID == id);
+        if (card == null)
+        {
+            return false;
+        }
+        card.UserID = null;
+        card.ProductID = null;
+        card.StartDate = null;
+        card.EndDate = null;
+        card.PauseDate = null;
+        card.ResumeDate = null;
+        _context.Update(card);
+        return true;
     }
 
     public async Task SaveChangesAsync()

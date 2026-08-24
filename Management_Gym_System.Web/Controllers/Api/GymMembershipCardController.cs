@@ -29,7 +29,7 @@ namespace Management_Gym_System.Controllers
         }
 
         // API: Lấy danh sách thẻ theo bộ lọc
-        [HttpGet]
+        [HttpGet("GetCards")]
         [HasPermission("GYMMEMBERSHIP_VIEW")]
         public async Task<IActionResult> GetCards(string? filter, string? keyword)
         {
@@ -39,9 +39,9 @@ namespace Management_Gym_System.Controllers
         }
 
         // API: Thêm mới thẻ trống
-        [HttpPost]
+        [HttpPost("GenerateCards")]
         [HasPermission("GYMMEMBERSHIP_CREATE")]
-        public async Task<IActionResult> GenerateCards(int quantity)
+        public async Task<IActionResult> GenerateCards([FromForm]int quantity)
         {
             var result = await _cardService.CreateCardQualityAsync(quantity);
             if (!result.IsSuccess)
@@ -53,9 +53,9 @@ namespace Management_Gym_System.Controllers
         }
 
         // API: Đăng ký / Cập nhật RFID_UID
-        [HttpPost]
+        [HttpPost("UpdateRFID")]
         [HasPermission("GYMMEMBERSHIP_EDIT")]
-        public async Task<IActionResult> UpdateRFID(long id, string rfidUid)
+        public async Task<IActionResult> UpdateRFID([FromForm]long id, [FromForm]string rfidUid)
         {
             var result = await _cardService.UpdateCardAsync(id, rfidUid);
             if (!result.IsSuccess)
@@ -67,9 +67,9 @@ namespace Management_Gym_System.Controllers
         }
 
         // API: Khóa / Mở thẻ
-        [HttpPost]
+        [HttpPost("ToggleStatus")]
         [HasPermission("GYMMEMBERSHIP_EDIT")]
-        public async Task<IActionResult> ToggleStatus(long id)
+        public async Task<IActionResult> ToggleStatus([FromForm]long id)
         {
             var result = await _cardService.LockUnlockCardAsync(id);
             if (!result.IsSuccess)
@@ -81,9 +81,9 @@ namespace Management_Gym_System.Controllers
         }
 
         // API: Xóa thẻ
-        [HttpPost]
+        [HttpPost("DeleteCard")]
         [HasPermission("GYMMEMBERSHIP_DELETE")]
-        public async Task<IActionResult> DeleteCard(long id)
+        public async Task<IActionResult> DeleteCard([FromForm]long id)
         {
             var result = await _cardService.DeleteCardAsync(id);
             if (!result.IsSuccess)

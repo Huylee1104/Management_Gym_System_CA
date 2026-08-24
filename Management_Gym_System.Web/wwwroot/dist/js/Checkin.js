@@ -5,7 +5,7 @@ $(document).ready(function () {
     loadCheckins();
 });
 
-$('#cardIdInput').on('keypress', function(e) {
+$('#cardIdInput').on('keypress', function (e) {
     if (e.key === 'Enter') {
         performCheckin();
     }
@@ -19,31 +19,37 @@ function loadCheckins() {
         if (res.length === 0) {
             html = '<tr><td colspan="5" class="text-center text-muted py-4">Chưa có ai check-in ngày này.</td></tr>';
         } else {
-            res.forEach(item => {
+            res.forEach((item, index) => {
                 const statusMap = {
-                    active:  '<span class="badge bg-success">Còn hạn</span>',
+                    active: '<span class="badge bg-success">Còn hạn</span>',
                     expired: '<span class="badge bg-danger">Hết hạn</span>',
-                    locked:  '<span class="badge bg-warning text-dark">Thẻ khóa</span>'
+                    locked: '<span class="badge bg-warning text-dark">Thẻ khóa</span>'
                 };
+
                 let statusBadge = statusMap[item.cardStatus] || statusMap.active;
+                let expText = formatEndDate(item.endDate);
 
-                let expText  = formatEndDate(item.endDate);
-
-                html += `<tr>
-                            <td class="text-center fw-bold text-primary">${item.checkinTime}</td>
-                            <td class="fw-bold">${item.rfidUid}</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="${item.avatar}" class="rounded-circle me-2" style="width:30px;height:30px;object-fit:cover;">
-                                    ${item.fullName}
-                                </div>
-                            </td>
-                            <td>${expText}</td>
-                            <td class="text-center">${statusBadge}</td>
-                        </tr>`;
+                html += `<tr class="checkin-row" data-index="${index}">
+                <td class="text-center fw-bold text-primary">${formatEndDateNormal(item.checkinTime)}</td>
+                <td class="fw-bold">${item.rfidUid}</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="${item.avatar}" class="rounded-circle me-2" style="width:30px;height:30px;object-fit:cover;">
+                        ${item.fullName}
+                    </div>
+                </td>   
+                <td>${expText}</td>
+                <td class="text-center">${statusBadge}</td>
+            </tr>`;
             });
+
         }
         $('#checkinTableBody').html(html);
+
+                    $('#checkinTableBody').off('click', '.checkin-row').on('click', '.checkin-row', function () {
+                const index = $(this).data('index');
+                showMemberInfo(res[index]);
+            });
     });
 }
 
@@ -74,19 +80,19 @@ function showMemberInfo(info) {
     $('#infoName').text(info.fullName);
     $('#infoPhone').text(info.phoneNumber || 'Chưa cập nhật');
     $('#infoCardId').text(info.rfidUid);
-    $('#infoStartDate').text(info.startDate);
+    $('#infoStartDate').text(formatEndDateNormal(info.startDate));
     $('#infoEndDate').html(formatEndDate(info.endDate)); // đổi .text() → .html()
 
     const statusMap = {
-        active:  { text: 'Còn hạn',  cls: 'text-success' },
-        expired: { text: 'Hết hạn',  cls: 'text-danger'  },
-        locked:  { text: 'Thẻ khóa', cls: 'text-warning' }
+        active: { text: 'Còn hạn', cls: 'text-success' },
+        expired: { text: 'Hết hạn', cls: 'text-danger' },
+        locked: { text: 'Thẻ khóa', cls: 'text-warning' }
     };
 
     const s = statusMap[info.cardStatus] || statusMap.active;
     $('#infoCardStatus').removeClass('text-success text-danger text-warning')
-                        .addClass(s.cls)
-                        .text(s.text);
+        .addClass(s.cls)
+        .text(s.text);
 
     // Bỏ hết khối if/else xử lý màu endDate ở đây vì formatEndDate đã lo
 
@@ -100,11 +106,11 @@ function showMemberInfo(info) {
 }
 
 function loadLatestToday() {
-    $.get('/Checkin/latestToday', function(res) {
-        if (res) {
+    $.get('/Checkin/latestToday', function (res) {
+        if (res.id != null) {
             showMemberInfo(res);
         }
-        else{
+        else {
             showToast('Không có thông tin check-in nào hôm nay.', 200);
         }
     });
@@ -169,13 +175,13 @@ function setLockButtonState(isActive) {
     var btn = $('#btnLockToggle');
     if (isActive) {
         btn.removeClass('btn-outline-primary').addClass('btn-outline-danger')
-           .html('<i class="bi bi-shield-lock"></i> Khóa thẻ')
-           .data('status', true);
+            .html('<i class="bi bi-shield-lock"></i> Khóa thẻ')
+            .data('status', true);
         $('#infoCardStatus').html('<span class="badge bg-success">Hoạt động</span>');
     } else {
         btn.removeClass('btn-outline-danger').addClass('btn-outline-primary')
-           .html('<i class="bi bi-shield-check"></i> Mở thẻ')
-           .data('status', false);
+            .html('<i class="bi bi-shield-check"></i> Mở thẻ')
+            .data('status', false);
         $('#infoCardStatus').html('<span class="badge bg-danger">Đã khóa</span>');
     }
 }
@@ -194,13 +200,15 @@ function formatEndDate(endDateStr, nguongCanhBao) {
     nguongCanhBao = nguongCanhBao || 5;
     var conLai = soNgayConLai(endDateStr);
 
+    var formattedDate = new Date(endDateStr).toLocaleDateString('vi-VN');
+
     if (conLai < 0) {
-        return `<span class="text-danger fw-bold">${endDateStr}</span>`;
+        return `<span class="text-danger fw-bold">${formattedDate}</span>`;
     }
 
     if (conLai <= nguongCanhBao) {
-        return `<span class="text-warning fw-bold" title="Còn ${conLai} ngày">${endDateStr}</span>`;
+        return `<span class="text-warning fw-bold" title="Còn ${conLai} ngày">${formattedDate}</span>`;
     }
 
-    return endDateStr;
+    return formattedDate;
 }

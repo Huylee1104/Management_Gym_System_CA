@@ -34,4 +34,6 @@ public class UserCreateUpdateDto
     public string? Avatar { get; set; }
 
     public bool? Status { get; set; }
+    public long? cardId { get; set; }
+
 }

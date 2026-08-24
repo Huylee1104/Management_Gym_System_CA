@@ -1,13 +1,16 @@
+using Management_Gym_System.Application.Interfaces;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Domain.Interfaces;
 
 public class UsersService : IUsersService
 {
     private readonly IUsersRepository _usersRepo;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public UsersService(IUsersRepository usersRepo)
+    public UsersService(IUsersRepository usersRepo, IUnitOfWork unitOfWork)
     {
         _usersRepo = usersRepo;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<List<UserDto>> GetUsers(string? keyword, long? filterValue)
@@ -29,45 +32,60 @@ public class UsersService : IUsersService
 
     public async Task<User> CreateUser(UserCreateUpdateDto request)
     {
-        var user = new User
+        await _unitOfWork.BeginTransactionAsync();
+
+        try
         {
-            FullName = request.FullName,
-            PhoneNumber = request.PhoneNumber,
-            RoleID = request.RoleID,
-            Avatar = request.Avatar,
-            Status = request.Status ?? true
-        };
-
-        await _usersRepo.AddAsync(user);
-
-        if (request.GoiTapID.HasValue)
-        {
-            // Tìm thẻ chưa gán user nhưng đã có RFID
-            var membership = await _usersRepo.GetGymMembershipCardByIdAsync();
-
-            // Không còn thẻ trống
-            if (membership == null)
+            var user = new User
             {
-                return new User();
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                RoleID = request.RoleID,
+                Avatar = request.Avatar,
+                Status = request.Status ?? true
+            };
+
+            await _usersRepo.AddAsync(user);
+
+            // Lưu User trước để lấy user.ID
+            await _usersRepo.SaveChangesAsync();
+
+            if (request.GoiTapID.HasValue)
+            {
+                // Tìm thẻ chưa gán user nhưng đã có RFID
+                var membership = await _usersRepo.GetGymMembershipCardByIdAsync();
+
+                // Không còn thẻ trống
+                if (membership == null)
+                {
+                    await _unitOfWork.RollbackAsync();
+                    return new User();
+                }
+
+                var startDate = DateTime.UtcNow;
+
+                membership.UserID = user.ID;
+                membership.ProductID = request.GoiTapID;
+                membership.StartDate = startDate;
+                membership.EndDate = request.ThoiHan.HasValue
+                    ? startDate.AddDays(request.ThoiHan.Value)
+                    : null;
+
+                await _usersRepo.UpdateAsync(membership);
+
+                // Lưu MembershipCard
+                await _usersRepo.SaveChangesAsync();
             }
 
-            var startDate = DateTime.UtcNow;
+            await _unitOfWork.CommitAsync();
 
-            // Map user vào thẻ
-            membership.UserID = user.ID;
-            membership.ProductID = request.GoiTapID;
-
-            membership.StartDate = startDate;
-
-            membership.EndDate = request.ThoiHan.HasValue
-                ? startDate.AddDays(request.ThoiHan.Value)
-                : null;
-
-            await _usersRepo.AddAsync(membership);
+            return user;
         }
-        await _usersRepo.SaveChangesAsync();
-
-        return user;
+        catch
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> UpdateUser(long id, UserCreateUpdateDto request)
@@ -102,6 +120,12 @@ public class UsersService : IUsersService
     public async Task<bool> Delete(long id)
     {
         var existingUser = await _usersRepo.GetUserByIdAsync(id);
+        var udCard = await _usersRepo.UpdateGymMembershipCard(id);
+        if (udCard == false)
+        {
+            return false;
+        }
+        await _usersRepo.SaveChangesAsync();
         if (existingUser == null)
             return false;
 

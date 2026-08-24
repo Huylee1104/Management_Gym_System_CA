@@ -205,3 +205,10 @@ function XacNhanModal() {
 // HienModalXacNhan('Xóa dữ liệu?', 'bg-danger', function() {
 //   XoaDuLieu();
 // });
+function formatEndDateNormal(endDateStr) {
+    if (!endDateStr || endDateStr === '--') return '--';
+
+    var formattedDate = new Date(endDateStr).toLocaleDateString('vi-VN');
+
+    return formattedDate;
+}
