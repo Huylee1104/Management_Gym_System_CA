@@ -1,17 +1,22 @@
+using System.Security.Claims;
 using Management_Gym_System.Application.DTOs.Permission;
 using Management_Gym_System.Application.DTOs.SystemFunction;
 using Management_Gym_System.Application.Interfaces;
 using Management_Gym_System.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 public class PermissionService : IPermissionService
 {
     private readonly IPermissionRepository _repository;
     private readonly ISystemFunctionQueryService _systemFunctionQueryService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PermissionService(IPermissionRepository repository, ISystemFunctionQueryService systemFunctionQueryService)
+    public PermissionService(IPermissionRepository repository, ISystemFunctionQueryService systemFunctionQueryService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _repository = repository;
         _systemFunctionQueryService = systemFunctionQueryService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<SystemFunctionDto>> GetFunctionsAsync()
@@ -235,4 +240,14 @@ public class PermissionService : IPermissionService
     {
         return await _repository.GetUserPermissionsAsync(userId);
     }
+
+    public long? GetUserId()
+    {
+        var value = _httpContextAccessor.HttpContext?
+            .User
+            .FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return long.TryParse(value, out var id) ? id : null;
+    }
+
 }

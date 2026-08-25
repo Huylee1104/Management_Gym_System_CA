@@ -51,9 +51,6 @@ public class CheckinService : ICheckinService
         await _checkinRepo.AddAsync(checkin);
         await _checkinRepo.SaveChangesAsync();
 
-        var startDate = card.StartDate.HasValue ? card.StartDate.Value.ToString("dd/MM/yyyy") : null;
-        var endDate = card.EndDate.HasValue ? card.EndDate.Value.ToString("dd/MM/yyyy") : null;
-
         return new CardInfo
         {
             ID = card.ID,
@@ -61,8 +58,8 @@ public class CheckinService : ICheckinService
             FullName = card.User?.FullName ?? string.Empty,
             PhoneNumber = card.User?.PhoneNumber ?? string.Empty,
             Avatar = card.User?.Avatar ?? string.Empty,
-            StartDate = startDate,
-            EndDate = endDate,
+            StartDate = card.StartDate,
+            EndDate = card.EndDate,
             CardStatus = cardStatus
         };
     }
@@ -146,8 +143,6 @@ public class CheckinService : ICheckinService
             : card.EndDate.HasValue && card.EndDate.Value < DateTime.Now ? "expired"
             : "active";
 
-        var startDate = card.StartDate.HasValue ? card.StartDate.Value.ToString("dd/MM/yyyy") : null;
-        var endDate = card.EndDate.HasValue ? card.EndDate.Value.ToString("dd/MM/yyyy") : null;
 
         return new CardInfo
         {
@@ -156,8 +151,8 @@ public class CheckinService : ICheckinService
             FullName = card.User?.FullName ?? string.Empty,
             PhoneNumber = card.User?.PhoneNumber ?? string.Empty,
             Avatar = card.User?.Avatar ?? string.Empty,
-            StartDate = startDate,
-            EndDate = endDate,
+            StartDate = card.StartDate,
+            EndDate = card.EndDate,
             CardStatus = cardStatus
         };
     }

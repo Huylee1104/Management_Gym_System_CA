@@ -55,8 +55,10 @@ public class CheckinRepository : ICheckinRepository
 
     public async Task<Checkin> GetCheckinLastDayAsync()
     {
-        var today = DateTime.Today;
+        var today = DateTime.UtcNow.Date;
         var latestCheckin = await _context.Checkins
+            .Include(c => c.Card)
+            .ThenInclude(card => card!.User)
             .Where(c => c.CheckinTime >= today)
             .OrderByDescending(c => c.CheckinTime)
             .FirstOrDefaultAsync();

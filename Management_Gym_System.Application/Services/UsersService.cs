@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Management_Gym_System.Application.Interfaces;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Domain.Interfaces;
@@ -6,11 +7,15 @@ public class UsersService : IUsersService
 {
     private readonly IUsersRepository _usersRepo;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPermissionService _permission;
+    private readonly IMembershipAuditLogRepository _auditlog;
 
-    public UsersService(IUsersRepository usersRepo, IUnitOfWork unitOfWork)
+    public UsersService(IUsersRepository usersRepo, IUnitOfWork unitOfWork, IPermissionService permission, IMembershipAuditLogRepository auditlog)
     {
         _usersRepo = usersRepo;
         _unitOfWork = unitOfWork;
+        _permission = permission;
+        _auditlog = auditlog;
     }
 
     public async Task<List<UserDto>> GetUsers(string? keyword, long? filterValue)
@@ -77,6 +82,18 @@ public class UsersService : IUsersService
                 await _usersRepo.SaveChangesAsync();
             }
 
+            var idStaff = _permission.GetUserId();
+            var audit = new MembershipAuditLog
+            {
+                Date = DateTime.UtcNow,
+                StaffId = idStaff,
+                Action = "Register",
+                MemberId = user.ID,
+                Note = "Đăng ký mới cho hội viên: " + user.FullName,
+            };
+
+            await _auditlog.AddAsync(audit);
+
             await _unitOfWork.CommitAsync();
 
             return user;
@@ -101,6 +118,19 @@ public class UsersService : IUsersService
         existingUser.Status = request.Status ?? existingUser.Status;
 
         await _usersRepo.UpdateAsync(existingUser);
+
+        var idStaff = _permission.GetUserId();
+        var audit = new MembershipAuditLog
+        {
+            Date = DateTime.UtcNow,
+            StaffId = idStaff,
+            Action = "EditUser",
+            MemberId = id,
+            Note = "Đăng ký mới cho hội viên: " + existingUser.FullName,
+        };
+
+        await _auditlog.AddAsync(audit);
+
         await _usersRepo.SaveChangesAsync();
         return true;
     }

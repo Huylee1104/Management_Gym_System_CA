@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
+
 // Thiết lập địa chỉ/port Kestrel lắng nghe (khi chạy sau reverse proxy như Nginx)
 //builder.WebHost.UseUrls("http://0.0.0.0:8090");
 

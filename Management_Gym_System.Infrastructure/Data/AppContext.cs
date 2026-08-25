@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<SystemFunction> SystemFunctions { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<SystemFunctionAction> SystemFunctionActions { get; set; }
+    public DbSet<MembershipAuditLog> MembershipAuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -119,6 +120,28 @@ public class ApplicationDbContext : DbContext
                 .WithMany(x => x.Actions)
                 .HasForeignKey(x => x.FunctionId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<MembershipAuditLog>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Action)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(x => x.Note)
+                .HasMaxLength(500);
+
+            entity.HasOne(x => x.Staff)
+                .WithMany()
+                .HasForeignKey(x => x.StaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.Member)
+                .WithMany()
+                .HasForeignKey(x => x.MemberId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
     }

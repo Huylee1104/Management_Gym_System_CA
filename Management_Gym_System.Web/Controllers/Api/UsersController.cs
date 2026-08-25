@@ -45,7 +45,12 @@ namespace Management_Gym_System.Controllers.Api
             // Tạo user
             var user = await _usersService.CreateUser(request);
 
-            return Ok(user);
+            if (user.ID != 0)
+            {
+                return Ok(true);
+            }
+
+            return Ok(false);
         }
 
         [HttpPost("{id}")]

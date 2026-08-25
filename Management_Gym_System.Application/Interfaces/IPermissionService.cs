@@ -21,4 +21,5 @@ public interface IPermissionService
     Task SaveRolePermissionsAsync(long roleId, List<PermissionItemRequest> permissions);
     Task<bool> HasPermissionAsync( long userId, string actionCode);
     Task<List<string>> GetUserPermissionsAsync(long userId);
+    long? GetUserId();
 }
