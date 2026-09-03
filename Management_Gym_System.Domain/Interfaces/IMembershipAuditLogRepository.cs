@@ -8,4 +8,5 @@ public interface IMembershipAuditLogRepository
     Task Update(MembershipAuditLog audit);
     Task Delete(MembershipAuditLog audit);
     Task<bool> SaveChangesAsync();
+    Task<IEnumerable<MembershipAuditLog>> GetListAsync(DateTime? startDate, DateTime? endDate, long? staffId);
 }

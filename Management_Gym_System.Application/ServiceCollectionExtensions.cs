@@ -17,7 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IUsersService, UsersService>();
         services.AddScoped<IRolesService, RolesService>();
         services.AddScoped<IPermissionService, PermissionService>();
-
+        services.AddScoped<IAuditLogService, AuditLogService>();
 
         return services;
     }

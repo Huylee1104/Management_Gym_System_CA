@@ -10,7 +10,7 @@ public class MembershipAuditLog
 
     public string Action { get; set; } = string.Empty;
 
-    public long MemberId { get; set; }
+    public long? MemberId { get; set; }
 
     public string? Note { get; set; }
 

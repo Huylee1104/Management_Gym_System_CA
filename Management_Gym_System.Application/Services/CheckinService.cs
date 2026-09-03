@@ -5,10 +5,15 @@ using Management_Gym_System.Domain.Interfaces;
 public class CheckinService : ICheckinService
 {
     private readonly ICheckinRepository _checkinRepo;
+    private readonly IMembershipAuditLogRepository _auditlog;
+    private readonly IPermissionService _permission;
 
-    public CheckinService(ICheckinRepository checkinRepo)
+
+    public CheckinService(ICheckinRepository checkinRepo, IMembershipAuditLogRepository auditlog, IPermissionService permission)
     {
         _checkinRepo = checkinRepo;
+        _auditlog = auditlog;
+        _permission = permission;
     }
 
     public async Task<List<CheckinDto>> GetCheckinsAsync(DateTime? date)
@@ -89,6 +94,19 @@ public class CheckinService : ICheckinService
 
         card.EndDate = card.EndDate.Value.AddMonths(1);
         await _checkinRepo.SaveChangesAsync();
+
+        var idStaff = _permission.GetUserId();
+        var audit = new MembershipAuditLog
+        {
+            Date = DateTime.UtcNow,
+            StaffId = idStaff,
+            Action = "Extend",
+            MemberId = card.UserID ?? null,
+            Note = "Đã gia hạn cho hội viên: " + card.User?.FullName ?? string.Empty,
+        };
+
+        await _auditlog.AddAsync(audit);
+
         return card.EndDate.Value;
     }
 
@@ -103,6 +121,17 @@ public class CheckinService : ICheckinService
         card.Status = false;
         card.PauseDate = DateTime.Now;
 
+        var idStaff = _permission.GetUserId();
+        var audit = new MembershipAuditLog
+        {
+            Date = DateTime.UtcNow,
+            StaffId = idStaff,
+            Action = "Lock",
+            MemberId = card.UserID ?? null,
+            Note = "Đã khóa thẻ hội viên: " + card.User?.FullName ?? string.Empty,
+        };
+
+        await _auditlog.AddAsync(audit);
         await _checkinRepo.SaveChangesAsync();
         return true;
     }
@@ -125,6 +154,18 @@ public class CheckinService : ICheckinService
             ? card.EndDate.Value.AddDays(soNgayTamDung)
             : null;
         card.Status = true;
+
+        var idStaff = _permission.GetUserId();
+        var audit = new MembershipAuditLog
+        {
+            Date = DateTime.UtcNow,
+            StaffId = idStaff,
+            Action = "UnLock",
+            MemberId = card.UserID ?? null,
+            Note = "Đã mở khóa thẻ hội viên: " + card.User?.FullName ?? string.Empty,
+        };
+
+        await _auditlog.AddAsync(audit);
 
         await _checkinRepo.SaveChangesAsync();
         return card.EndDate;

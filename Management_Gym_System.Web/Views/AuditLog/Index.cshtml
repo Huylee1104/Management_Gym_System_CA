@@ -1,0 +1,170 @@
+@{
+    ViewData["Title"] = "Nhật ký hoạt động";
+}
+
+<style>
+    .audit-table-wrapper {
+        height: 460px;
+        overflow-y: auto;
+        overflow-x: auto;
+    }
+
+    /* Header luôn nằm trên khi cuộn */
+    .audit-table-wrapper thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        white-space: nowrap;
+    }
+
+    .audit-table-wrapper tbody td {
+        vertical-align: middle;
+    }
+
+    /* Ghi chú dài thì không làm bảng vỡ */
+    .audit-note {
+        max-width: 500px;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    /* Cột ngày không xuống dòng */
+    .audit-date {
+        white-space: nowrap;
+    }
+</style>
+
+<div class="container-fluid py-3">
+
+    <div class="card shadow-sm border-0">
+
+        <!-- ==================== BỘ LỌC ==================== -->
+        <div class="card-body border-bottom">
+            <div class="row g-3 align-items-end">
+
+                <!-- Từ ngày -->
+                <div class="col-xl-2 col-lg-3 col-md-6">
+                    <label for="fromDate" class="form-label">Từ ngày</label>
+                    <input type="date" class="form-control" id="fromDate" />
+                </div>
+
+                <!-- Đến ngày -->
+                <div class="col-xl-2 col-lg-3 col-md-6">
+                    <label for="toDate" class="form-label">Đến ngày</label>
+                    <input type="date" class="form-control" id="toDate" />
+                </div>
+
+                <!-- Nhân viên -->
+                <div class="col-xl-2 col-lg-3 col-md-6">
+                    <label for="staffId" class="form-label">Nhân viên</label>
+                    <select class="form-select" id="staffId">
+                    </select>
+                </div>
+
+                <!-- Action -->
+                <div class="col-xl-2 col-lg-3 col-md-6">
+                    <label for="action" class="form-label">Hành động</label>
+
+                    <select class="form-select" id="action">
+                        <option value="">--Tất cả--</option>
+                        <option value="Register">Đăng ký mới</option>
+                        <option value="Extend">Gia hạn</option>
+                        <option value="Lock">Khóa</option>
+                        <option value="Unlock">Mở khóa</option>
+                    </select>
+                </div>
+
+                <!-- Tìm kiếm -->
+                <div class="col-xl-2 col-lg-6 col-md-8">
+                    <label for="keyword" class="form-label">Tìm kiếm</label>
+
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="keyword" placeholder="Tên hội viên" />
+
+                        <button type="button" class="btn btn-outline-primary" id="btnSearch" title="Tìm kiếm">
+                            <i class="ti ti-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Xuất file -->
+                <div class="col-xl-2 col-lg-6 col-md-4">
+                    <div class="d-flex gap-2">
+
+                        <button type="button" class="btn btn-success flex-fill" id="btnExcel">
+                            <i class="ti ti-file-spreadsheet me-1"></i>
+                            Excel
+                        </button>
+
+                        <button type="button" class="btn btn-danger flex-fill" id="btnPdf">
+                            <i class="ti ti-file-type-pdf me-1"></i>
+                            PDF
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- ==================== BẢNG DỮ LIỆU ==================== -->
+        <div class="card-body">
+
+            <div class="audit-table-wrapper">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 170px;">Ngày</th>
+                            <th style="width: 220px;">Tên nhân viên</th>
+                            <th style="width: 180px;">Hành động</th>
+                            <th style="width: 220px;">Hội viên</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="auditLogBody">
+                        <!-- AJAX render dữ liệu vào đây -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Không có dữ liệu -->
+            <div id="emptyData" class="text-center text-muted py-4 d-none">
+                Không có dữ liệu nhật ký hoạt động.
+            </div>
+
+
+            <!-- ==================== PHÂN TRANG ==================== -->
+            <div class="d-flex justify-content-between
+                align-items-center
+                mt-3
+                flex-wrap
+                gap-2">
+
+                <div class="text-muted small" id="paginationInfo">
+                    Hiển thị 0 - 0 / 0 bản ghi
+                </div>
+
+                <nav>
+                    <ul class="pagination pagination-sm mb-0" id="pagination">
+                    </ul>
+                </nav>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        let currentPage = 1;
+        const pageSize = 20;
+        const staffApiUrl = '/User/listUsers';
+        let tomSelectStaff;
+        let tomSelectAction;
+    </script>
+    <script src="~/dist/js/AuditLog.js" asp-append-version="true"></script>
+}

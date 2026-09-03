@@ -160,6 +160,29 @@
                                                 </li>
                                             }
 
+                                            @* @if (User.HasClaim(
+                                                    "AuditLog",
+                                                    "AuditLog_VIEW"))
+                                            {
+                                                <li>
+                                                    <a class="dropdown-item" asp-controller="AuditLog" asp-action="Index">
+
+                                                        <i class="bi bi-clock-history me-2"></i>
+                                                        Nhật ký hoạt động
+
+                                                    </a>
+                                                </li>
+                                            } *@
+
+                                            <li>
+                                                    <a class="dropdown-item" asp-controller="AuditLog" asp-action="Index">
+
+                                                        <i class="bi bi-clock-history me-2"></i>
+                                                        Nhật ký hoạt động
+
+                                                    </a>
+                                                </li>
+
                                         </ul>
 
                                     </li>
