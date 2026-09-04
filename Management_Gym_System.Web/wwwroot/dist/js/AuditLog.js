@@ -33,13 +33,13 @@ $(document).ready(function () {
 
     // Xuất Excel
     $("#btnExcel").on("click", function () {
-        exportFile("/AuditLog/ExportExcel");
+        exportFile("excel");
     });
 
 
     // Xuất PDF
     $("#btnPdf").on("click", function () {
-        exportFile("/AuditLog/ExportPdf");
+        exportFile("pdf");
     });
 
 });
@@ -90,7 +90,7 @@ function loadAuditLogs(page) {
     $.ajax({
         url: "/AuditLog/GetList",
         type: "GET",
-        data: JSON.stringify(filter),
+        data: filter,
         contentType: "application/json",
         beforeSend: function () {
             showLoading();
@@ -154,7 +154,17 @@ function renderTable(items) {
 
     if (!items || items.length === 0) {
 
-        $("#emptyData").removeClass("d-none");
+        const row = `
+                    <tr>
+
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            Không có dữ liệu hiển thị
+                        </td>
+
+                    </tr>
+                `;
+
+        tbody.append(row);
         return;
 
     }
@@ -439,26 +449,89 @@ function formatDateTime(value) {
 // EXPORT EXCEL / PDF
 // =========================================================
 
-function exportFile(url) {
+function exportFile(type) {
+    const data = {
+        fromDate: $("#fromDate").val() || null,
+        toDate: $("#toDate").val() || null,
+        staffId: tomSelectStaff.getValue() || null,
+        action: tomSelectAction.getValue() || null,
+        keyword: $("#keyword").val().trim(),
+        page: 1,
+        pageSize: 99999
+    }
+    $.ajax({
+        url: `/AuditLog/Export${type === "excel" ? "Excel" : "Pdf"}`,
+        type: "GET",
+        data: data,
+        contentType: "application/json",
+        xhrFields: {
+            responseType: "blob"
+        },
 
-    /*
-        Export dùng chính bộ lọc hiện tại.
+        success: function (response, status, xhr) {
 
-        Không truyền page/pageSize vì thông thường export
-        sẽ xuất toàn bộ dữ liệu thỏa điều kiện.
-    */
+            const contentType = xhr.getResponseHeader("Content-Type");
 
-    const params = new URLSearchParams();
+            const blob = new Blob([response], {
+                type: contentType
+            });
 
-    params.append("fromDate", $("#fromDate").val());
-    params.append("toDate", $("#toDate").val());
-    params.append("staffId", $("#staffId").val());
-    params.append("action", $("#action").val());
-    params.append("keyword", $("#keyword").val().trim());
+            if (type === "excel") {
 
+                const fromDate = $("#fromDate").val().replaceAll("/", "-");
+                const toDate = $("#toDate").val().replaceAll("/", "-");
 
-    window.location.href = url + "?" + params.toString();
+                const filename =
+                    `BaoCaoLichSuHoatDong_${fromDate}_${toDate}.xlsx`;
 
+                const link = document.createElement("a");
+
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+
+                document.body.appendChild(link);
+                link.click();
+
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(link.href);
+
+                return;
+            }
+
+            const pdfUrl = window.URL.createObjectURL(blob);
+
+            const iframe = document.createElement("iframe");
+
+            document.body.appendChild(iframe);
+
+            iframe.onload = function () {
+
+                setTimeout(function () {
+
+                    iframe.contentWindow.focus();
+
+                    iframe.contentWindow.onafterprint = function () {
+                        document.body.removeChild(iframe);
+                        window.URL.revokeObjectURL(pdfUrl);
+                    };
+
+                    iframe.contentWindow.print();
+
+                }, 500);
+            };
+
+            iframe.src = pdfUrl;
+        },
+
+        error: function () {
+
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi",
+                text: "Không thể xuất file."
+            });
+        }
+    });
 }
 
 
