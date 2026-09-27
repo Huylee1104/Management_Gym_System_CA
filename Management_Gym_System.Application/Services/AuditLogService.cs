@@ -44,7 +44,8 @@ public class AuditLogService : IAuditLogService
                 StaffName = x.Staff?.FullName,
                 Action = x.Action,
                 MemberName = x.Member?.FullName,
-                Note = x.Note
+                Note = x.Note,
+                DataEdited = x.DataEdited
             }).ToList();
 
         return new ActivityLogResponse

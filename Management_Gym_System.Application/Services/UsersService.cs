@@ -9,13 +9,17 @@ public class UsersService : IUsersService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPermissionService _permission;
     private readonly IMembershipAuditLogRepository _auditlog;
+    private readonly IRolesRepository _roleRepo;
+    private readonly IProductRepository _productRepo;
 
-    public UsersService(IUsersRepository usersRepo, IUnitOfWork unitOfWork, IPermissionService permission, IMembershipAuditLogRepository auditlog)
+    public UsersService(IUsersRepository usersRepo, IUnitOfWork unitOfWork, IPermissionService permission, IMembershipAuditLogRepository auditlog, IRolesRepository roleRepo, IProductRepository productRepo)
     {
         _usersRepo = usersRepo;
         _unitOfWork = unitOfWork;
         _permission = permission;
         _auditlog = auditlog;
+        _roleRepo = roleRepo;
+        _productRepo = productRepo;
     }
 
     public async Task<List<UserDto>> GetUsers(string? keyword, long? filterValue)
@@ -83,6 +87,69 @@ public class UsersService : IUsersService
             }
 
             var idStaff = _permission.GetUserId();
+
+            var changes = new List<object>();
+
+            if (request.FullName != null)
+            {
+                changes.Add(new
+                {
+                    Field = "FullName",
+                    Display = "Họ và tên",
+                    Old = "",
+                    New = request.FullName
+                });
+            }
+
+            if (request.PhoneNumber != null)
+            {
+                changes.Add(new
+                {
+                    Field = "PhoneNumber",
+                    Display = "Số điện thoại",
+                    Old = "",
+                    New = request.PhoneNumber
+                });
+            }
+
+            if (request.RoleID != null)
+            {
+                var newRole = request.RoleID.HasValue
+                    ? await _roleRepo.GetRoleByIdAsync(request.RoleID.Value)
+                    : null;
+
+                changes.Add(new
+                {
+                    Field = "RoleID",
+                    Display = "Vai trò",
+                    Old = "",
+                    New = newRole?.RoleName ?? "Không có vai trò"
+                });
+            }
+
+            if (request.Status != null)
+            {
+                changes.Add(new
+                {
+                    Field = "Status",
+                    Display = "Trạng thái",
+                    Old = "",
+                    New = request.Status == true ? "Hoạt động" : "Ngưng hoạt động"
+                });
+            }
+
+            if (request.GoiTapID != null)
+            {
+                var goiTap = await _productRepo.GetByIdAsync(request.GoiTapID.Value);
+                changes.Add(new
+                {
+                    Field = "GoiTapID",
+                    Display = "Gói tập",
+                    Old = "",
+                    New = goiTap?.ProductName ?? "Không có gói tập"
+                });
+            }
+
             var audit = new MembershipAuditLog
             {
                 Date = DateTime.UtcNow,
@@ -90,6 +157,7 @@ public class UsersService : IUsersService
                 Action = "Register",
                 MemberId = user.ID,
                 Note = "Đăng ký mới cho hội viên: " + user.FullName,
+                DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
             };
 
             await _auditlog.AddAsync(audit);
@@ -111,6 +179,56 @@ public class UsersService : IUsersService
         if (existingUser == null)
             return false;
 
+        var changes = new List<object>();
+
+        if (existingUser.FullName != request.FullName)
+        {
+            changes.Add(new
+            {
+                Field = "FullName",
+                Display = "Họ và tên",
+                Old = existingUser.FullName,
+                New = request.FullName
+            });
+        }
+
+        if (existingUser.PhoneNumber != request.PhoneNumber)
+        {
+            changes.Add(new
+            {
+                Field = "PhoneNumber",
+                Display = "Số điện thoại",
+                Old = existingUser.PhoneNumber,
+                New = request.PhoneNumber
+            });
+        }
+
+        if (existingUser.RoleID != request.RoleID)
+        {
+            var newRole = request.RoleID.HasValue
+                ? await _roleRepo.GetRoleByIdAsync(request.RoleID.Value)
+                : null;
+
+            changes.Add(new
+            {
+                Field = "RoleID",
+                Display = "Vai trò",
+                Old = existingUser.Role?.RoleName ?? "Không có vai trò",
+                New = newRole?.RoleName ?? "Không có vai trò"
+            });
+        }
+
+        if (existingUser.Status != request.Status)
+        {
+            changes.Add(new
+            {
+                Field = "Status",
+                Display = "Trạng thái",
+                Old = existingUser.Status == true ? "Hoạt động" : "Ngưng hoạt động",
+                New = request.Status == true ? "Hoạt động" : "Ngưng hoạt động"
+            });
+        }
+
         existingUser.FullName = request.FullName;
         existingUser.PhoneNumber = request.PhoneNumber;
         existingUser.RoleID = request.RoleID;
@@ -120,13 +238,15 @@ public class UsersService : IUsersService
         await _usersRepo.UpdateAsync(existingUser);
 
         var idStaff = _permission.GetUserId();
+
         var audit = new MembershipAuditLog
         {
             Date = DateTime.UtcNow,
             StaffId = idStaff,
             Action = "EditUser",
             MemberId = id,
-            Note = "Đăng ký mới cho hội viên: " + existingUser.FullName,
+            Note = "Chỉnh sửa thông tin hội viên: " + existingUser.FullName,
+            DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
         };
 
         await _auditlog.AddAsync(audit);

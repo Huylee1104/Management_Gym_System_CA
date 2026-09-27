@@ -8,7 +8,7 @@ public interface ICheckinRepository
     Task<GymMembershipCard?> GetGymMembershipCardAsync(string RFID_UID);
     Task<GymMembershipCard?> GetGymMembershipCardIdAsync(long cardId);
     Task<Checkin> GetCheckinLastDayAsync();
-    Task<bool?> AddTimeCardAsync(long cardId, int ThoiHan);
+    Task<bool?> AddTimeCardAsync(GymMembershipCard card, int ThoiHan);
     Task AddAsync(Checkin card);
     Task Update(Checkin card);
     Task Delete(Checkin card);

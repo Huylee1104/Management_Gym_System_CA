@@ -41,4 +41,5 @@ public class ActivityLogDto
     public string? MemberName { get; set; }
 
     public string? Note { get; set; }
+    public string? DataEdited { get; set; }
 }

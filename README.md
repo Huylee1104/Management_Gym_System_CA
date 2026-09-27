@@ -3,6 +3,6 @@
 ### Project được viết bằng ngôn ngữ lập trình C#, cụ thể là ASP.NET Core mvc phiên bản 8.0
 ### Hệ quản trị cơ sở sử dụng là postgres, một csdl mã nguồn mở linh hoạt có thể sql hoặc no sql
 
-##### dotnet ef migrations add Ten_Migration_Moi --project Management_Gym_System.Infrastructure --startup-project Management_Gym_System.Web 
+##### dotnet ef migrations add ThemCotDataEdited --project Management_Gym_System.Infrastructure --startup-project Management_Gym_System.Web 
 ##### dotnet ef database update --project Management_Gym_System.Infrastructure --startup-project Management_Gym_System.Web
 ##### dotnet ef migrations remove --project Management_Gym_System.Infrastructure --startup-project Management_Gym_System.Web

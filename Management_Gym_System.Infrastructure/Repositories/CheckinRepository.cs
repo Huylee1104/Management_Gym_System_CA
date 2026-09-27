@@ -48,6 +48,7 @@ public class CheckinRepository : ICheckinRepository
     {
         var card = await _context.GymMembershipCards
                 .Include(c => c.User)
+                .Include(p =>p.Product)
                 .FirstOrDefaultAsync(c => c.ID == cardId);
 
         return card;
@@ -66,9 +67,8 @@ public class CheckinRepository : ICheckinRepository
         return latestCheckin ?? new Checkin();
     }
 
-    public async Task<bool?> AddTimeCardAsync(long cardId, int ThoiHan)
+    public async Task<bool?> AddTimeCardAsync(GymMembershipCard card, int ThoiHan)
     {
-        var card = await GetGymMembershipCardIdAsync(cardId);
         if (card == null)
         {
             return false;
@@ -80,7 +80,6 @@ public class CheckinRepository : ICheckinRepository
             : now;
 
         card.EndDate = baseDate.AddDays(ThoiHan);
-        card.Status = true;
 
         return true;
     }

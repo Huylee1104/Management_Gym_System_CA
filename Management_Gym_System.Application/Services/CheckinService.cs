@@ -89,13 +89,28 @@ public class CheckinService : ICheckinService
 
         int thoiHan = card.Product.ThoiHan.Value;
 
-        var addTime = _checkinRepo.AddTimeCardAsync(cardId, thoiHan);
+        var addTime = await _checkinRepo.AddTimeCardAsync(card, thoiHan);
 
-
-        card.EndDate = card.EndDate.Value.AddMonths(1);
-        await _checkinRepo.SaveChangesAsync();
+        if (addTime != true)
+        {
+            return null;
+        }
 
         var idStaff = _permission.GetUserId();
+
+        var changes = new List<object>();
+
+        if (card.StartDate != null)     
+        {
+            changes.Add(new
+            {
+                Field = "",
+                Display = "Gia hạn thẻ",
+                Old = "Ngày bắt đầu: " + card.StartDate + "\nNgày gia hạn: " + DateTime.UtcNow,
+                New = "Ngày hết hạn: " + card.EndDate
+            });
+        }
+
         var audit = new MembershipAuditLog
         {
             Date = DateTime.UtcNow,
@@ -103,9 +118,11 @@ public class CheckinService : ICheckinService
             Action = "Extend",
             MemberId = card.UserID ?? null,
             Note = "Đã gia hạn cho hội viên: " + card.User?.FullName ?? string.Empty,
+            DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
         };
 
         await _auditlog.AddAsync(audit);
+        await _checkinRepo.SaveChangesAsync();
 
         return card.EndDate.Value;
     }
@@ -119,9 +136,23 @@ public class CheckinService : ICheckinService
         }
 
         card.Status = false;
-        card.PauseDate = DateTime.Now;
+        card.PauseDate = DateTime.UtcNow;
 
         var idStaff = _permission.GetUserId();
+
+        var changes = new List<object>();
+
+        if (card.StartDate != null)
+        {
+            changes.Add(new
+            {
+                Field = "",
+                Display = "Ngày khóa thẻ",
+                Old = "Ngày bắt đầu: " + card.StartDate,
+                New = "Ngày khóa: " + DateTime.UtcNow
+            });
+        }
+
         var audit = new MembershipAuditLog
         {
             Date = DateTime.UtcNow,
@@ -129,6 +160,7 @@ public class CheckinService : ICheckinService
             Action = "Lock",
             MemberId = card.UserID ?? null,
             Note = "Đã khóa thẻ hội viên: " + card.User?.FullName ?? string.Empty,
+            DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
         };
 
         await _auditlog.AddAsync(audit);
@@ -156,6 +188,20 @@ public class CheckinService : ICheckinService
         card.Status = true;
 
         var idStaff = _permission.GetUserId();
+
+        var changes = new List<object>();
+
+        if (card.PauseDate != null)
+        {
+            changes.Add(new
+            {
+                Field = "",
+                Display = "Ngày mở thẻ",
+                Old = "Ngày bắt đầu: " + card.StartDate + "\nNgày khóa: " + card.PauseDate + "\nSố ngày tạm dừng: " + soNgayTamDung,
+                New = "Ngày hết hạn: " + card.EndDate
+            });
+        }
+
         var audit = new MembershipAuditLog
         {
             Date = DateTime.UtcNow,
@@ -163,6 +209,7 @@ public class CheckinService : ICheckinService
             Action = "UnLock",
             MemberId = card.UserID ?? null,
             Note = "Đã mở khóa thẻ hội viên: " + card.User?.FullName ?? string.Empty,
+            DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
         };
 
         await _auditlog.AddAsync(audit);

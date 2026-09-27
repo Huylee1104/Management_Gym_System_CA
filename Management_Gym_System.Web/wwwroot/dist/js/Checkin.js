@@ -46,10 +46,10 @@ function loadCheckins() {
         }
         $('#checkinTableBody').html(html);
 
-                    $('#checkinTableBody').off('click', '.checkin-row').on('click', '.checkin-row', function () {
-                const index = $(this).data('index');
-                showMemberInfo(res[index]);
-            });
+        $('#checkinTableBody').off('click', '.checkin-row').on('click', '.checkin-row', function () {
+            const index = $(this).data('index');
+            showMemberInfo(res[index]);
+        });
     });
 }
 
@@ -75,7 +75,7 @@ function performCheckin() {
 
 // 4. Hiển thị thông tin lên khung bên phải
 function showMemberInfo(info) {
-    currentScannedCardId = info.id;
+    currentScannedCardId = info?.id ?? info.cardID;
     $('#infoAvatar').attr('src', info.avatar);
     $('#infoName').text(info.fullName);
     $('#infoPhone').text(info.phoneNumber || 'Chưa cập nhật');

@@ -157,7 +157,7 @@ function renderTable(items) {
         const row = `
                     <tr>
 
-                        <td colspan="5" class="text-center py-5 text-muted">
+                        <td colspan="6" class="text-center py-5 text-muted">
                             Không có dữ liệu hiển thị
                         </td>
 
@@ -204,6 +204,10 @@ function renderTable(items) {
 
                         <td class="audit-note">
                             ${note}
+                        </td>
+        
+                        <td>
+                            ${buildDataEdited(item)}
                         </td>
 
                     </tr>
@@ -396,7 +400,7 @@ function showLoading() {
 
     $("#auditLogBody").html(`
                 <tr>
-                    <td colspan="5"
+                    <td colspan="6"
                         class="text-center py-5 text-muted">
 
                         <div class="spinner-border spinner-border-sm
@@ -450,19 +454,13 @@ function formatDateTime(value) {
 // =========================================================
 
 function exportFile(type) {
-    const data = {
-        fromDate: $("#fromDate").val() || null,
-        toDate: $("#toDate").val() || null,
-        staffId: tomSelectStaff.getValue() || null,
-        action: tomSelectAction.getValue() || null,
-        keyword: $("#keyword").val().trim(),
-        page: 1,
-        pageSize: 99999
-    }
+    currentPage = page;
+
+    const filter = getFilter(page);
     $.ajax({
         url: `/AuditLog/Export${type === "excel" ? "Excel" : "Pdf"}`,
         type: "GET",
-        data: data,
+        data: filter,
         contentType: "application/json",
         xhrFields: {
             responseType: "blob"
@@ -547,4 +545,45 @@ function escapeHtml(value) {
         .text(value)
         .html();
 
+}
+
+function buildDataEdited(item) {
+
+    if (!item.dataEdited)
+        return "-";
+
+    let changes;
+
+    try {
+        changes = JSON.parse(item.dataEdited);
+    }
+    catch {
+        return "-";
+    }
+
+    if (!changes.length)
+        return "-";
+
+    let tooltip = "";
+
+    changes.forEach(x => {
+
+        tooltip += `${x.Display}\n`;
+        tooltip += `${x.Old} → ${x.New}\n\n`;
+
+    });
+
+    tooltip = tooltip.trim();
+
+    return `
+        <span
+            data-bs-toggle="tooltip"
+            data-bs-placement="left"
+            data-bs-html="true"
+            title="${escapeHtml(tooltip).replace(/\n/g,'&#10;')}">
+            Số thay đổi: ${changes.length} 
+            <i class="bi bi-eye-fill text-primary"></i>
+
+        </span>
+    `;
 }

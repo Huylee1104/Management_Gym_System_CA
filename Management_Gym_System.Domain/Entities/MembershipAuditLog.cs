@@ -13,7 +13,7 @@ public class MembershipAuditLog
     public long? MemberId { get; set; }
 
     public string? Note { get; set; }
-
+    public string? DataEdited { get; set; }
     public User Staff { get; set; } = null!;
     public User Member { get; set; } = null!;
 }

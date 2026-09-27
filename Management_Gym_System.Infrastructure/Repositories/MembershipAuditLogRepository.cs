@@ -26,23 +26,27 @@ public class MembershipAuditLogRepository : IMembershipAuditLogRepository
         _context.MembershipAuditLogs.Remove(audit);
     }
 
-        public async Task<bool> SaveChangesAsync()
+    public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
     }
 
     public async Task<IEnumerable<MembershipAuditLog>> GetListAsync(DateTime? startDate, DateTime? endDate, long? staffId)
     {
-        var query = _context.MembershipAuditLogs.AsQueryable();
+        var query = _context.
+            MembershipAuditLogs
+            .Include(a => a.Staff)
+            .Include(a => a.Member)
+            .AsQueryable();
 
         if (startDate.HasValue)
         {
-            query = query.Where(a => a.Date >= startDate.Value);
+            query = query.Where(a => a.Date >= startDate.Value.Date);
         }
 
         if (endDate.HasValue)
         {
-            query = query.Where(a => a.Date <= endDate.Value);
+            query = query.Where(a => a.Date < endDate.Value.Date.AddDays(1));
         }
 
         if (staffId.HasValue)
