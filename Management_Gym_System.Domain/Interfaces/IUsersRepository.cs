@@ -4,7 +4,7 @@ namespace Management_Gym_System.Domain.Interfaces;
 
 public interface IUsersRepository
 {
-    Task<List<User>> GetAllUsersAsync(string? keyword, long? filterValue);
+    Task<List<User>> GetAllUsersAsync();
     Task<User?> GetUserByIdAsync(long id);
     Task<GymMembershipCard?> GetGymMembershipCardByIdAsync();
     Task AddAsync(User user);

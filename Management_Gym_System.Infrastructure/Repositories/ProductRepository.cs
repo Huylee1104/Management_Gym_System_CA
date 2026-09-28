@@ -19,27 +19,13 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.ID == id);
     }
 
-    public async Task<List<Product>> GetFilteredProductsAsync(long? categoryId, string? keyword)
+    public async Task<List<Product>> GetFilteredProductsAsync()
     {
-        var query = _context.Products
+        var query = await _context.Products
             .Include(p => p.Category)
-            .AsQueryable();
+            .OrderBy(p => p.ID).ToListAsync();
 
-        if (categoryId.HasValue && categoryId.Value > 0)
-        {
-            query = query.Where(p => p.CategoryID == categoryId.Value);
-        }
-
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            var normalizedKeyword = StringHelper.NormalizeText(keyword);
-            query = query.Where(p =>
-                EF.Functions.ILike(
-                    EF.Functions.Unaccent(p.ProductName ?? string.Empty),
-                    $"%{normalizedKeyword}%"));
-        }
-
-        return await query.OrderBy(p => p.ID).ToListAsync();
+        return query;
     }
 
     public async Task<bool> ExistsAsync(long id)

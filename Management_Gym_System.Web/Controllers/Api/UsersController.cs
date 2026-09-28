@@ -34,6 +34,15 @@ namespace Management_Gym_System.Controllers.Api
 
             return Ok(users);
         }
+    
+        [HttpGet("listStaffs")]
+        [HasPermission("USER_VIEW")]
+        public async Task<IActionResult> GetStaffs(string? keyword, long? filterValue)
+        {
+            var staffs = await _usersService.GetStaffs(keyword, filterValue);
+
+            return Ok(staffs);
+        }
 
         [HttpPost]
         [HasPermission("USER_CREATE")]
@@ -64,10 +73,7 @@ namespace Management_Gym_System.Controllers.Api
             if (!result)
                 return NotFound();
 
-            return Ok(new
-            {
-                success = true
-            });
+            return Ok(true);
         }
 
         [HttpPost("{id}/status")]

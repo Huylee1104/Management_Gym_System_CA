@@ -33,13 +33,13 @@ $(document).ready(function () {
 
     // Xuất Excel
     $("#btnExcel").on("click", function () {
-        exportFile("excel");
+        exportFile("excel", currentPage);
     });
 
 
     // Xuất PDF
     $("#btnPdf").on("click", function () {
-        exportFile("pdf");
+        exportFile("pdf", currentPage);
     });
 
 });
@@ -49,7 +49,7 @@ function loadStaffs() {
         const staffs = res.filter(u =>
             u.status == true &&
             u.roleID !== null &&
-            u.roleID !== 3
+            u.userType !== 1
         );
 
         let options = `
@@ -381,6 +381,7 @@ function renderPagination(page, pageSize, totalItems, totalPages) {
 
 
         const selectedPage = Number($(this).data("page"));
+        currentPage = selectedPage;
 
         loadAuditLogs(selectedPage);
 
@@ -453,7 +454,7 @@ function formatDateTime(value) {
 // EXPORT EXCEL / PDF
 // =========================================================
 
-function exportFile(type) {
+function exportFile(type, page) {
     currentPage = page;
 
     const filter = getFilter(page);

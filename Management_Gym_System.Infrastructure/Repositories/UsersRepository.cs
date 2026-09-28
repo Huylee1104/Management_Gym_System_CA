@@ -12,30 +12,15 @@ public class UsersRepository : IUsersRepository
         _context = context;
     }
 
-    public async Task<List<User>> GetAllUsersAsync(string? keyword, long? filterValue)
+    public async Task<List<User>> GetAllUsersAsync()
     {
-        var query = _context.Users
+        var query = await _context.Users
             .Include(u => u.Role)
             .Include(u => u.Memberships)
-                .ThenInclude(m => m.Product)
-            .AsQueryable();
+            .ThenInclude(m => m.Product)
+            .ToListAsync();
 
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            var normalizedKeyword = StringHelper.NormalizeText(keyword);
-            query = query.Where(u =>
-                EF.Functions.ILike(
-                    EF.Functions.Unaccent(u.FullName ?? string.Empty),
-                    $"%{normalizedKeyword}%"));
-        }
-
-        if (filterValue.HasValue)
-        {
-            query = query.Where(u =>
-                u.Memberships.Any(m => m.ProductID == filterValue.Value));
-        }
-
-        return await query.ToListAsync();
+        return query;
     }
 
     public async Task<User?> GetUserByIdAsync(long id)

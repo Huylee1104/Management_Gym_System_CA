@@ -6,7 +6,7 @@ public interface IProductRepository
 {
     // Truy vấn
     Task<Product?> GetByIdAsync(long id);
-    Task<List<Product>> GetFilteredProductsAsync(long? categoryId, string? keyword);
+    Task<List<Product>> GetFilteredProductsAsync();
     Task<bool> ExistsAsync(long id);
 
     // Thao tác dữ liệu

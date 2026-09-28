@@ -29,6 +29,9 @@ public class User
     public string? PhoneNumber { get; set; }
 
     public bool? Status { get; set; }
+    public int? UserType { get; set; }
+    public DateTime? NgaySinh { get; set; }
+    public int? GioiTinh { get; set; }
 
     // Navigation properties
     [ForeignKey("RoleID")]

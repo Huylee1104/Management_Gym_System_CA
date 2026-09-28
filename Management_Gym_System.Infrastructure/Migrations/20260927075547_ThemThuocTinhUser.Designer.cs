@@ -3,6 +3,7 @@ using System;
 using Management_Gym_System.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Management_Gym_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927075547_ThemThuocTinhUser")]
+    partial class ThemThuocTinhUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -568,6 +571,9 @@ namespace Management_Gym_System.Migrations
                     b.Property<int?>("GioiTinh")
                         .HasColumnType("integer");
 
+                    b.Property<bool?>("IsMember")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("NgaySinh")
                         .HasColumnType("timestamp without time zone");
 
@@ -584,9 +590,6 @@ namespace Management_Gym_System.Migrations
 
                     b.Property<bool?>("Status")
                         .HasColumnType("boolean");
-
-                    b.Property<int?>("UserType")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Username")
                         .IsRequired()

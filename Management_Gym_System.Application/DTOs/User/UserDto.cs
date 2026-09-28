@@ -15,6 +15,9 @@ public class UserDto
     public bool? Status { get; set; }
     public long? GoiTapID { get; set; }
     public string? GoiTapName { get; set; }
+    public DateTime? NgaySinh { get; set; }
+    public int? GioiTinh { get; set; }
+    public int? UserType { get; set; }
 }
 
 public class UserCreateUpdateDto
@@ -35,5 +38,8 @@ public class UserCreateUpdateDto
 
     public bool? Status { get; set; }
     public long? cardId { get; set; }
+    public DateTime? NgaySinh { get; set; }
+    public int? GioiTinh { get; set; }
+    public int? UserType { get; set; }
 
 }
