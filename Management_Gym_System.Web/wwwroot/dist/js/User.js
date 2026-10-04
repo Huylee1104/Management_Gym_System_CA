@@ -149,12 +149,10 @@ function saveData() {
         data: JSON.stringify(payload),
         success: (response) => { 
             console.log(response);
-            if (response == true) {
-                showToast('Lưu thành công!', 200);
+            showToast(response.message, response.IsSuccess ? 200 : 500);
+            if (response.IsSuccess) {
                 modal.hide();
                 loadData();
-            } else {
-                showToast('Không tìm thấy thẻ tập trống', 500);
             }
         }
     });

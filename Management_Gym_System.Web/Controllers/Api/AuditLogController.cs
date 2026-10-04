@@ -17,14 +17,14 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpGet]
-        //[HasPermission("AUDITLOG_VIEW")]
+        [HasPermission("AUDITLOG_VIEW")]
         public IActionResult Index()
         {
             return View("~/Views/AuditLog/Index.cshtml");
         }
 
         [HttpGet("GetList")]
-        //[HasPermission("AUDITLOG_VIEW")]
+        [HasPermission("AUDITLOG_VIEW")]
         public async Task<IActionResult> GetActivityLogs([FromQuery] ActivityLogRequest request)
         {
             var response = await _auditLogService.GetActivityLogsAsync(request);
@@ -32,7 +32,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpGet("ExportExcel")]
-        //[HasPermission("AUDITLOG_VIEW")]
+        [HasPermission("AUDITLOG_VIEW")]
         public async Task<IActionResult> ExportExcel([FromQuery]ActivityLogRequest request)
         {
             var file = await _auditLogService.GetExportExcelLogsAsync(request);
@@ -45,7 +45,7 @@ namespace Management_Gym_System.Web.Controllers.Api
         }
 
         [HttpGet("ExportPdf")]
-        //[HasPermission("AUDITLOG_VIEW")]
+        [HasPermission("AUDITLOG_VIEW")]
         public async Task<IActionResult> ExportPdf([FromQuery]ActivityLogRequest request)
         {
             var file = await _auditLogService.GetExportPdfLogsAsync(request);

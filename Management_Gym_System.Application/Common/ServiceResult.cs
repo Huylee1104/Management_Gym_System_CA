@@ -22,3 +22,16 @@ public class ServiceResultWithId
     public static ServiceResultWithId Failure(string message)
         => new ServiceResultWithId { IsSuccess = false, Message = message, Id = null };
 }
+
+public class ServiceResultWithData<T>
+{
+    public bool IsSuccess { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public T? Data { get; set; }
+
+    public static ServiceResultWithData<T> Success(string message = "", T? data = default)
+        => new ServiceResultWithData<T> { IsSuccess = true, Message = message, Data = data };
+
+    public static ServiceResultWithData<T> Failure(string message)
+        => new ServiceResultWithData<T> { IsSuccess = false, Message = message, Data = default };
+}

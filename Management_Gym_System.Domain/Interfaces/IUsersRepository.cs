@@ -6,6 +6,7 @@ public interface IUsersRepository
 {
     Task<List<User>> GetAllUsersAsync();
     Task<User?> GetUserByIdAsync(long id);
+    Task<bool?> GetExistingUser(string username);
     Task<GymMembershipCard?> GetGymMembershipCardByIdAsync();
     Task AddAsync(User user);
     Task UpdateAsync(GymMembershipCard membershipCard);

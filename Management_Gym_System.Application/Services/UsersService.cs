@@ -5,6 +5,9 @@ using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Domain.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 
+using System.Security.Cryptography;
+using System.Text;
+
 public class UsersService : IUsersService
 {
     private readonly IUsersRepository _usersRepo;
@@ -122,12 +125,24 @@ public class UsersService : IUsersService
         return staffs ?? new List<UserDto>();
     }
 
-    public async Task<User> CreateUser(UserCreateUpdateDto request)
+    public async Task<ServiceResult> CreateUser(UserCreateUpdateDto request)
     {
         await _unitOfWork.BeginTransactionAsync();
 
         try
         {
+            if (request.FullName == null)
+            {
+                return ServiceResult.Failure("Họ và tên không được để trống.");
+            }
+
+            var username = RemoveVietnameseAccent(request.FullName).Replace(" ", "").ToLower();
+            var isExist = await _usersRepo.GetExistingUser(username);
+            if (isExist == true)
+            {
+                return ServiceResult.Failure("Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác.");
+            }
+
             var user = new User
             {
                 FullName = request.FullName,
@@ -137,7 +152,9 @@ public class UsersService : IUsersService
                 Status = request.Status ?? true,
                 NgaySinh = request.NgaySinh,
                 GioiTinh = request.GioiTinh,
-                UserType = request.UserType
+                UserType = request.UserType,
+                Username = username,
+                PasswordHash = CreateMd5(username)
             };
 
             await _usersRepo.AddAsync(user);
@@ -154,7 +171,7 @@ public class UsersService : IUsersService
                 if (membership == null)
                 {
                     await _unitOfWork.RollbackAsync();
-                    return new User();
+                    return ServiceResult.Failure("Không còn thẻ trống để gán cho hội viên mới.");
                 }
 
                 var startDate = DateTime.UtcNow;
@@ -299,137 +316,153 @@ public class UsersService : IUsersService
                 _cache.Remove(STAFF_CACHE_KEY);
             }
 
-            return user;
+            return ServiceResult.Success("Tạo user thành công.");
         }
-        catch
+        catch (Exception ex)
         {
             await _unitOfWork.RollbackAsync();
-            throw;
+            return ServiceResult.Failure("Đã xảy ra lỗi khi tạo user: " + ex.Message);
         }
     }
 
-    public async Task<bool> UpdateUser(long id, UserCreateUpdateDto request)
+    public async Task<ServiceResult> UpdateUser(long id, UserCreateUpdateDto request)
     {
-        var existingUser = await _usersRepo.GetUserByIdAsync(id);
-        if (existingUser == null)
-            return false;
-
-        var changes = new List<object>();
-
-        if (existingUser.FullName != request.FullName)
+        try
         {
-            changes.Add(new
+            var existingUser = await _usersRepo.GetUserByIdAsync(id);
+            if (existingUser == null)
+                return ServiceResult.Failure("Người dùng không tồn tại.");
+
+
+            var changes = new List<object>();
+
+            if (existingUser.FullName != request.FullName)
             {
-                Field = "FullName",
-                Display = "Họ và tên",
-                Old = existingUser.FullName,
-                New = request.FullName
-            });
-        }
+                changes.Add(new
+                {
+                    Field = "FullName",
+                    Display = "Họ và tên",
+                    Old = existingUser.FullName,
+                    New = request.FullName
+                });
+            }
 
-        if (existingUser.PhoneNumber != request.PhoneNumber)
-        {
-            changes.Add(new
+            if (existingUser.PhoneNumber != request.PhoneNumber)
             {
-                Field = "PhoneNumber",
-                Display = "Số điện thoại",
-                Old = existingUser.PhoneNumber,
-                New = request.PhoneNumber
-            });
-        }
+                changes.Add(new
+                {
+                    Field = "PhoneNumber",
+                    Display = "Số điện thoại",
+                    Old = existingUser.PhoneNumber,
+                    New = request.PhoneNumber
+                });
+            }
 
-        if (existingUser.RoleID != request.RoleID)
-        {
-            var newRole = request.RoleID.HasValue
-                ? await _roleRepo.GetRoleByIdAsync(request.RoleID.Value)
-                : null;
-
-            changes.Add(new
+            if (existingUser.RoleID != request.RoleID)
             {
-                Field = "RoleID",
-                Display = "Vai trò",
-                Old = existingUser.Role?.RoleName ?? "Không có vai trò",
-                New = newRole?.RoleName ?? "Không có vai trò"
-            });
-        }
+                var newRole = request.RoleID.HasValue
+                    ? await _roleRepo.GetRoleByIdAsync(request.RoleID.Value)
+                    : null;
+                if (existingUser.UserType == 1 || request.UserType == 1)
+                {
+                    return ServiceResult.Failure("Không thể update vai trò liên quan đến hội viên, vui lòng tạo account mới");
+                }
+                changes.Add(new
+                {
+                    Field = "RoleID",
+                    Display = "Vai trò",
+                    Old = existingUser.Role?.RoleName ?? "Không có vai trò",
+                    New = newRole?.RoleName ?? "Không có vai trò"
+                });
+            }
 
-        if (existingUser.Status != request.Status)
-        {
-            changes.Add(new
+            if (existingUser.Status != request.Status)
             {
-                Field = "Status",
-                Display = "Trạng thái",
-                Old = existingUser.Status == true ? "Hoạt động" : "Ngưng hoạt động",
-                New = request.Status == true ? "Hoạt động" : "Ngưng hoạt động"
-            });
-        }
+                changes.Add(new
+                {
+                    Field = "Status",
+                    Display = "Trạng thái",
+                    Old = existingUser.Status == true ? "Hoạt động" : "Ngưng hoạt động",
+                    New = request.Status == true ? "Hoạt động" : "Ngưng hoạt động"
+                });
+            }
 
-        if (existingUser.NgaySinh != request.NgaySinh)
-        {
-            changes.Add(new
+            if (existingUser.NgaySinh != request.NgaySinh)
             {
-                Field = "NgaySinh",
-                Display = "Ngày sinh",
-                Old = existingUser.NgaySinh,
-                New = request.NgaySinh
-            });
-        }
+                changes.Add(new
+                {
+                    Field = "NgaySinh",
+                    Display = "Ngày sinh",
+                    Old = existingUser.NgaySinh,
+                    New = request.NgaySinh
+                });
+            }
 
-        if (existingUser.GioiTinh != request.GioiTinh)
-        {
-            changes.Add(new
+            if (existingUser.GioiTinh != request.GioiTinh)
             {
-                Field = "GioiTinh",
-                Display = "Giới tính",
-                Old = existingUser.GioiTinh,
-                New = request.GioiTinh
-            });
-        }
+                changes.Add(new
+                {
+                    Field = "GioiTinh",
+                    Display = "Giới tính",
+                    Old = existingUser.GioiTinh,
+                    New = request.GioiTinh
+                });
+            }
 
-        if (existingUser.UserType != request.UserType)
-        {
-            changes.Add(new
+            if (existingUser.UserType != request.UserType)
             {
-                Field = "UserType",
-                Display = "Loại người dùng",
-                Old = existingUser.UserType == 1 ? "Hội viên" : "Nhân viên",
-                New = request.UserType == 1 ? "Hội viên" : "Nhân viên"
-            });
+                changes.Add(new
+                {
+                    Field = "UserType",
+                    Display = "Loại người dùng",
+                    Old = existingUser.UserType == 1 ? "Hội viên" : "Nhân viên",
+                    New = request.UserType == 1 ? "Hội viên" : "Nhân viên"
+                });
+            }
+
+            if (request.FullName == null)
+            {
+                return ServiceResult.Failure("Họ và tên không được để trống.");
+            }
+
+            existingUser.FullName = request.FullName;
+            existingUser.PhoneNumber = request.PhoneNumber;
+            existingUser.RoleID = request.RoleID;
+            existingUser.Avatar = request.Avatar;
+            existingUser.Status = request.Status ?? existingUser.Status;
+            existingUser.NgaySinh = request.NgaySinh;
+            existingUser.GioiTinh = request.GioiTinh;
+            existingUser.UserType = request.UserType;
+
+            await _usersRepo.UpdateAsync(existingUser);
+
+            var idStaff = _permission.GetUserId();
+
+            var audit = new MembershipAuditLog
+            {
+                Date = DateTime.UtcNow,
+                StaffId = idStaff,
+                Action = "EditUser",
+                MemberId = id,
+                Note = "Chỉnh sửa thông tin hội viên: " + existingUser.FullName,
+                DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
+            };
+
+            await _auditlog.AddAsync(audit);
+
+            await _usersRepo.SaveChangesAsync();
+
+            if (request.UserType != 1)
+            {
+                _cache.Remove(STAFF_CACHE_KEY);
+            }
+
+            return ServiceResult.Success("Cập nhật thông tin người dùng thành công.");
         }
-
-        existingUser.FullName = request.FullName;
-        existingUser.PhoneNumber = request.PhoneNumber;
-        existingUser.RoleID = request.RoleID;
-        existingUser.Avatar = request.Avatar;
-        existingUser.Status = request.Status ?? existingUser.Status;
-        existingUser.NgaySinh = request.NgaySinh;
-        existingUser.GioiTinh = request.GioiTinh;
-        existingUser.UserType = request.UserType;
-
-        await _usersRepo.UpdateAsync(existingUser);
-
-        var idStaff = _permission.GetUserId();
-
-        var audit = new MembershipAuditLog
+        catch (Exception ex)
         {
-            Date = DateTime.UtcNow,
-            StaffId = idStaff,
-            Action = "EditUser",
-            MemberId = id,
-            Note = "Chỉnh sửa thông tin hội viên: " + existingUser.FullName,
-            DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
-        };
-
-        await _auditlog.AddAsync(audit);
-
-        await _usersRepo.SaveChangesAsync();
-
-        if (request.UserType != 1)
-        {
-            _cache.Remove(STAFF_CACHE_KEY);
+            return ServiceResult.Failure("Đã xảy ra lỗi khi cập nhật thông tin người dùng: " + ex.Message);
         }
-
-        return true;
     }
 
     public async Task<User> ToggleStatus(long id)
@@ -471,5 +504,36 @@ public class UsersService : IUsersService
         }
 
         return true;
+    }
+
+    private static string RemoveVietnameseAccent(string text)
+    {
+        text = text.Normalize(NormalizationForm.FormD);
+
+        var sb = new StringBuilder();
+
+        foreach (char c in text)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString()
+                 .Normalize(NormalizationForm.FormC)
+                 .Replace('đ', 'd')
+                 .Replace('Đ', 'D');
+    }
+
+    private static string CreateMd5(string input)
+    {
+        using var md5 = MD5.Create();
+
+        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+        return Convert.ToHexString(hashBytes).ToLower();
     }
 }

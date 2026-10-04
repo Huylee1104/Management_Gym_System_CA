@@ -4,8 +4,8 @@ public interface IUsersService
 {
     Task<List<UserDto>> GetUsers(string? keyword, long? filterValue);
     Task<List<UserDto>> GetStaffs(string? keyword, long? filterValue);
-    Task<User> CreateUser(UserCreateUpdateDto request);
-    Task<bool> UpdateUser(long id,UserCreateUpdateDto request);
+    Task<ServiceResult> CreateUser(UserCreateUpdateDto request);
+    Task<ServiceResult> UpdateUser(long id,UserCreateUpdateDto request);
     Task<User> ToggleStatus(long id);
     Task<bool> Delete(long id);
 }

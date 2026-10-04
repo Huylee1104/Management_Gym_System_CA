@@ -45,6 +45,7 @@ $(document).ready(function () {
 });
 
 function loadStaffs() {
+    LoadingData();
     $.get(staffApiUrl, function (res) {
         const staffs = res.filter(u =>
             u.status == true &&
@@ -65,6 +66,7 @@ function loadStaffs() {
         tomSelectStaff = new TomSelect("#staffId", {
             create: false
         });
+        HidenLoadingData();
     });
 }
 

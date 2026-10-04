@@ -78,4 +78,17 @@ public class UsersRepository : IUsersRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool?> GetExistingUser(string username)
+    {
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
+        if (existingUser != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

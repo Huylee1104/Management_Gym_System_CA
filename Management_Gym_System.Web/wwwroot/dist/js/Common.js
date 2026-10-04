@@ -212,3 +212,12 @@ function formatEndDateNormal(endDateStr) {
 
     return formattedDate;
 }
+
+function LoadingData(text = "Đang tải dữ liệu...") {
+    $("#loadingText").text(text);
+    $("#loadingOverlay").removeClass("d-none");
+}
+
+function HidenLoadingData() {
+    $("#loadingOverlay").addClass("d-none");
+}

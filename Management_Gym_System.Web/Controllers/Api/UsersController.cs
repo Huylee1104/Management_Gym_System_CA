@@ -54,12 +54,12 @@ namespace Management_Gym_System.Controllers.Api
             // Tạo user
             var user = await _usersService.CreateUser(request);
 
-            if (user.ID != 0)
+            if (user.IsSuccess)
             {
-                return Ok(true);
+                return Ok(user);
             }
 
-            return Ok(false);
+            return Ok(user);
         }
 
         [HttpPost("{id}")]
@@ -70,10 +70,10 @@ namespace Management_Gym_System.Controllers.Api
                 return BadRequest();
 
             var result = await _usersService.UpdateUser(id, request);
-            if (!result)
-                return NotFound();
+            if (!result.IsSuccess)
+                return Ok(result);
 
-            return Ok(true);
+            return Ok(result);
         }
 
         [HttpPost("{id}/status")]
