@@ -42,4 +42,13 @@ public class User
     public ICollection<FinancialTransaction> StaffTransactions { get; set; } = new List<FinancialTransaction>();
     public ICollection<ImportReceipt> ImportReceipts { get; set; } = new List<ImportReceipt>();
     public ICollection<ExportReceipt> ExportReceipts { get; set; } = new List<ExportReceipt>();
+    
+    [NotMapped]
+    public bool IsManager
+    {
+        get
+        {
+            return RoleID != null && UserType == null;
+        }
+    }
 }

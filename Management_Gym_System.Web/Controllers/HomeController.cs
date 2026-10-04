@@ -15,7 +15,12 @@ namespace Management_Gym_System.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("~/Views/Home/HomeUser.cshtml");
+        }
+
+        public IActionResult IndexAdmin()
+        {
+            return View("~/Views/Home/HomeManager.cshtml");
         }
 
         public IActionResult Privacy()

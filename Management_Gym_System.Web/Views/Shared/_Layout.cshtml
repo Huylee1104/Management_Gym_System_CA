@@ -67,10 +67,96 @@
                 <!-- Menu bên trái -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
-                            <i class="bi bi-house-door"></i> Tổng quan
-                        </a>
-                    </li>
+                    <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
+                        <i class="bi bi-house-door-fill me-1"></i>
+                        Tổng quan
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        Giới thiệu
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle @Active("Workout")"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                        <i class="bi bi-fire me-1"></i>
+                        Tập luyện
+                    </a>
+
+                    <ul class="dropdown-menu shadow">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-person-arms-up me-2 text-primary"></i> Vai
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-person-standing me-2 text-success"></i> Lưng
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-heart-pulse-fill me-2 text-danger"></i> Ngực
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-hand-index-thumb-fill me-2 text-warning"></i> Tay
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-circle-fill me-2 text-info"></i> Bụng
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-person-walking me-2 text-secondary"></i> Chân
+                            </a>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-lightning-charge-fill me-2 text-warning"></i> Giảm mỡ
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @Active("Nutrition")" asp-controller="Nutrition" asp-action="Index">
+                        <i class="bi bi-egg-fried me-1"></i>
+                        Dinh dưỡng
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @Active("News")" asp-controller="News" asp-action="Index">
+                        <i class="bi bi-newspaper me-1"></i>
+                        Tin tức
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @Active("Contact")" asp-controller="Contact" asp-action="Index">
+                        <i class="bi bi-telephone-fill me-1"></i>
+                        Liên hệ
+                    </a>
+                </li>
 
                     @if (User.HasClaim("Permission", "CHECKIN_VIEW"))
                     {
@@ -206,11 +292,9 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-4 mb-5">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">
+        @RenderBody()
+    </main>
 
     <!-- Modal Xác nhận xóa -->
     <div class="modal fade" id="modal-delete-confirm" tabindex="-1" aria-hidden="true">

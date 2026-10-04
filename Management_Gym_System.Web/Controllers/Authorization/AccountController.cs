@@ -156,6 +156,11 @@ public class AccountController : Controller
             return Redirect(model.ReturnUrl);
         }
 
+        if (user.IsManager)
+        {
+            return RedirectToAction("IndexAdmin", "Home");
+        }
+
         return RedirectToAction("Index", "Home");
     }
 

@@ -1,0 +1,185 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<link href="/dist/css/Custome/HomeUser.css" rel="stylesheet" />
+
+<div class="home-page">
+<!-- 1. HERO -->
+<section class="hero position-relative overflow-hidden">
+  <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
+  <div class="container position-relative py-5">
+    <div class="row justify-content-center text-center py-lg-5">
+      <div class="col-lg-8">
+        <span class="hero-badge badge rounded-pill px-3 py-2 mb-3"><i class="bi bi-lightning-charge-fill me-1"></i>Mở cửa 5:00 – 23:00 mỗi ngày</span>
+        <h1 class="hero-title display-4 fw-bold mb-3">Thay đổi vóc dáng,<br><span class="text-primary-brand">bứt phá giới hạn</span> của bạn</h1>
+        <p class="hero-desc lead mb-4">Phòng tập hiện đại, huấn luyện viên tận tâm và lộ trình cá nhân hóa giúp bạn đạt mục tiêu nhanh hơn, bền vững hơn.</p>
+        <div class="hero-btns d-flex flex-wrap gap-3 justify-content-center">
+          <a href="#dang-ky" class="btn btn-brand btn-lg px-4">Đăng ký ngay <i class="bi bi-arrow-right ms-1 arrow"></i></a>
+          <a href="#tinh-nang" class="btn btn-outline-brand btn-lg px-4">Tìm hiểu thêm</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. QUICK ACTIONS -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-6 col-lg-4 reveal" data-delay="0"><a href="#dang-ky" class="qa-card"><i class="bi bi-person-plus qa-icon"></i><h3 class="qa-title">Đăng ký tập thử</h3><p>Trải nghiệm miễn phí 1 buổi.</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+      <div class="col-6 col-lg-4 reveal" data-delay="80"><a href="#" class="qa-card"><i class="bi bi-calendar-week qa-icon"></i><h3 class="qa-title">Lịch lớp học</h3><p>Yoga, Zumba, HIIT, Boxing…</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+      <div class="col-6 col-lg-4 reveal" data-delay="160"><a href="#" class="qa-card"><i class="bi bi-credit-card-2-front qa-icon"></i><h3 class="qa-title">Gói thành viên</h3><p>Linh hoạt, giá minh bạch.</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+      <div class="col-6 col-lg-4 reveal" data-delay="240"><a href="#" class="qa-card"><i class="bi bi-people qa-icon"></i><h3 class="qa-title">Huấn luyện viên</h3><p>Đội ngũ PT chứng chỉ quốc tế.</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+      <div class="col-6 col-lg-4 reveal" data-delay="320"><a href="#" class="qa-card"><i class="bi bi-clipboard2-pulse qa-icon"></i><h3 class="qa-title">Lộ trình cá nhân</h3><p>Thiết kế theo thể trạng của bạn.</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+      <div class="col-6 col-lg-4 reveal" data-delay="400"><a href="#dang-ky" class="qa-card"><i class="bi bi-headset qa-icon"></i><h3 class="qa-title">Liên hệ tư vấn</h3><p>Phản hồi trong vòng 30 phút.</p><i class="bi bi-arrow-right qa-arrow"></i></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. GIỚI THIỆU TÍNH NĂNG (ảnh ↔ nội dung xen kẽ) -->
+<section id="tinh-nang" class="py-5 section-white">
+  <div class="container">
+    <div class="text-center mb-5 reveal fade-up"><h2 class="fw-bold">Vì sao chọn chúng tôi?</h2><p class="text-muted">Mọi thứ bạn cần để tập luyện hiệu quả, trong một nơi duy nhất.</p></div>
+
+    <div class="row align-items-center g-5 mb-5">
+      <div class="col-lg-6 reveal slide-left"><div class="feature-img img-1"><i class="bi bi-image"></i></div></div>
+      <div class="col-lg-6 reveal fade-up" data-delay="100">
+        <h3 class="fw-bold">Thiết bị chuẩn thi đấu</h3>
+        <p class="text-muted">Hơn 200 thiết bị nhập khẩu, được bảo dưỡng định kỳ, không gian rộng rãi, thoáng mát và luôn sạch sẽ.</p>
+        <ul class="list-unstyled feature-list"><li><i class="bi bi-check-circle-fill"></i>Khu tạ tự do &amp; máy tập đa dạng</li><li><i class="bi bi-check-circle-fill"></i>Hệ thống điều hòa, âm thanh cao cấp</li></ul>
+      </div>
+    </div>
+
+    <div class="row align-items-center g-5 mb-5 flex-lg-row-reverse">
+      <div class="col-lg-6 reveal slide-right"><div class="feature-img img-2"><i class="bi bi-image"></i></div></div>
+      <div class="col-lg-6 reveal fade-up" data-delay="100">
+        <h3 class="fw-bold">Huấn luyện viên đồng hành</h3>
+        <p class="text-muted">PT theo sát từng buổi tập, điều chỉnh kỹ thuật và dinh dưỡng để bạn tiến bộ an toàn.</p>
+        <ul class="list-unstyled feature-list"><li><i class="bi bi-check-circle-fill"></i>Đánh giá thể trạng miễn phí</li><li><i class="bi bi-check-circle-fill"></i>Kèm 1-1 hoặc theo nhóm nhỏ</li></ul>
+      </div>
+    </div>
+
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6 reveal slide-left">
+        <div class="feature-img img-3 float-slow"><i class="bi bi-bar-chart-line"></i>
+          <div class="dash-chip"><i class="bi bi-graph-up-arrow"></i> Theo dõi tiến độ</div></div>
+      </div>
+      <div class="col-lg-6 reveal fade-up" data-delay="100">
+        <h3 class="fw-bold">Theo dõi tiến độ mỗi ngày</h3>
+        <p class="text-muted">Dashboard trực quan giúp bạn xem chỉ số cơ thể, lịch tập và thành tích ngay trên điện thoại.</p>
+        <ul class="list-unstyled feature-list"><li><i class="bi bi-check-circle-fill"></i>Báo cáo InBody định kỳ</li><li><i class="bi bi-check-circle-fill"></i>Nhắc lịch tập thông minh</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. THỐNG KÊ NỔI BẬT -->
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-6 col-lg-3 reveal fade-up" data-delay="0"><div class="stat-card"><i class="bi bi-people-fill stat-icon"></i><div class="stat-num"><span class="counter" data-target="1200">0</span>+</div><div class="text-muted">Hội viên</div></div></div>
+      <div class="col-6 col-lg-3 reveal fade-up" data-delay="100"><div class="stat-card"><i class="bi bi-person-badge-fill stat-icon"></i><div class="stat-num"><span class="counter" data-target="120">0</span>+</div><div class="text-muted">Huấn luyện viên</div></div></div>
+      <div class="col-6 col-lg-3 reveal fade-up" data-delay="200"><div class="stat-card"><i class="bi bi-calendar-check-fill stat-icon"></i><div class="stat-num"><span class="counter" data-target="320">0</span>+</div><div class="text-muted">Lớp mỗi tháng</div></div></div>
+      <div class="col-6 col-lg-3 reveal fade-up" data-delay="300"><div class="stat-card"><i class="bi bi-trophy-fill stat-icon"></i><div class="stat-num"><span class="counter" data-target="650">0</span>+</div><div class="text-muted">Mục tiêu đạt được</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. ĐÁNH GIÁ KHÁCH HÀNG -->
+<section class="py-5 section-white">
+  <div class="container">
+    <div class="text-center mb-5 reveal fade-up"><h2 class="fw-bold">Hội viên nói gì?</h2></div>
+    <div class="row justify-content-center reveal fade-up">
+      <div class="col-lg-8">
+        <div id="reviews" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+          <div class="carousel-inner">
+            <div class="carousel-item active"><div class="review-card"><img class="hp-avatar" alt="" src="images/avatar-1.jpg"><p class="fs-5">“Sau 3 tháng tập cùng PT, mình giảm 8kg và cảm thấy tràn đầy năng lượng. Không gian rất thoải mái!”</p><strong>Nguyễn Minh Anh</strong><div class="stars">★★★★★</div></div></div>
+            <div class="carousel-item"><div class="review-card"><img class="hp-avatar" alt="" src="images/avatar-2.jpg"><p class="fs-5">“Lịch lớp đa dạng, huấn luyện viên nhiệt tình. Mình đã gắn bó hơn một năm rồi.”</p><strong>Trần Quốc Bảo</strong><div class="stars">★★★★★</div></div></div>
+            <div class="carousel-item"><div class="review-card"><img class="hp-avatar" alt="" src="images/avatar-3.jpg"><p class="fs-5">“Thiết bị mới, luôn sạch sẽ. Dashboard theo dõi tiến độ giúp mình có động lực mỗi ngày.”</p><strong>Lê Thu Hà</strong><div class="stars">★★★★★</div></div></div>
+          </div>
+          <div class="carousel-indicators brand-dots position-static mt-3">
+            <button data-bs-target="#reviews" data-bs-slide-to="0" class="active" aria-label="1"></button>
+            <button data-bs-target="#reviews" data-bs-slide-to="1" aria-label="2"></button>
+            <button data-bs-target="#reviews" data-bs-slide-to="2" aria-label="3"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. FORM ĐĂNG KÝ -->
+<section id="dang-ky" class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 reveal fade-up">
+        <div class="signup-card position-relative">
+          <h2 class="fw-bold text-center mb-1">Đăng ký tập thử miễn phí</h2>
+          <p class="text-muted text-center mb-4">Để lại thông tin, chúng tôi sẽ liên hệ bạn sớm nhất.</p>
+          <form id="signupForm" novalidate>
+            <div class="mb-3"><label class="form-label" for="fName">Họ và tên</label><input type="text" class="form-control form-control-lg" id="fName" required placeholder="Nguyễn Văn A"><div class="invalid-feedback">Vui lòng nhập họ tên.</div></div>
+            <div class="mb-3"><label class="form-label" for="fPhone">Số điện thoại</label><input type="tel" class="form-control form-control-lg" id="fPhone" required pattern="^(0|\+84)[0-9]{9}$" placeholder="0901234567"><div class="invalid-feedback">Số điện thoại không hợp lệ.</div></div>
+            <div class="mb-4"><label class="form-label" for="fEmail">Email</label><input type="email" class="form-control form-control-lg" id="fEmail" required placeholder="ban@email.com"><div class="invalid-feedback">Email không hợp lệ.</div></div>
+            <button type="submit" class="btn btn-brand btn-lg w-100">Đăng ký ngay <i class="bi bi-arrow-right ms-1 arrow-4"></i></button>
+          </form>
+          <div id="signupSuccess" class="signup-success text-center" aria-live="polite">
+            <i class="bi bi-check-circle-fill"></i><h3 class="fw-bold mt-2">Đăng ký thành công</h3><p class="text-muted mb-0">Chúng tôi sẽ liên hệ với bạn sớm.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. FOOTER -->
+<footer class="site-footer pt-5 pb-4 section-white">
+  <div class="container reveal fade-up">
+    <div class="row g-4">
+      <div class="col-lg-4"><h5 class="fw-bold text-primary-brand">GYM FIT</h5><p class="text-muted">Nơi bắt đầu hành trình sống khỏe mỗi ngày.</p>
+        <div class="d-flex gap-2"><a href="#" class="social" aria-label="Facebook"><i class="bi bi-facebook"></i></a><a href="#" class="social" aria-label="Instagram"><i class="bi bi-instagram"></i></a><a href="#" class="social" aria-label="YouTube"><i class="bi bi-youtube"></i></a><a href="#" class="social" aria-label="TikTok"><i class="bi bi-tiktok"></i></a></div></div>
+      <div class="col-6 col-lg-4"><h6 class="fw-bold">Liên kết</h6><ul class="list-unstyled"><li><a href="#" class="f-link">Trang chủ</a></li><li><a href="#" class="f-link">Lịch lớp học</a></li><li><a href="#" class="f-link">Gói thành viên</a></li><li><a href="#" class="f-link">Liên hệ</a></li></ul></div>
+      <div class="col-6 col-lg-4"><h6 class="fw-bold">Liên hệ</h6><ul class="list-unstyled text-muted"><li><i class="bi bi-geo-alt me-2"></i>123 Nguyễn Huệ, Q.1, TP.HCM</li><li><i class="bi bi-telephone me-2"></i>0900 000 000</li><li><i class="bi bi-envelope me-2"></i>hello@gymfit.vn</li></ul></div>
+    </div>
+    <hr><p class="text-center text-muted small mb-0">© 2026 GYM FIT. All rights reserved.</p>
+  </div>
+</footer>
+
+</div>
+<script>
+    function initHome(){
+        const root=document.querySelector('.home-page');
+        if(!root)return;
+        if(!('IntersectionObserver' in window)){return;}
+        root.classList.add('js-ready');
+        // Scroll reveal + stagger delay
+        const io=new IntersectionObserver((es)=>es.forEach(e=>{
+            if(!e.isIntersecting)return;
+            e.target.style.setProperty('--d',(e.target.dataset.delay||0)+'ms');
+            e.target.classList.add('show');
+            e.target.querySelectorAll('.counter').forEach(countUp);
+            io.unobserve(e.target);
+        }),{threshold:.15});
+        document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+        // Đếm số trong 1.2s
+        function countUp(el){
+            const t=+el.dataset.target,d=1200,s=performance.now();
+            (function f(n){const p=Math.min((n-s)/d,1),e=1-Math.pow(1-p,3);
+            el.textContent=Math.round(t*e).toLocaleString('vi-VN');
+            if(p<1)requestAnimationFrame(f);})(s);
+        }
+
+        // Form
+        const form=document.getElementById('signupForm');
+        form.addEventListener('submit',e=>{
+            e.preventDefault();
+            let ok=true;
+            form.querySelectorAll('input').forEach(i=>{const v=i.checkValidity();i.classList.toggle('is-invalid',!v);if(!v)ok=false;});
+            if(!ok)return;
+            // TODO: gửi dữ liệu về server tại đây (fetch/axios)
+            form.closest('.signup-card').classList.add('done');
+        });
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initHome);else initHome();
+</script>
