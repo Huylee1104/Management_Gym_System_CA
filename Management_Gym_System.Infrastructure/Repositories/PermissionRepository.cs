@@ -126,7 +126,7 @@ public class PermissionRepository : IPermissionRepository
         if (!roleId.HasValue)
             return new List<string>();
 
-        return await _context.RolePermissions
+        var permissions = await _context.RolePermissions
             .Where(x =>
                 x.RoleId == roleId.Value &&
                 x.IsAllowed &&
@@ -134,6 +134,13 @@ public class PermissionRepository : IPermissionRepository
             .Select(x => x.Action.Code)
             .Distinct()
             .ToListAsync();
+
+        if (!permissions.Any())
+        {
+            return new List<string> { "NO_ACTION" };
+        }
+
+        return permissions;
     }
 
     public async Task<bool> RoleExistsAsync(long roleId)

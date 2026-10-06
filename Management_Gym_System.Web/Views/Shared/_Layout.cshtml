@@ -27,7 +27,17 @@
     <link href="~/dist/css/tom-select.css" rel="stylesheet" />
     <link href="/dist/css/Custom.css" rel="stylesheet" />
 </head>
+<style>
+    .dropdown-item {
+        font-weight: 600;
+        padding: .65rem 1rem;
+    }
 
+    .dropdown-item i {
+        width: 20px;
+        text-align: center;
+    }
+</style>
 <body class="bg-light">
 
     @{
@@ -48,13 +58,17 @@
         bool QuanLyVanHanh = User.HasClaim("Permission", "INVENTORY_VIEW")
                     || User.HasClaim("Permission", "FINANCE_VIEW")
                     || User.HasClaim("Permission", "INVENTORYIMPORT_VIEW");
+
+        bool isAdmin = KhoiQuanLyHeThong || KhoiQuanLyDanhMuc || QuanLyVanHanh;
+        bool isMember = User.HasClaim("Permission", "NO_ACTION");
     }
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <nav class="navbar navbar-expand-lg @(isAdmin ? "navbar-dark bg-dark" : "navbar-light") shadow-sm sticky-top" 
+        style="@(isAdmin ? "" : "background-color: #f0b55d;")">
         <div class="container-fluid">
 
-            <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-activity text-warning me-2"></i>Gym Fit
+            <a class="navbar-brand fw-bold">
+                <i class="bi bi-activity text-red me-2"></i>Gym Fit
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#gymNavbar"
@@ -66,98 +80,138 @@
 
                 <!-- Menu bên trái -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                    <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
-                        <i class="bi bi-house-door-fill me-1"></i>
-                        Tổng quan
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
-                        <i class="bi bi-info-circle-fill me-1"></i>
-                        Giới thiệu
-                    </a>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle @Active("Workout")"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                        <i class="bi bi-fire me-1"></i>
-                        Tập luyện
-                    </a>
-
-                    <ul class="dropdown-menu shadow">
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-person-arms-up me-2 text-primary"></i> Vai
+                    @if (!KhoiQuanLyHeThong && !KhoiQuanLyDanhMuc && !QuanLyVanHanh)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door-fill me-1"></i>
+                                Trang chủ
                             </a>
                         </li>
 
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-person-standing me-2 text-success"></i> Lưng
+                        if (!isMember)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
+                                    <i class="bi bi-info-circle-fill me-1"></i>
+                                    Giới thiệu
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    Đăng ký ngay
+                                </a>
+                            </li>
+                        }
+
+                        @if (isMember)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="IndexMember">
+                                    <i class="bi bi-card-checklist me-1"></i>
+                                    Quản lý gói tập
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle @Active("Workout")"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                    <i class="bi bi-fire me-1"></i>
+                                    Tập luyện
+                                </a>
+
+                                <ul class="dropdown-menu shadow">
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-chevron-double-up me-3 text-primary"></i>
+                                            Vai
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-grid-3x3-gap-fill me-3 text-success"></i>
+                                            Lưng
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-hexagon-fill me-3 text-danger"></i>
+                                            Ngực
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-record-circle-fill me-3 text-warning"></i>
+                                            Tay
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-bullseye me-3 text-info"></i>
+                                            Bụng
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-triangle-fill me-3 text-secondary"></i>
+                                            Chân
+                                        </a>
+                                    </li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <li>
+                                        <a class="dropdown-item fw-semibold" href="#">
+                                            <i class="bi bi-lightning-charge-fill me-3 text-warning"></i>
+                                            Giảm mỡ
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Nutrition")" asp-controller="Nutrition" asp-action="Index">
+                                    <i class="bi bi-egg-fried me-1"></i>
+                                    Dinh dưỡng
+                                </a>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link @Active("News")" asp-controller="News" asp-action="Index">
+                                <i class="bi bi-newspaper me-1"></i>
+                                Tin tức
                             </a>
                         </li>
 
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-heart-pulse-fill me-2 text-danger"></i> Ngực
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Contact")" asp-controller="Contact" asp-action="Index">
+                                <i class="bi bi-telephone-fill me-1"></i>
+                                Liên hệ
                             </a>
                         </li>
+                    }
 
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-hand-index-thumb-fill me-2 text-warning"></i> Tay
+                    @if (isAdmin)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="IndexAdmin">
+                                <i class="bi bi-house-door-fill me-1"></i>
+                                Quản lý chung
                             </a>
                         </li>
-
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-circle-fill me-2 text-info"></i> Bụng
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-person-walking me-2 text-secondary"></i> Chân
-                            </a>
-                        </li>
-
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                            <a class="dropdown-item" href="#">
-                                <i class="bi bi-lightning-charge-fill me-2 text-warning"></i> Giảm mỡ
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link @Active("Nutrition")" asp-controller="Nutrition" asp-action="Index">
-                        <i class="bi bi-egg-fried me-1"></i>
-                        Dinh dưỡng
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link @Active("News")" asp-controller="News" asp-action="Index">
-                        <i class="bi bi-newspaper me-1"></i>
-                        Tin tức
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link @Active("Contact")" asp-controller="Contact" asp-action="Index">
-                        <i class="bi bi-telephone-fill me-1"></i>
-                        Liên hệ
-                    </a>
-                </li>
-
+                    }
                     @if (User.HasClaim("Permission", "CHECKIN_VIEW"))
                     {
                         <li class="nav-item">
@@ -191,19 +245,22 @@
                             </ul>
                         </li>
                     }
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle @Active("Inventory", "Finance", "InventoryImport")"
-                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-wallet2"></i> Quản lý vận hành
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Export">Bán hàng</a></li>
-                            <li><a class="dropdown-item" asp-controller="Finance" asp-action="Index">Tài chính</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" asp-controller="InventoryImport" asp-action="Index">Nhập kho</a></li>
-                        </ul>
-                    </li>
+                    
+                    @if (QuanLyVanHanh)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle @Active("Inventory", "Finance", "InventoryImport")"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-wallet2"></i> Quản lý vận hành
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" asp-controller="Inventory" asp-action="Export">Bán hàng</a></li>
+                                <li><a class="dropdown-item" asp-controller="Finance" asp-action="Index">Tài chính</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="InventoryImport" asp-action="Index">Nhập kho</a></li>
+                            </ul>
+                        </li>
+                    }
                 </ul>
 
                 <!-- Menu bên phải -->
