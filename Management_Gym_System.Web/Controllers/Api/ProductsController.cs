@@ -48,7 +48,7 @@ namespace Management_Gym_System.Controllers.Api
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("{id}")]
         [HasPermission("PRODUCT_EDIT")]
         public async Task<IActionResult> Update(long id, [FromBody] UpdateProductRequest request)
         {
@@ -64,7 +64,7 @@ namespace Management_Gym_System.Controllers.Api
             }
         }
 
-        [HttpPatch("{id}/status")]
+        [HttpPost("{id}/status")]
         [HasPermission("PRODUCT_EDIT")]
         public async Task<IActionResult> ToggleStatus(long id)
         {
@@ -73,7 +73,7 @@ namespace Management_Gym_System.Controllers.Api
             return Ok(new { success = true });
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("delete")]
         [HasPermission("PRODUCT_DELETE")]
         public async Task<IActionResult> Delete(long id)
         {

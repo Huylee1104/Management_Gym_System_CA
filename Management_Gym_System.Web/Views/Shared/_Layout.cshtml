@@ -92,14 +92,14 @@
                         if (!isMember)
                         {
                             <li class="nav-item">
-                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
+                                <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="About">
                                     <i class="bi bi-info-circle-fill me-1"></i>
                                     Giới thiệu
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="About">
+                                <a class="nav-link @Active("RegisterMember")" asp-controller="RegisterMember" asp-action="RegisterMember">
                                     <i class="bi bi-pencil-square me-1"></i>
                                     Đăng ký ngay
                                 </a>
@@ -109,7 +109,7 @@
                         @if (isMember)
                         {
                             <li class="nav-item">
-                                <a class="nav-link @Active("About")" asp-controller="Home" asp-action="IndexMember">
+                                <a class="nav-link @Active("ManagerMembership")" asp-controller="ManagerMembership" asp-action="Index">
                                     <i class="bi bi-card-checklist me-1"></i>
                                     Quản lý gói tập
                                 </a>
@@ -196,7 +196,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link @Active("Contact")" asp-controller="Contact" asp-action="Index">
+                            <a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Contact">
                                 <i class="bi bi-telephone-fill me-1"></i>
                                 Liên hệ
                             </a>

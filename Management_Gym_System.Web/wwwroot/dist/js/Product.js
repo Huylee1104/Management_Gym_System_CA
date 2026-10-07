@@ -138,6 +138,7 @@ function editData(item) {
     $('#imageBase64').val(item.imageProduct);
     $('#fileUpload').val('');
     $('#thoihan').val(item.thoiHan || '');
+    $('#prodDescription').val(item.description || '');
 
     $('#modalTitle').text('Sửa Sản phẩm'); 
     modal.show(); 
@@ -152,7 +153,8 @@ function saveData() {
         price: parseFloat($('#prodPrice').val().replace(/,/g, '')),
         unit: $('#prodUnit').val(),
         ThoiHan: parseInt($('#thoihan').val()) || null,
-        imageProduct: $('#imageBase64').val(), // Base64 chuỗi ảnh
+        imageProduct: $('#imageBase64').val(), 
+        description: $('#prodDescription').val(), 
         status: $('#prodStatus').is(':checked') 
     };
 

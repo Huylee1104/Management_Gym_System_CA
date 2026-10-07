@@ -1,0 +1,213 @@
+.home-page {
+    --primary: #FF9800;
+    font-size: 1.0625rem;
+    /* 17px, thử 1.125rem = 18px nếu vẫn nhỏ */
+}
+
+/* Cho nút, ô nhập, tab, accordion cũng to theo (Tabler mặc định đặt cỡ chữ riêng cho các phần này) */
+.home-page .form-control,
+.home-page .form-select,
+.home-page .btn,
+.home-page .nav-link,
+.home-page .accordion-button {
+    font-size: inherit;
+}
+
+#gymIntro .gi-hero {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    padding: 1rem 0 4.5rem;
+}
+
+#gymIntro .gi-stats {
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2
+}
+
+#gymIntro .gi-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary)
+}
+
+#gymIntro .card {
+    background: var(--card);
+    border-radius: .75rem
+}
+
+#gymIntro .gi-year {
+    background: var(--primary);
+    color: #fff;
+    font-size: .85rem
+}
+
+#gymIntro .gi-chip {
+    background: #FFF3E0;
+    color: #E65100;
+    font-weight: 500;
+    padding: .5rem .75rem
+}
+
+#gymIntro .gi-values {
+    background: var(--card);
+    border-block: 1px solid var(--border)
+}
+
+#gymIntro .gi-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #FFF3E0;
+    color: var(--primary);
+    font-size: 1.75rem;
+}
+
+#gymIntro .gi-hover {
+    transition: transform .25s, box-shadow .25s
+}
+
+#gymIntro .gi-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1) !important
+}
+
+#gymIntro .gi-cta {
+    background: linear-gradient(135deg, var(--secondary), var(--primary))
+}
+
+#gymIntro .gi-cta .btn {
+    color: var(--primary);
+    font-weight: 600
+}
+
+/* Timeline */
+#gymIntro .gi-tl {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto
+}
+
+#gymIntro .gi-tl::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 18px;
+    width: 3px;
+    background: var(--border);
+    border-radius: 2px;
+}
+
+#gymIntro .gi-tl::after {
+    /* đường chạy theo scroll */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 18px;
+    width: 3px;
+    height: var(--gi-progress, 0%);
+    background: linear-gradient(var(--primary), var(--secondary));
+    border-radius: 2px;
+    transition: height .2s linear;
+}
+
+#gymIntro .gi-item {
+    position: relative;
+    padding-left: 56px;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+#gymIntro .gi-item.show {
+    opacity: 1;
+    transform: none
+}
+
+#gymIntro .gi-dot {
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 5px var(--bg);
+    z-index: 1;
+}
+
+#gymIntro .gi-item.show .gi-dot {
+    animation: giPop .5s ease
+}
+
+@keyframes giPop {
+    0% {
+        transform: scale(.4)
+    }
+
+    70% {
+        transform: scale(1.2)
+    }
+
+    100% {
+        transform: scale(1)
+    }
+}
+
+@media (min-width:768px) {
+
+    #gymIntro .gi-tl::before,
+    #gymIntro .gi-tl::after {
+        left: calc(50% - 1.5px)
+    }
+
+    #gymIntro .gi-item {
+        width: 50%;
+        padding: 0 3rem 0 0;
+        text-align: right;
+        transform: translateX(-32px) translateY(0)
+    }
+
+    #gymIntro .gi-item:nth-child(even) {
+        margin-left: 50%;
+        padding: 0 0 0 3rem;
+        text-align: left;
+        transform: translateX(32px)
+    }
+
+    #gymIntro .gi-item.show,
+    #gymIntro .gi-item:nth-child(even).show {
+        transform: none
+    }
+
+    #gymIntro .gi-dot {
+        right: -20px;
+        left: auto
+    }
+
+    #gymIntro .gi-item:nth-child(even) .gi-dot {
+        left: -20px;
+        right: auto
+    }
+}
+
+@media (prefers-reduced-motion:reduce) {
+    #gymIntro .gi-item {
+        opacity: 1;
+        transform: none;
+        transition: none
+    }
+
+    #gymIntro .gi-item.show .gi-dot {
+        animation: none
+    }
+}

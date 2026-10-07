@@ -32,7 +32,9 @@ public class ProductService : IProductService
                 CategoryId = p?.CategoryID,
                 ThoiHan = p?.ThoiHan,
                 Status = p?.Status,
-                ImageProduct = p?.ImageProduct
+                ImageProduct = p?.ImageProduct,
+                Description = p?.Description,
+                Review = p?.Review
             }).ToList();
             _cache.Set(PRODUCT_CACHE_KEY, cachedProducts);
         }
@@ -73,7 +75,8 @@ public class ProductService : IProductService
             Unit = dto.Unit,
             ThoiHan = dto.ThoiHan,
             Status = dto.Status,
-            ImageProduct = dto.ImageProduct
+            ImageProduct = dto.ImageProduct,
+            Description = dto.Description
         };
 
         await _productRepo.AddAsync(entity);
@@ -94,7 +97,7 @@ public class ProductService : IProductService
         existing.ThoiHan = dto.ThoiHan;
         existing.Status = dto.Status;
         existing.ImageProduct = dto.ImageProduct;
-
+        existing.Description = dto.Description;
         await _productRepo.UpdateAsync(existing);
         return true;
     }

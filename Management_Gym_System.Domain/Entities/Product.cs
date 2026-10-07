@@ -27,6 +27,8 @@ public class Product
     public bool? Status { get; set; }
 
     public string? ImageProduct { get; set; }
+    public string? Description { get; set; }
+    public string? Review { get; set; }
 
     // Navigation properties
     [ForeignKey("CategoryID")]

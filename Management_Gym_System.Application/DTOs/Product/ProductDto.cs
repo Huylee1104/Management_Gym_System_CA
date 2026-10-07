@@ -9,6 +9,8 @@ public class ProductDto
     public int? ThoiHan { get; set; }
     public bool? Status { get; set; }
     public string? ImageProduct { get; set; }
+    public string? Description { get; set; }
+    public string? Review { get; set; }
 }
 
 public class CreateProductRequest
@@ -20,6 +22,7 @@ public class CreateProductRequest
     public int? ThoiHan { get; set; }
     public bool? Status { get; set; }
     public string? ImageProduct { get; set; }
+    public string? Description { get; set; }
 }
 
 public class UpdateProductRequest : CreateProductRequest { }

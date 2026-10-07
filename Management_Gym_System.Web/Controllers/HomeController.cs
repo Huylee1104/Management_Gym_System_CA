@@ -28,6 +28,16 @@ namespace Management_Gym_System.Controllers
             return View("~/Views/Home/HomeMember.cshtml");
         }
 
+        public IActionResult About()
+        {
+            return View("~/Views/Home/About.cshtml");
+        }
+
+        public IActionResult Contact()
+        {
+            return View("~/Views/Home/Contact.cshtml");
+        }
+
         public IActionResult Privacy()
         {
             return View();

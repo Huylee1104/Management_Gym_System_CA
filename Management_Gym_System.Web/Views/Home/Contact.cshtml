@@ -1,0 +1,490 @@
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<!-- ===== Trang Liên hệ (chỉ phần body) =====
+    Yêu cầu: Bootstrap 5 / Tabler (CSS + JS bundle) + Tabler Icons (ti ti-*) -->
+     
+<style>
+    .home-page {
+        --primary: #FF9800;
+        font-size: 1.0625rem; /* 17px, thử 1.125rem = 18px nếu vẫn nhỏ */
+    }
+
+    /* Cho nút, ô nhập, tab, accordion cũng to theo (Tabler mặc định đặt cỡ chữ riêng cho các phần này) */
+    .home-page .form-control,
+    .home-page .form-select,
+    .home-page .btn,
+    .home-page .nav-link,
+    .home-page .accordion-button {
+        font-size: inherit;
+    }
+    #gymContact .gc-hero {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 1rem 0 4.5rem;
+    }
+
+    #gymContact .gc-quick {
+        margin-top: -3rem;
+        position: relative;
+        z-index: 2
+    }
+
+    #gymContact .card {
+        background: var(--card);
+        border-radius: .75rem
+    }
+
+    #gymContact .gc-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #FFF3E0;
+        color: var(--primary);
+        font-size: 1.75rem;
+    }
+
+    #gymContact .gc-hover {
+        transition: transform .25s, box-shadow .25s
+    }
+
+    #gymContact .gc-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1) !important
+    }
+
+    #gymContact .gc-link {
+        color: var(--primary)
+    }
+
+    #gymContact .gc-link:hover {
+        color: var(--primary-hover)
+    }
+
+    #gymContact .form-control:focus,
+    #gymContact .form-select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 .2rem rgba(255, 152, 0, .2);
+    }
+
+    #gymContact .gc-btn {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        font-weight: 600
+    }
+
+    #gymContact .gc-btn:hover {
+        background: var(--primary-hover);
+        border-color: var(--primary-hover);
+        color: #fff
+    }
+
+    #gymContact .gc-pills .nav-link {
+        color: var(--text);
+        border-radius: 2rem;
+        padding: .4rem 1.1rem
+    }
+
+    #gymContact .gc-pills .nav-link.active {
+        background: var(--primary);
+        color: #fff
+    }
+
+    #gymContact .gc-branch {
+        padding: .9rem 0;
+        border-bottom: 1px solid var(--border)
+    }
+
+    #gymContact .gc-branch:last-child {
+        border-bottom: 0
+    }
+
+    #gymContact .gc-b-name {
+        font-weight: 600
+    }
+
+    #gymContact .gc-faq {
+        background: var(--card);
+        border-block: 1px solid var(--border)
+    }
+
+    #gymContact .gc-acc .accordion-item {
+        border: 1px solid var(--border);
+        border-radius: .75rem !important;
+        margin-bottom: .75rem;
+        overflow: hidden
+    }
+
+    #gymContact .gc-acc .accordion-button {
+        font-weight: 600;
+        color: var(--text);
+        background: var(--card)
+    }
+
+    #gymContact .gc-acc .accordion-button:not(.collapsed) {
+        color: var(--primary);
+        background: #FFF8EE;
+        box-shadow: none
+    }
+
+    #gymContact .gc-acc .accordion-button:focus {
+        box-shadow: 0 0 0 .2rem rgba(255, 152, 0, .2)
+    }
+
+    #gymContact .gc-cta {
+        background: linear-gradient(135deg, var(--secondary), var(--primary))
+    }
+
+    #gymContact .gc-cta .btn {
+        color: var(--primary);
+        font-weight: 600
+    }
+</style>
+<div class="home-page" id="gymContact">
+
+    <!-- HERO -->
+    <section class="gc-hero text-center text-white">
+        <div class="container py-5">
+            <span class="badge bg-white text-dark mb-3 px-3 py-2">Liên hệ</span>
+            <h1 class="display-5 fw-bold mb-3">Chúng tôi luôn sẵn sàng lắng nghe</h1>
+            <p class="lead mx-auto mb-0" style="max-width:640px">
+                Cần tư vấn gói tập, đăng ký tập thử hay góp ý dịch vụ? Hãy để lại thông tin, đội ngũ sẽ phản hồi trong
+                vòng 24 giờ.
+            </p>
+        </div>
+    </section>
+
+    <!-- THÔNG TIN NHANH -->
+    <section class="container gc-quick">
+        <div class="row g-3">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm gc-hover">
+                    <div class="card-body text-center">
+                        <span class="gc-icon"><i class="ti ti-phone-call"></i></span>
+                        <h6 class="mt-3 mb-1">Hotline</h6>
+                        <a href="tel:19001234" class="fw-semibold text-decoration-none gc-link">1900 1234</a>
+                        <div class="text-secondary small">Miễn phí cước nội mạng</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm gc-hover">
+                    <div class="card-body text-center">
+                        <span class="gc-icon"><i class="ti ti-mail"></i></span>
+                        <h6 class="mt-3 mb-1">Email</h6>
+                        <a href="mailto:lienhe@example.vn"
+                           class="fw-semibold text-decoration-none gc-link">lienhe@example.vn</a>
+                        <div class="text-secondary small">Phản hồi trong 24 giờ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm gc-hover">
+                    <div class="card-body text-center">
+                        <span class="gc-icon"><i class="ti ti-clock"></i></span>
+                        <h6 class="mt-3 mb-1">Giờ mở cửa</h6>
+                        <div class="fw-semibold">05:30 – 22:00</div>
+                        <div class="text-secondary small">Tất cả các ngày trong tuần</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm gc-hover">
+                    <div class="card-body text-center">
+                        <span class="gc-icon"><i class="ti ti-building-skyscraper"></i></span>
+                        <h6 class="mt-3 mb-1">Trụ sở chính</h6>
+                        <div class="fw-semibold">123 Nguyễn Văn Linh</div>
+                        <div class="text-secondary small">Q. Hải Châu, Đà Nẵng</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORM + CHI NHÁNH -->
+    <section class="container py-5">
+        <div class="row g-4">
+
+            <!-- Form -->
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-1">Gửi tin nhắn cho chúng tôi</h4>
+                        <p class="text-secondary">Các trường có dấu <span class="text-danger">*</span> là bắt buộc.</p>
+
+                        <div id="gcAlert" class="alert alert-success d-none" role="alert">
+                            <i class="ti ti-circle-check me-1"></i> Cảm ơn bạn! Chúng tôi đã nhận được thông tin và sẽ
+                            liên hệ sớm.
+                        </div>
+
+                        <form id="gcForm" class="needs-validation" novalidate>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="gcName" class="form-label">Họ và tên <span
+                                        class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="gcName" required minlength="2"
+                                               placeholder="Nguyễn Văn A">
+                                        <div class="invalid-feedback">Vui lòng nhập họ tên.</div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label for="gcPhone" class="form-label">Số điện thoại <span
+                                            class="text-danger">*</span></label>
+                                            <input type="tel" class="form-control" id="gcPhone" required
+                                                   pattern="^(0|\+84)[0-9]{9}$" placeholder="09xx xxx xxx">
+                                            <div class="invalid-feedback">Số điện thoại chưa hợp lệ.</div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="gcEmail" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="gcEmail"
+                                                   placeholder="email@example.com">
+                                            <div class="invalid-feedback">Email chưa hợp lệ.</div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="gcBranch" class="form-label">Chi nhánh quan tâm</label>
+                                            <select class="form-select" id="gcBranch">
+                                                <option value="">Chưa chọn</option>
+                                                <optgroup label="Miền Trung">
+                                                    <option>Đà Nẵng</option>
+                                                    <option>Huế</option>
+                                                    <option>Quy Nhơn</option>
+                                                    <option>Nha Trang</option>
+                                                    <option>Đà Lạt</option>
+                                                </optgroup>
+                                                <optgroup label="Miền Nam">
+                                                    <option>TP. Hồ Chí Minh</option>
+                                                    <option>Biên Hòa</option>
+                                                    <option>Vũng Tàu</option>
+                                                    <option>Cần Thơ</option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="gcTopic" class="form-label">Nội dung cần hỗ trợ <span
+                                                class="text-danger">*</span></label>
+                                                <select class="form-select" id="gcTopic" required>
+                                                    <option value="">Chọn nội dung</option>
+                                                    <option>Tư vấn gói tập</option>
+                                                    <option>Đăng ký tập thử miễn phí</option>
+                                                    <option>Hợp tác / Nhượng quyền</option>
+                                                    <option>Góp ý, khiếu nại</option>
+                                                    <option>Khác</option>
+                                                </select>
+                                                <div class="invalid-feedback">Vui lòng chọn nội dung.</div>
+                                            </div>
+                                            <div class="col-12">
+                                                <label for="gcMsg" class="form-label">Lời nhắn <span
+                                                    class="text-danger">*</span></label>
+                                                    <textarea class="form-control" id="gcMsg" rows="4" required minlength="10"
+                                                              maxlength="1000" placeholder="Bạn muốn chúng tôi hỗ trợ điều gì?"></textarea>
+                                                    <div class="invalid-feedback">Vui lòng nhập ít nhất 10 ký tự.</div>
+                                                </div>
+                                                <div class="col-12 d-grid d-md-block">
+                                                    <button type="submit" class="btn gc-btn btn-lg px-4"><i class="ti ti-send me-1"></i>
+                                                        Gửi liên hệ</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chi nhánh -->
+                                <div class="col-12 col-lg-5">
+                                    <div class="card border-0 shadow-sm h-100">
+                                        <div class="card-body p-4">
+                                            <h4 class="fw-bold mb-3">Hệ thống chi nhánh</h4>
+
+                                            <ul class="nav nav-pills gc-pills mb-3" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#gcTrung"
+                                                            type="button" role="tab">Miền Trung</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" data-bs-toggle="pill" data-bs-target="#gcNam" type="button"
+                                                            role="tab">Miền Nam</button>
+                                                </li>
+                                            </ul>
+
+                                            <div class="tab-content">
+                                                <div class="tab-pane fade show active" id="gcTrung" role="tabpanel">
+                                                    <div class="gc-branch">
+                                                        <div class="gc-b-name">Đà Nẵng – Hải Châu</div>
+                                                        <div class="text-secondary small">123 Nguyễn Văn Linh, Hải Châu, Đà Nẵng</div>
+                                                        <a class="gc-link small" target="_blank" rel="noopener"
+                                                           href="https://www.google.com/maps/search/?api=1&query=123+Nguyen+Van+Linh+Da+Nang"><i
+                                                            class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                        </div>
+                                                        <div class="gc-branch">
+                                                            <div class="gc-b-name">Huế – Vĩnh Ninh</div>
+                                                            <div class="text-secondary small">45 Lê Lợi, TP. Huế</div>
+                                                            <a class="gc-link small" target="_blank" rel="noopener"
+                                                               href="https://www.google.com/maps/search/?api=1&query=45+Le+Loi+Hue"><i
+                                                                class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                            </div>
+                                                            <div class="gc-branch">
+                                                                <div class="gc-b-name">Nha Trang – Lộc Thọ</div>
+                                                                <div class="text-secondary small">88 Trần Phú, Nha Trang, Khánh Hòa</div>
+                                                                <a class="gc-link small" target="_blank" rel="noopener"
+                                                                   href="https://www.google.com/maps/search/?api=1&query=88+Tran+Phu+Nha+Trang"><i
+                                                                    class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="tab-pane fade" id="gcNam" role="tabpanel">
+                                                                <div class="gc-branch">
+                                                                    <div class="gc-b-name">TP.HCM – Quận 1</div>
+                                                                    <div class="text-secondary small">12 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</div>
+                                                                    <a class="gc-link small" target="_blank" rel="noopener"
+                                                                       href="https://www.google.com/maps/search/?api=1&query=12+Nguyen+Hue+Ho+Chi+Minh"><i
+                                                                        class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                                    </div>
+                                                                    <div class="gc-branch">
+                                                                        <div class="gc-b-name">TP.HCM – Thủ Đức</div>
+                                                                        <div class="text-secondary small">200 Võ Văn Ngân, TP. Thủ Đức</div>
+                                                                        <a class="gc-link small" target="_blank" rel="noopener"
+                                                                           href="https://www.google.com/maps/search/?api=1&query=200+Vo+Van+Ngan+Thu+Duc"><i
+                                                                            class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                                        </div>
+                                                                        <div class="gc-branch">
+                                                                            <div class="gc-b-name">Cần Thơ – Ninh Kiều</div>
+                                                                            <div class="text-secondary small">56 Hòa Bình, Ninh Kiều, Cần Thơ</div>
+                                                                            <a class="gc-link small" target="_blank" rel="noopener"
+                                                                               href="https://www.google.com/maps/search/?api=1&query=56+Hoa+Binh+Can+Tho"><i
+                                                                                class="ti ti-map-pin"></i> Chỉ đường</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <p class="text-secondary small mt-3 mb-0">Danh sách đầy đủ 22 chi nhánh có thể xem khi liên hệ
+                                                                        hotline.</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
+                                                    <!-- FAQ -->
+                                                    <section class="gc-faq py-5">
+                                                        <div class="container" style="max-width:820px">
+                                                            <div class="text-center mb-4">
+                                                                <h2 class="fw-bold">Câu hỏi thường gặp</h2>
+                                                            </div>
+                                                            <div class="accordion gc-acc" id="gcFaq">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="accordion-header">
+                                                                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                                                data-bs-target="#gcF1">Tôi có thể tập thử trước khi đăng ký không?</button>
+                                                                    </h2>
+                                                                    <div id="gcF1" class="accordion-collapse collapse show" data-bs-parent="#gcFaq">
+                                                                        <div class="accordion-body text-secondary">Có. Bạn có thể đăng ký tập thử miễn phí tại bất kỳ
+                                                                            chi nhánh nào, chỉ cần để lại thông tin ở biểu mẫu phía trên.</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="accordion-item">
+                                                                        <h2 class="accordion-header">
+                                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                                                    data-bs-target="#gcF2">Thẻ hội viên có dùng được ở nhiều chi nhánh không?</button>
+                                                                        </h2>
+                                                                        <div id="gcF2" class="accordion-collapse collapse" data-bs-parent="#gcFaq">
+                                                                            <div class="accordion-body text-secondary">Có. Một thẻ hội viên sử dụng được trên toàn hệ thống
+                                                                                theo điều kiện của từng gói.</div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="accordion-item">
+                                                                            <h2 class="accordion-header">
+                                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                                                        data-bs-target="#gcF3">Làm sao để bảo lưu hoặc chuyển nhượng gói tập?</button>
+                                                                            </h2>
+                                                                            <div id="gcF3" class="accordion-collapse collapse" data-bs-parent="#gcFaq">
+                                                                                <div class="accordion-body text-secondary">Vui lòng liên hệ lễ tân chi nhánh hoặc hotline để
+                                                                                    được hướng dẫn thủ tục bảo lưu, chuyển nhượng.</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </section>
+
+                                                                <!-- CTA -->
+                                                                <section class="container py-5">
+                                                                    <div class="gc-cta text-center text-white rounded-4 p-4 p-md-5">
+                                                                        <h3 class="fw-bold mb-2">Muốn trao đổi trực tiếp?</h3>
+                                                                        <p class="mb-4">Gọi hotline để được tư vấn nhanh nhất.</p>
+                                                                        <a href="tel:19001234" class="btn btn-light btn-lg px-4"><i class="ti ti-phone me-1"></i> 1900 1234</a>
+                                                                    </div>
+                                                                </section>
+  
+                                                                <!-- 7. FOOTER -->
+                                                                <footer class="site-footer pt-5 pb-4 section-white">
+                                                                    <div class="container reveal fade-up">
+                                                                        <div class="row g-4">
+                                                                            <div class="col-lg-4">
+                                                                                <h5 class="fw-bold text-primary-brand">GYM FIT</h5>
+                                                                                <p class="text-muted">Nơi bắt đầu hành trình sống khỏe mỗi ngày.</p>
+                                                                                <div class="d-flex gap-2"><a href="#" class="social" aria-label="Facebook"><i
+                                                                                    class="bi bi-facebook"></i></a><a href="#" class="social" aria-label="Instagram"><i
+                                                                                    class="bi bi-instagram"></i></a><a href="#" class="social" aria-label="YouTube"><i
+                                                                                    class="bi bi-youtube"></i></a><a href="#" class="social" aria-label="TikTok"><i
+                                                                                    class="bi bi-tiktok"></i></a></div>
+                                                                                </div>
+                                                                                <div class="col-6 col-lg-4">
+                                                                                    <h6 class="fw-bold">Liên kết</h6>
+                                                                                    <ul class="list-unstyled">
+                                                                                        <li><a href="#" class="f-link">Trang chủ</a></li>
+                                                                                        <li><a href="#" class="f-link">Lịch lớp học</a></li>
+                                                                                        <li><a href="#" class="f-link">Gói thành viên</a></li>
+                                                                                        <li><a href="#" class="f-link">Liên hệ</a></li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                                <div class="col-6 col-lg-4">
+                                                                                    <h6 class="fw-bold">Liên hệ</h6>
+                                                                                    <ul class="list-unstyled text-muted">
+                                                                                        <li><i class="bi bi-geo-alt me-2"></i>123 Nguyễn Huệ, Q.1, TP.HCM</li>
+                                                                                        <li><i class="bi bi-telephone me-2"></i>0900 000 000</li>
+                                                                                        <li><i class="bi bi-envelope me-2"></i>hello@gymfit.vn</li>
+                                                                                    </ul>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr>
+                                                                            <p class="text-center text-muted small mb-0">© 2026 GYM FIT. All rights reserved.</p>
+                                                                        </div>
+                                                                    </footer>
+                                                                </div>
+
+                                                                <script>
+                                                                    (function () {
+                                                                        var form = document.getElementById('gcForm');
+                                                                        var alertBox = document.getElementById('gcAlert');
+                                                                        if (!form) return;
+
+                                                                        form.addEventListener('submit', function (e) {
+                                                                            e.preventDefault();
+                                                                            if (!form.checkValidity()) {
+                                                                                form.classList.add('was-validated');
+                                                                                return;
+                                                                            }
+
+                                                                            var data = {
+                                                                                name: form.gcName.value.trim(),
+                                                                                phone: form.gcPhone.value.trim(),
+                                                                                email: form.gcEmail.value.trim(),
+                                                                                branch: form.gcBranch.value,
+                                                                                topic: form.gcTopic.value,
+                                                                                message: form.gcMsg.value.trim()
+                                                                            };
+
+                                                                            // TODO: gọi API của bạn tại đây, ví dụ:
+                                                                            // fetch('/api/contact', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data) })
+                                                                            //   .then(...)
+                                                                            console.log('Contact payload', data);
+
+                                                                            alertBox.classList.remove('d-none');
+                                                                            form.reset();
+                                                                            form.classList.remove('was-validated');
+                                                                            alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                                        });
+                                                                    })();
+                                                                </script>
