@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Đăng ký gói tập";
+}
+
+<style>
+    /* 1. Màu thương hiệu cho các class Bootstrap (xóa khối này nếu theme đã có màu cam) */
+    #gymPackages .text-primary {
+        color: var(--bs-primary) !important;
+    }
+
+    #gymPackages .border-primary {
+        border-color: var(--bs-primary) !important;
+    }
+
+    #gymPackages .btn-primary {
+        background: var(--bs-primary);
+        border-color: var(--bs-primary);
+        color: #fff;
+    }
+
+    #gymPackages .btn-primary:hover {
+        background: var(--bs-primary-hover);
+        border-color: var(--bs-primary-hover);
+    }
+
+    #gymPackages .btn-outline-primary {
+        color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+
+    #gymPackages .btn-outline-primary:hover {
+        background: var(--bs-primary);
+        color: #fff;
+    }
+
+    /* 2. Card nổi lên khi rê chuột (Bootstrap không có sẵn) */
+    @@media (hover: hover) {
+        #gymPackages .gp-card {
+            transition: transform .25s, box-shadow .25s;
+        }
+
+        #gymPackages .gp-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .15) !important;
+        }
+    }
+</style>
+
+<div class="home-page" id="gymPackages">
+    <div class="container-xl py-4">
+
+        <div class="mb-4">
+            <h1 class="h2 fw-bold mb-1">Đăng ký gói tập</h1>
+            <p class="text-secondary mb-0">Chọn gói phù hợp với mục tiêu của bạn</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Danh sách gói: laptop 4 cột, khi mở chi tiết thì còn 2 cột nằm bên trái -->
+            <div class="col-12" id="gpListCol">
+                <div class="row g-3 row-cols-1 row-cols-lg-4" id="gpList">
+                    <div class="col-12 text-center text-secondary py-5">Đang tải gói tập...</div>
+                </div>
+            </div>
+
+            <!-- Chi tiết gói (chỉ dùng trên laptop; trên điện thoại chi tiết nằm ngay dưới item) -->
+            <div class="col-lg-6 d-none" id="gpSide">
+                <div class="card border-0 shadow sticky-top overflow-y-auto" id="gpPanel"
+                     style="top:1rem; max-height:calc(80vh - 2rem)"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/dist/js/RegisterMembership.js" asp-append-version="true"></script>
+}
