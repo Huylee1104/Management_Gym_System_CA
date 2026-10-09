@@ -24,6 +24,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<SystemFunctionAction> SystemFunctionActions { get; set; }
     public DbSet<MembershipAuditLog> MembershipAuditLogs { get; set; }
+    public DbSet<MemberAdvise> MemberAdvises { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -142,6 +143,20 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.MemberId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<MemberAdvise>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.FullName)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.PhoneNumber)
+                .HasMaxLength(20);
+
+            entity.Property(x => x.Email)
+                .HasMaxLength(100);
         });
 
     }
