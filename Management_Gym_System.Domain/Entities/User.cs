@@ -42,7 +42,7 @@ public class User
     public ICollection<FinancialTransaction> StaffTransactions { get; set; } = new List<FinancialTransaction>();
     public ICollection<ImportReceipt> ImportReceipts { get; set; } = new List<ImportReceipt>();
     public ICollection<ExportReceipt> ExportReceipts { get; set; } = new List<ExportReceipt>();
-    
+    public ICollection<WorkoutNoteDetail> WorkoutNoteDetails { get; set; } = new List<WorkoutNoteDetail>();
     [NotMapped]
     public bool IsManager
     {

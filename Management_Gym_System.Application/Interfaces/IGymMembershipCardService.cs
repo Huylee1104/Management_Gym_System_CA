@@ -9,4 +9,6 @@ public interface IGymMembershipCardService
     Task<ServiceResult> UpdateCardAsync(long id, string rfidUid);
     Task<ServiceResult> LockUnlockCardAsync(long id);
     Task<ServiceResult> DeleteCardAsync(long id);
+    Task<DtoInfoAcountMember> GetInfoAcountMember();
+    Task<DtoWorkoutSchedule> getCalunder();
 }

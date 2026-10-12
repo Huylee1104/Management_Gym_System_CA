@@ -35,6 +35,7 @@ builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericService<>));
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddMemoryCache();
+builder.Services.AddScoped<CurrentUserHelper>();
 
 ExcelPackage.License.SetNonCommercialPersonal("Le Quoc Huy");
 QuestPDF.Settings.License = LicenseType.Community;

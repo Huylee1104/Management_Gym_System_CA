@@ -31,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IMembershipAuditLogRepository, MembershipAuditLogRepository>();
         services.AddScoped<IMemberAdviseRepository, MemberAdviseRepository>();
+        services.AddScoped<IWorkoutScheduleRepository, WorkoutScheduleRepository>();
 
         services.AddScoped<IInventoryImportQueryService, InventoryImportQueryService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

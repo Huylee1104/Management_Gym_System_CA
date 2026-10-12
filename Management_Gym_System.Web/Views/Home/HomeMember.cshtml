@@ -1,5 +1,111 @@
 @{
     ViewData["Title"] = "Trang chủ";
+    DtoInfoAcountMember? card = ViewBag.AcountMember;
 }
+<link href="/dist/css/Custome/HomeMember.css" rel="stylesheet" />
 
-<H1 class="h3 mb-4 text-gray-800">TRANG QUẢN LÝ GÓI TẬP</H1>
+<div class="home-page member-schedule py-4">
+    <div class="container">
+        <div class="row g-4">
+
+            @* ===== BÊN TRÁI: thông tin hội viên (truyền từ Model) ===== *@
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+
+                        <div class="mb-4">
+                            <div class="small text-muted">Hội viên</div>
+                            <div class="fs-4 fw-semibold">@card.FullName</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="small text-muted">Gói tập</div>
+                            <div class="fs-5">@card.Packback</div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="small text-muted">Huấn luyện viên</div>
+                            <div class="fs-5">@card.Trainer</div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <div class="small text-muted">Ngày bắt đầu</div>
+                                <div class="fs-5">@card.StartDate?.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="small text-muted">Ngày hết hạn</div>
+                                <div class="fs-5">@card.EndDate?.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+
+                        <div class="gym-message p-3 rounded">
+                            <div class="small text-muted mb-1">Thông báo từ phòng gym</div>
+                            <div class="text-break">@card.Notify</div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            @* ===== BÊN PHẢI: lịch được JS render ===== *@
+            <div class="col-lg-8">
+                <div class="card overflow-hidden">
+
+                    <div id="memberCalendar">
+                        <div class="calendar-header row g-2 align-items-center m-0 p-2 p-md-3">
+                            <div class="col-auto">
+                                <button type="button" id="btnPrevMonth" class="btn btn-light rounded-circle calendar-nav-btn" aria-label="Tháng trước">
+                                    <i class="ti ti-chevron-left"></i>
+                                </button>
+                            </div>
+                            <div class="col">
+                                <h1 id="calendarTitle" class="mb-0 text-center"></h1>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" id="btnNextMonth" class="btn btn-light rounded-circle calendar-nav-btn" aria-label="Tháng sau">
+                                    <i class="ti ti-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-auto d-flex justify-content-center gap-2">
+                                <select id="selectMonth" class="form-select form-select-sm w-auto" aria-label="Chọn tháng"></select>
+                                <select id="selectYear" class="form-select form-select-sm w-auto" aria-label="Chọn năm"></select>
+                            </div>
+                        </div>
+
+                        @* Tên các thứ trong tuần *@
+                        <div class="calendar-grid border-bottom text-center small text-muted fw-semibold">
+                            @* Mobile hiện tên viết tắt (T2, T3, ...), từ sm trở lên hiện tên đầy đủ *@
+                            <div class="py-2"><span class="d-sm-none">T2</span><span class="d-none d-sm-inline">Thứ hai</span></div>
+                            <div class="py-2"><span class="d-sm-none">T3</span><span class="d-none d-sm-inline">Thứ ba</span></div>
+                            <div class="py-2"><span class="d-sm-none">T4</span><span class="d-none d-sm-inline">Thứ tư</span></div>
+                            <div class="py-2"><span class="d-sm-none">T5</span><span class="d-none d-sm-inline">Thứ năm</span></div>
+                            <div class="py-2"><span class="d-sm-none">T6</span><span class="d-none d-sm-inline">Thứ sáu</span></div>
+                            <div class="py-2"><span class="d-sm-none">T7</span><span class="d-none d-sm-inline">Thứ bảy</span></div>
+                            <div class="py-2 text-gym-danger"><span class="d-sm-none">CN</span><span class="d-none d-sm-inline">Chủ nhật</span></div>
+                        </div>
+
+                        @* Các ngày trong tháng: JS render vào đây *@
+                        <div id="calendarDays" class="calendar-grid"></div>
+
+                        @* Chú thích màu *@
+                        <div class="d-flex flex-wrap gap-3 p-3 small text-muted">
+                            <span><span class="legend-box bg-gym-active border"></span> Thời gian của gói tập</span>
+                            <span><span class="legend-box bg-gym-paused border"></span> Thời gian tạm dừng</span>
+                            <span><span class="legend-box note-chip-member"></span> Ghi chú hội viên (HV)</span>
+                            <span><span class="legend-box note-chip-trainer"></span> Ghi chú huấn luyện viên (HLV)</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    </script>
+    <script src="~/dist/js/HomeMember.js" asp-append-version="true" defer></script>
+}

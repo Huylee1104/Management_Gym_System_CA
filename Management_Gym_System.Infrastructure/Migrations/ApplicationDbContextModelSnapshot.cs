@@ -627,6 +627,84 @@ namespace Management_Gym_System.Migrations
                     b.ToTable("UserRoles");
                 });
 
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.WorkoutNoteDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("MemberNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("MemberNoteDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("TrainerNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("TrainerNoteDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long?>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WorkoutScheduleId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("WorkoutScheduleId");
+
+                    b.ToTable("WorkoutNoteDetails");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.WorkoutSchedule", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("CardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("CheckinTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("PauseDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("ResumeDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WorkoutSchedules");
+                });
+
             modelBuilder.Entity("MemberAdvise", b =>
                 {
                     b.Property<long>("Id")
@@ -885,6 +963,41 @@ namespace Management_Gym_System.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.WorkoutNoteDetail", b =>
+                {
+                    b.HasOne("Management_Gym_System.Domain.Entities.User", null)
+                        .WithMany("WorkoutNoteDetails")
+                        .HasForeignKey("UserID");
+
+                    b.HasOne("Management_Gym_System.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Management_Gym_System.Domain.Entities.WorkoutSchedule", null)
+                        .WithMany("WorkoutNoteDetails")
+                        .HasForeignKey("WorkoutScheduleId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.WorkoutSchedule", b =>
+                {
+                    b.HasOne("Management_Gym_System.Domain.Entities.GymMembershipCard", "Card")
+                        .WithMany()
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Management_Gym_System.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Card");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MembershipAuditLog", b =>
                 {
                     b.HasOne("Management_Gym_System.Domain.Entities.User", "Member")
@@ -963,6 +1076,8 @@ namespace Management_Gym_System.Migrations
                     b.Navigation("Memberships");
 
                     b.Navigation("StaffTransactions");
+
+                    b.Navigation("WorkoutNoteDetails");
                 });
 
             modelBuilder.Entity("Management_Gym_System.Domain.Entities.UserRole", b =>
@@ -970,6 +1085,11 @@ namespace Management_Gym_System.Migrations
                     b.Navigation("RolePermissions");
 
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.WorkoutSchedule", b =>
+                {
+                    b.Navigation("WorkoutNoteDetails");
                 });
 #pragma warning restore 612, 618
         }

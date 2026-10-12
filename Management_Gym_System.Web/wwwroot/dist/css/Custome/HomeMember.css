@@ -1,0 +1,113 @@
+.member-schedule {
+    --primary-soft: var(--tblr-primary-lt);
+    --paused-bg: var(--tblr-bg-surface-secondary);
+}
+
+.member-schedule .gym-message {
+    background: var(--primary-soft);
+    border-left: 4px solid var(--tblr-primary);
+}
+
+.member-schedule .text-gym-danger {
+    color: var(--tblr-danger);
+}
+
+.member-schedule .calendar-header {
+    background: var(--tblr-primary);
+    color: var(--tblr-primary-fg);
+}
+
+.member-schedule .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.member-schedule .calendar-cell {
+    min-height: 100px;
+    overflow: hidden;
+}
+
+.member-schedule .calendar-day-number {
+    font-size: 1rem;
+}
+
+.member-schedule .calendar-label {
+    font-size: 0.75rem;
+}
+
+.member-schedule .bg-gym-active {
+    background: var(--primary-soft);
+}
+
+.member-schedule .bg-gym-paused {
+    background: var(--paused-bg);
+    color: var(--tblr-gray-500);
+}
+
+.member-schedule .calendar-today {
+    outline: 2px solid var(--tblr-primary);
+    outline-offset: -2px;
+}
+
+.member-schedule .note-chip {
+    display: block;
+    height: auto;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    cursor: pointer;
+}
+
+.member-schedule .note-chip-member {
+    background: var(--tblr-primary);
+    color: var(--tblr-primary-fg);
+}
+
+.member-schedule .note-chip-trainer {
+    background: var(--tblr-secondary);
+    color: var(--tblr-secondary-fg);
+}
+
+.member-schedule .legend-box {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--tblr-border-color);
+    border-radius: 3px;
+    vertical-align: middle;
+}
+
+.note-popover-content {
+    white-space: pre-line;
+}
+
+@media (max-width: 575.98px) {
+    .member-schedule .calendar-cell {
+        min-height: 68px;
+        padding: 2px !important;
+    }
+
+    .member-schedule .calendar-day-number {
+        font-size: 0.875rem;
+    }
+
+    .member-schedule .calendar-label {
+        font-size: 0.625rem;
+    }
+
+    .member-schedule .note-chip {
+        font-size: 0.625rem;
+        padding: 2px 3px;
+    }
+}
+
+.member-schedule .calendar-header .ts-wrapper {
+    width: auto;
+    min-width: 8rem;
+}
+
+.member-schedule .calendar-header .ts-control,
+.member-schedule .calendar-header .ts-control .item {
+    color: var(--tblr-body-color);
+}

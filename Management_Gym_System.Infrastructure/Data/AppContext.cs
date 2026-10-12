@@ -25,7 +25,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<SystemFunctionAction> SystemFunctionActions { get; set; }
     public DbSet<MembershipAuditLog> MembershipAuditLogs { get; set; }
     public DbSet<MemberAdvise> MemberAdvises { get; set; }
-
+    public DbSet<WorkoutSchedule> WorkoutSchedules { get; set; }
+    public DbSet<WorkoutNoteDetail> WorkoutNoteDetails { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -159,5 +160,29 @@ public class ApplicationDbContext : DbContext
                 .HasMaxLength(100);
         });
 
+        modelBuilder.Entity<WorkoutSchedule>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.Card)
+                .WithMany()
+                .HasForeignKey(x => x.CardId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WorkoutNoteDetail>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
     }
 }

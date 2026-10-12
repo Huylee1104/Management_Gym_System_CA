@@ -5,6 +5,7 @@ namespace Management_Gym_System.Domain.Interfaces;
 public interface ICheckinRepository
 {
     Task<List<Checkin>> GetCheckinsAsync(DateTime? date);
+    Task<List<DateTime?>> GetCheckinsWithIdAsync(long? CardId);
     Task<GymMembershipCard?> GetGymMembershipCardAsync(string RFID_UID);
     Task<GymMembershipCard?> GetGymMembershipCardIdAsync(long cardId);
     Task<Checkin> GetCheckinLastDayAsync();

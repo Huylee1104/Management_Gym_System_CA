@@ -8,6 +8,8 @@ public interface IGymMembershipCardRepository
     Task<List<GymMembershipCard>> GetFilteredCardsAsync(string? filter, string? keyword);
     Task AddRangeAsync(IEnumerable<GymMembershipCard> cards);
     Task<bool> IsRfidExistsAsync(string rfidUid, long excludeId);
+    Task<GymMembershipCard> getInfoCardMember(long UserId);
+    Task<GymMembershipCard> getCalunder(long UserId);
     Task AddAsync(GymMembershipCard card);
     Task Update(GymMembershipCard card);
     Task Delete(GymMembershipCard card);

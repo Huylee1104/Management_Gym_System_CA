@@ -26,20 +26,20 @@ public class GymMembershipCardRepository : IGymMembershipCardRepository
             .Include(x => x.User).AsQueryable();
 
         switch (filter)
-            {
-                case "unregistered":
-                    query = query.Where(c => string.IsNullOrEmpty(c.RFID_UID));
-                    break;
-                case "active":
-                    query = query.Where(c => c.Status == true);
-                    break;
-                case "inactive":
-                    query = query.Where(c => c.Status == true && c.UserID == null);
-                    break;
-                case "all":
-                default:
-                    break;
-            }
+        {
+            case "unregistered":
+                query = query.Where(c => string.IsNullOrEmpty(c.RFID_UID));
+                break;
+            case "active":
+                query = query.Where(c => c.Status == true);
+                break;
+            case "inactive":
+                query = query.Where(c => c.Status == true && c.UserID == null);
+                break;
+            case "all":
+            default:
+                break;
+        }
 
         if (!string.IsNullOrWhiteSpace(keyword))
         {
@@ -82,5 +82,24 @@ public class GymMembershipCardRepository : IGymMembershipCardRepository
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<GymMembershipCard> getInfoCardMember(long UserId)
+    {
+        var card = await _context.GymMembershipCards
+            .Include(u => u.User)
+            .Include(p => p.Product)
+            .FirstOrDefaultAsync();
+        return card ?? new GymMembershipCard();
+    }
+
+    public async Task<GymMembershipCard> getCalunder(long UserId)
+    {
+        var card = await _context.GymMembershipCards
+                .Include(u => u.User!)
+                .ThenInclude(x => x.WorkoutNoteDetails)
+                .FirstOrDefaultAsync();
+
+        return card ?? new GymMembershipCard();
     }
 }

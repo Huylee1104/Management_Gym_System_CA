@@ -48,7 +48,7 @@ public class CheckinRepository : ICheckinRepository
     {
         var card = await _context.GymMembershipCards
                 .Include(c => c.User)
-                .Include(p =>p.Product)
+                .Include(p => p.Product)
                 .FirstOrDefaultAsync(c => c.ID == cardId);
 
         return card;
@@ -102,5 +102,18 @@ public class CheckinRepository : ICheckinRepository
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<List<DateTime?>> GetCheckinsWithIdAsync(long? cardId)
+    {
+        if (!cardId.HasValue)
+        {
+            return new List<DateTime?>();
+        }
+
+        return await _context.Checkins
+            .Where(x => x.CardID == cardId)
+            .Select(x => x.CheckinTime)
+            .ToListAsync();
     }
 }

@@ -332,25 +332,25 @@ function buildReviewItem(review) {
 
 // Khung nhập đánh giá: chọn sao + ô nhập + nút gửi
 function buildChatBox() {
-    var starButtons = '';
-    for (var n = 1; n <= 5; n++) {
-        starButtons += `<button type="button"
-                                class="btn btn-link p-0 fs-3 lh-1 text-decoration-none text-secondary"
-                                data-action="star" data-value="${n}">★</button>`;
-    }
-    return `
-        <div class="bg-light rounded-3 p-3" data-chat data-rating="0">
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="small text-secondary me-1">Chọn số sao:</span>
-                ${starButtons}
-            </div>
-            <div class="input-group gap-2">
-                <input type="text" class="form-control" maxlength="300" placeholder="Chia sẻ cảm nhận của bạn...">
-                <button type="button" class="btn btn-outline-primary" data-action="send" aria-label="Gửi">
-                    <i class="ti ti-send"></i>
-                </button>
-            </div>
-        </div>`;
+    // var starButtons = '';
+    // for (var n = 1; n <= 5; n++) {
+    //     starButtons += `<button type="button"
+    //                             class="btn btn-link p-0 fs-3 lh-1 text-decoration-none text-secondary"
+    //                             data-action="star" data-value="${n}">★</button>`;
+    // }
+    // return `
+    //     <div class="bg-light rounded-3 p-3" data-chat data-rating="0">
+    //         <div class="d-flex align-items-center gap-2 mb-2">
+    //             <span class="small text-secondary me-1">Chọn số sao:</span>
+    //             ${starButtons}
+    //         </div>
+    //         <div class="input-group gap-2">
+    //             <input type="text" class="form-control" maxlength="300" placeholder="Chia sẻ cảm nhận của bạn...">
+    //             <button type="button" class="btn btn-outline-primary" data-action="send" aria-label="Gửi">
+    //                 <i class="ti ti-send"></i>
+    //             </button>
+    //         </div>
+    //     </div>`;
 }
 
 // Dòng "★★★★★ 5.0 (5)" cạnh tiêu đề Đánh giá
@@ -422,7 +422,7 @@ function buildDetail(product, withImage) {
                 <h4 class="h5 fw-bold mb-0">Đánh giá từ hội viên</h4>
                 ${buildReviewSummary(reviews)}
             </div>
-            ${buildChatBox()}
+            ${buildChatBox() || 'Đăng ký gói tập để đánh giá'}
             <ul class="list-group list-group-flush mt-2">${reviewsHtml}</ul>
         </div>`;
 }

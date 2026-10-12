@@ -5,10 +5,15 @@ using Management_Gym_System.Domain.Interfaces;
 public class GymMembershipCardService : IGymMembershipCardService
 {
     private readonly IGymMembershipCardRepository _cardRepo;
+    private readonly CurrentUserHelper _currentUser;
+    private readonly ICheckinRepository _checkin;
 
-    public GymMembershipCardService(IGymMembershipCardRepository cardRepo)
+    public GymMembershipCardService(IGymMembershipCardRepository cardRepo, CurrentUserHelper currentUser,
+            ICheckinRepository checkin)
     {
         _cardRepo = cardRepo;
+        _currentUser = currentUser;
+        _checkin = checkin;
     }
 
     public async Task<List<GymMembershipCardDto>> GetFilteredCardsAsync(string? filter, string? keyword)
@@ -33,28 +38,28 @@ public class GymMembershipCardService : IGymMembershipCardService
         try
         {
             if (quantity <= 0)
-        {
-            return ServiceResult.Failure("Số lượng thẻ phải lớn hơn 0!");
-        }
-
-        var newCards = new List<GymMembershipCard>();
-        for (int i = 0; i < quantity; i++)
-        {
-            newCards.Add(new GymMembershipCard
             {
-                RFID_UID = null,
-                UserID = null,
-                ProductID = null,
-                StartDate = null,
-                EndDate = null,
-                PauseDate = null,
-                Status = false
-            });
-        }
+                return ServiceResult.Failure("Số lượng thẻ phải lớn hơn 0!");
+            }
 
-        await _cardRepo.AddRangeAsync(newCards);
-        await _cardRepo.SaveChangesAsync();
-        return ServiceResult.Success("Tạo thẻ thành công!");
+            var newCards = new List<GymMembershipCard>();
+            for (int i = 0; i < quantity; i++)
+            {
+                newCards.Add(new GymMembershipCard
+                {
+                    RFID_UID = null,
+                    UserID = null,
+                    ProductID = null,
+                    StartDate = null,
+                    EndDate = null,
+                    PauseDate = null,
+                    Status = false
+                });
+            }
+
+            await _cardRepo.AddRangeAsync(newCards);
+            await _cardRepo.SaveChangesAsync();
+            return ServiceResult.Success("Tạo thẻ thành công!");
         }
         catch (Exception ex)
         {
@@ -131,5 +136,51 @@ public class GymMembershipCardService : IGymMembershipCardService
         {
             return ServiceResult.Failure($"Xóa thẻ thất bại: {ex.Message}");
         }
+    }
+
+    public async Task<DtoInfoAcountMember> GetInfoAcountMember()
+    {
+        long id = _currentUser.GetIdAccountLogin();
+        var card = await _cardRepo.getInfoCardMember(id);
+        return new DtoInfoAcountMember
+        {
+            FullName = card?.User?.FullName ?? "",
+            Packback = card?.Product?.ProductName ?? "",
+            StartDate = card?.StartDate ?? null,
+            EndDate = card?.EndDate ?? null,
+            Trainer = "",
+            Notify = "",
+        };
+    }
+
+    public async Task<DtoWorkoutSchedule> getCalunder()
+    {
+        long userId = _currentUser.GetIdAccountLogin();
+
+        var workout = await _cardRepo.getCalunder(userId);
+        var listCheckin = await _checkin.GetCheckinsWithIdAsync(workout.ID);
+        if (workout == null)
+        {
+            return new DtoWorkoutSchedule();
+        }
+
+        return new DtoWorkoutSchedule
+        {
+            StartDate = workout.StartDate,
+            EndDate = workout.EndDate,
+            PauseDate = workout.PauseDate,
+            ResumeDate = workout.ResumeDate,
+            CheckinTime = listCheckin,
+
+            WorkoutNoteDetails = workout.User?.WorkoutNoteDetails?
+                .Select(x => new DtoWorkoutNoteDetail
+                {
+                    MemberNote = x.MemberNote,
+                    MemberNoteDate = x.MemberNoteDate,
+                    TrainerNote = x.TrainerNote,
+                    TrainerNoteDate = x.TrainerNoteDate
+                })
+                .ToList() ?? new List<DtoWorkoutNoteDetail>()
+        };
     }
 }
