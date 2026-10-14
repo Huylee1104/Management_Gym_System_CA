@@ -740,7 +740,14 @@ namespace Management_Gym_System.Migrations
                     b.Property<long?>("ProductId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("StaffId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("StaffId");
 
                     b.ToTable("MemberAdvises");
                 });
@@ -996,6 +1003,21 @@ namespace Management_Gym_System.Migrations
                     b.Navigation("Card");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MemberAdvise", b =>
+                {
+                    b.HasOne("Management_Gym_System.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("Management_Gym_System.Domain.Entities.User", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffId");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("MembershipAuditLog", b =>

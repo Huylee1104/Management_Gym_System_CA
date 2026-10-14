@@ -1,94 +1,26 @@
-const staffApiUrl = '/User/listStaffs';
-const planApiUrl = '/Product/listProducts';
-var DESKTOP_MIN_WIDTH = 992;        
-var MAX_VISIBLE_DESC_LINES = 3;     
-var SCROLL_OFFSET = 80;             
 
+var API_URL = '/RegisterMembership/GetProducts';
+var DESKTOP_MIN_WIDTH = 992;
+var MAX_VISIBLE_DESC_LINES = 3;
+var SCROLL_OFFSET = 80;
 
 var $root = $('#gymPackages');
 var $list = $('#gpList'); 
 var $listCol = $('#gpListCol');
-var $side = $('#gpSide');  
-var $panel = $('#gpPanel');
+var $side = $('#gpSide');
+var $panel = $('#gpPanel'); 
 
-var productsById = {}; 
-var activeId = null; 
-var wasDesktop = isDesktop();  
+var productsById = {};
+var activeId = null;
+var wasDesktop = isDesktop();
+// Người dùng bật "giảm chuyển động" thì tắt toàn bộ animation của jQuery
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     $.fx.off = true;
 }
 
-function loadStaffs() {
-    LoadingData();
-    $.get(staffApiUrl, function (res) {
-        const staffs = res.filter(u =>
-            u.status == true &&
-            u.roleID !== null &&
-            u.userType !== 1
-        );
-
-        let options = `
-            <option value="">--Tất cả--</option>
-        `;
-
-        options += staffs.map(u =>
-            `<option value="${u.id}">${u.fullName}</option>`
-        ).join('');
-
-        $('#staffId').html(options);
-
-        tomSelectStaff = new TomSelect("#staffId", {
-            create: false
-        });
-        HidenLoadingData();
-    });
-}
-
-function loadPlans() {
-    $.get(planApiUrl, function (res) {
-
-        // chỉ lấy thoiHan != null
-        let filtered = res.filter(p => p.thoiHan != null);
-
-        let options = filtered.map(p => `
-                    <option 
-                        value="${p.id}" 
-                        data-thoihan="${p.thoiHan}">
-                        ${p.productName}
-                    </option>
-                `);
-
-        // Destroy trước khi re-init để tránh lỗi duplicate
-        if (tomSelectProduct) {
-            tomSelectProduct.destroy();
-            tomSelectProduct = null;
-        }
-        if (tomSelectFilter) {
-            tomSelectFilter.destroy();
-            tomSelectFilter = null;
-        }
-
-        $('#planId').html(options.join(''));
-        $('#selectFilter').html('<option value="">Tất cả</option>' + options.join(''));
-
-        tomSelectProduct = new TomSelect("#planId", {
-            create: false
-        });
-
-        tomSelectFilter = new TomSelect("#selectFilter", {
-            create: false
-        });
-    });
-}
-
-function initActionSelect() {
-    tomSelectAction = new TomSelect("#action", {
-        create: false,
-        allowEmptyOption: true,
-        placeholder: "Tất cả",
-        maxOptions: null
-    });
-}
+/* =================================================================
+   3. HÀM TIỆN ÍCH
+   ================================================================= */
 function isDesktop() {
     return $(window).width() >= DESKTOP_MIN_WIDTH;
 }
@@ -187,9 +119,7 @@ $(function () {
         rebuildAfterBreakpointChange();
     });
 
-    loadStaffs();
-    loadPlans();
-    initActionSelect();
+    loadProducts();
 });
 
 function escapeHtml(value) {
@@ -301,9 +231,6 @@ function parseReviews(reviewText) {
     return reviews;
 }
 
-/* =================================================================
-   4. TẠO HTML
-   ================================================================= */
 function buildDurationBadge(days) {
     if (!days) {
         return '';
@@ -492,10 +419,6 @@ function buildDetail(product, withImage) {
         </div>`;
 }
 
-/* =================================================================
-   5. BỐ CỤC & HIỆU ỨNG
-   ================================================================= */
-
 // Bật/tắt vùng collapse của Bootstrap ($box là jQuery object)
 function setCollapse($box, show) {
     var instance = bootstrap.Collapse.getOrCreateInstance($box[0], { toggle: false });
@@ -524,9 +447,7 @@ function showSidePanel(show) {
     }
 }
 
-// Đánh dấu gói đang mở:
-// - laptop: ẩn khỏi danh sách (vì đã "nhảy" sang bên phải)
-// - điện thoại: giữ lại và viền màu cam
+
 function markActiveCard() {
     $list.children('[data-id]').each(function () {
         var $col = $(this);
@@ -557,9 +478,7 @@ function fadeInPanel() {
     });
 }
 
-/* =================================================================
-   6. MỞ / ĐÓNG GÓI
-   ================================================================= */
+
 function openPackage(id) {
     id = String(id);
     var product = productsById[id];
@@ -670,6 +589,24 @@ function renderProducts(items) {
     });
 
     $list.html(html);
+}
+
+function loadProducts() {
+    LoadingData();
+    $.ajax({
+        url: API_URL,
+        type: 'POST',
+        dataType: 'json',
+        success: function (response) {
+            renderProducts(response);
+            HidenLoadingData();
+        },
+        error: function (xhr, status, error) {
+            console.error('Không tải được danh sách gói tập:', status, error);
+            showToast('Không tải được danh sách gói tập. Vui lòng thử lại sau.', 500);
+            HidenLoadingData();
+        }
+    });
 }
 
 function registerTrial() {

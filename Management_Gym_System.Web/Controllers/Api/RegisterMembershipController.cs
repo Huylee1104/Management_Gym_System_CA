@@ -41,20 +41,6 @@ namespace Management_Gym_System.Web.Controllers.Api
             return Ok(goiTap);
         }
 
-        [HttpPost("GetMemberAdvises")]
-        public async Task<IActionResult> GetMemberAdvises(DateTime? fromDate, DateTime? toDate, string? fullName)
-        {
-            var memberAdvises = await _memberAdviseService.GetListMemberAdviseAsync(fromDate, toDate, fullName);
-            return Ok(memberAdvises);
-        }
-
-        [HttpPost("GetMemberAdvisesContacted")]
-        public async Task<IActionResult> GetMemberAdvisesContacted(DateTime? fromDate, DateTime? toDate, string? fullName)
-        {
-            var memberAdvises = await _memberAdviseService.GetListMemberAdviseContactedAsync(fromDate, toDate, fullName);
-            return Ok(memberAdvises);
-        }
-
         [HttpPost("AddMemberAdvise")]
         public async Task<IActionResult> AddMemberAdvise([FromBody] RequestMemberAdvise requestMemberAdvise)
         {
