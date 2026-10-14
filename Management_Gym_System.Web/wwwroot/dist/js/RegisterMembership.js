@@ -1,31 +1,94 @@
-/* =================================================================
-   1. CẤU HÌNH
-   ================================================================= */
-var API_URL = '/RegisterMembership/GetProducts';
-var DESKTOP_MIN_WIDTH = 992;        // trùng breakpoint "lg" của Bootstrap
-var MAX_VISIBLE_DESC_LINES = 3;     // số dòng mô tả hiển thị trước khi thu gọn
-var SCROLL_OFFSET = 80;             // chừa chỗ cho thanh menu khi cuộn tới item (điện thoại)
+const staffApiUrl = '/User/listStaffs';
+const planApiUrl = '/Product/listProducts';
+var DESKTOP_MIN_WIDTH = 992;        
+var MAX_VISIBLE_DESC_LINES = 3;     
+var SCROLL_OFFSET = 80;             
 
-/* =================================================================
-   2. BIẾN TOÀN CỤC CỦA TRANG
-   ================================================================= */
+
 var $root = $('#gymPackages');
-var $list = $('#gpList');           // vùng chứa các card gói tập
-var $listCol = $('#gpListCol');     // cột chứa danh sách (đổi col-12 <-> col-lg-6)
-var $side = $('#gpSide');           // cột chi tiết bên phải (laptop)
-var $panel = $('#gpPanel');         // khung chi tiết bên phải (laptop)
+var $list = $('#gpList'); 
+var $listCol = $('#gpListCol');
+var $side = $('#gpSide');  
+var $panel = $('#gpPanel');
 
-var productsById = {};              // { "1": {...}, "2": {...} }
-var activeId = null;                // id gói đang mở, null = chưa mở gói nào
-var wasDesktop = isDesktop();       // dùng để biết khi nào đổi giữa laptop <-> điện thoại
-// Người dùng bật "giảm chuyển động" thì tắt toàn bộ animation của jQuery
+var productsById = {}; 
+var activeId = null; 
+var wasDesktop = isDesktop();  
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     $.fx.off = true;
 }
 
-/* =================================================================
-   3. HÀM TIỆN ÍCH
-   ================================================================= */
+function loadStaffs() {
+    LoadingData();
+    $.get(staffApiUrl, function (res) {
+        const staffs = res.filter(u =>
+            u.status == true &&
+            u.roleID !== null &&
+            u.userType !== 1
+        );
+
+        let options = `
+            <option value="">--Tất cả--</option>
+        `;
+
+        options += staffs.map(u =>
+            `<option value="${u.id}">${u.fullName}</option>`
+        ).join('');
+
+        $('#staffId').html(options);
+
+        tomSelectStaff = new TomSelect("#staffId", {
+            create: false
+        });
+        HidenLoadingData();
+    });
+}
+
+function loadPlans() {
+    $.get(planApiUrl, function (res) {
+
+        // chỉ lấy thoiHan != null
+        let filtered = res.filter(p => p.thoiHan != null);
+
+        let options = filtered.map(p => `
+                    <option 
+                        value="${p.id}" 
+                        data-thoihan="${p.thoiHan}">
+                        ${p.productName}
+                    </option>
+                `);
+
+        // Destroy trước khi re-init để tránh lỗi duplicate
+        if (tomSelectProduct) {
+            tomSelectProduct.destroy();
+            tomSelectProduct = null;
+        }
+        if (tomSelectFilter) {
+            tomSelectFilter.destroy();
+            tomSelectFilter = null;
+        }
+
+        $('#planId').html(options.join(''));
+        $('#selectFilter').html('<option value="">Tất cả</option>' + options.join(''));
+
+        tomSelectProduct = new TomSelect("#planId", {
+            create: false
+        });
+
+        tomSelectFilter = new TomSelect("#selectFilter", {
+            create: false
+        });
+    });
+}
+
+function initActionSelect() {
+    tomSelectAction = new TomSelect("#action", {
+        create: false,
+        allowEmptyOption: true,
+        placeholder: "Tất cả",
+        maxOptions: null
+    });
+}
 function isDesktop() {
     return $(window).width() >= DESKTOP_MIN_WIDTH;
 }
@@ -124,7 +187,9 @@ $(function () {
         rebuildAfterBreakpointChange();
     });
 
-    loadProducts();
+    loadStaffs();
+    loadPlans();
+    initActionSelect();
 });
 
 function escapeHtml(value) {
@@ -605,24 +670,6 @@ function renderProducts(items) {
     });
 
     $list.html(html);
-}
-
-function loadProducts() {
-    LoadingData();
-    $.ajax({
-        url: API_URL,
-        type: 'POST',
-        dataType: 'json',
-        success: function (response) {
-            renderProducts(response);
-            HidenLoadingData();
-        },
-        error: function (xhr, status, error) {
-            console.error('Không tải được danh sách gói tập:', status, error);
-            showToast('Không tải được danh sách gói tập. Vui lòng thử lại sau.', 500);
-            HidenLoadingData();
-        }
-    });
 }
 
 function registerTrial() {

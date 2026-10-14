@@ -214,20 +214,20 @@
                     }
                     @if (User.HasClaim("Permission", "CHECKIN_VIEW"))
                     {
-                        <li class="nav-item">
+                        @* <li class="nav-item">
                             <a class="nav-link @Active("CheckIn")" asp-controller="CheckIn" asp-action="Index">
                                 <i class="bi bi-person-badge"></i> Check-in
                             </a>
-                        </li>
+                        </li> *@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle @Active("CheckIn", "Finance", "InventoryImport")"
                             href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-wallet2"></i> Quản lý vận hành
+                                <i class="bi bi-person-badge"></i> Hằng ngày
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="nav-link @Active("CheckIn")" asp-controller="CheckIn" asp-action="Index">
-                                        <i class="bi bi-person-badge"></i> Check-in
+                                    <a class="dropdown-item @Active("CheckIn")" asp-controller="CheckIn" asp-action="Index">
+                                        Check-in
                                     </a>
                                 </li>
                                 <li><a class="dropdown-item" asp-controller="MemberAdvise" asp-action="Index">Danh sach tư vấn</a></li>
