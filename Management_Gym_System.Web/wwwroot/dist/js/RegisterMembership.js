@@ -5,14 +5,23 @@ var MAX_VISIBLE_DESC_LINES = 3;
 var SCROLL_OFFSET = 80;
 
 var $root = $('#gymPackages');
-var $list = $('#gpList'); 
+var $list = $('#gpList');
 var $listCol = $('#gpListCol');
 var $side = $('#gpSide');
-var $panel = $('#gpPanel'); 
+var $panel = $('#gpPanel');
 
 var productsById = {};
 var activeId = null;
 var wasDesktop = isDesktop();
+
+var PAYMENT_TIMEOUT_SECONDS = 300;
+var PAYMENT_CHECK_INTERVAL_MS = 3000;
+
+var paymentStatusCheckTimer = null;
+var paymentTimeoutCountdownTimer = null;
+var remainingPaymentSeconds = 0;
+var currentPaymentOrderCode = null;
+
 // Người dùng bật "giảm chuyển động" thì tắt toàn bộ animation của jQuery
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     $.fx.off = true;
@@ -120,6 +129,10 @@ $(function () {
     });
 
     loadProducts();
+
+    $('#paymentQrModal').on('hidden.bs.modal', function () {
+        stopAllPaymentTimers();
+    });
 });
 
 function escapeHtml(value) {
@@ -641,14 +654,6 @@ function registerTrial() {
     })
 }
 
-function onPayClick(idGoiTap) {
-    if (isAuthenticated == false) {
-        HienModalThongTin('Vui lòng đăng nhập để thanh toán!', 'bg-warning');
-    }
-
-
-}
-
 function onSubmitReview(idGoiTap, rating, content) {
     if (isAuthenticated == false) {
         HienModalThongTin('Vui lòng đăng nhập để gửi đánh giá!.', 'bg-warning');
@@ -691,4 +696,184 @@ function onSubmitReview(idGoiTap, rating, content) {
             }
         }
     })
+}
+
+
+function onPayClick(idGoiTap) {
+    if (isAuthenticated == false) {
+        HienModalThongTin('Vui lòng đăng nhập để thanh toán!', 'bg-warning');
+        return;
+    }
+
+    var selectedProduct = productsById[String(idGoiTap)];
+    if (!selectedProduct || !selectedProduct.price) {
+        showToast('Không tìm thấy thông tin giá của gói tập này.', 500);
+        return;
+    }
+
+    createQrAndShowPaymentModal(selectedProduct);
+}
+
+function createQrAndShowPaymentModal(product) {
+    stopAllPaymentTimers();
+    LoadingData();
+
+    $.ajax({
+        url: '/api/Payment/create-qr',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            PaymentAmount: product.price
+        }),
+        success: function (response) {
+            HidenLoadingData();
+
+            currentPaymentOrderCode = response.orderCode;
+
+            // Cập nhật tên gói tập và số tiền cần thanh toán lên Modal
+            $('#qrPackageName').text(product.name);
+            $('#qrPaymentAmount').text(formatMoney(product.price));
+            $('#paymentStatusText').text('Vui lòng mở ứng dụng ngân hàng và quét mã QR để thanh toán');
+
+            // Xóa mã QR cũ và vẽ mã QR mới
+            var qrContainerElement = document.getElementById('qrCodeContainer');
+            qrContainerElement.innerHTML = '';
+
+            new QRCode(qrContainerElement, {
+                text: response.qrCodeData,
+                width: 220,
+                height: 220
+            });
+
+            // Hiển thị Modal thanh toán
+            var paymentModalElement = document.getElementById('paymentQrModal');
+            var paymentModalInstance = bootstrap.Modal.getOrCreateInstance(paymentModalElement);
+            paymentModalInstance.show();
+
+            // Bắt đầu đếm ngược 5 phút và kiểm tra trạng thái thanh toán định kỳ
+            startPaymentTimeoutCountdown(product);
+            startCheckingPaymentStatus(product);
+        },
+        error: function (xhr, status, error) {
+            HidenLoadingData();
+            console.error('Lỗi khi tạo mã QR thanh toán:', status, error);
+            showToast('Không thể khởi tạo mã QR thanh toán. Vui lòng thử lại.', 500);
+        }
+    });
+}
+
+function startPaymentTimeoutCountdown(product) {
+    remainingPaymentSeconds = PAYMENT_TIMEOUT_SECONDS;
+    updateCountdownDisplay(remainingPaymentSeconds);
+
+    paymentTimeoutCountdownTimer = setInterval(function () {
+        remainingPaymentSeconds = remainingPaymentSeconds - 1;
+        updateCountdownDisplay(remainingPaymentSeconds);
+
+        // Nếu hết 5 phút (300 giây) mà người dùng chưa thanh toán xong
+        if (remainingPaymentSeconds <= 0) {
+            handlePaymentTimeoutExpired();
+        }
+    }, 1000);
+}
+
+function updateCountdownDisplay(totalSeconds) {
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds % 60;
+
+    var formattedMinutes = minutes < 10 ? '0' + minutes : String(minutes);
+    var formattedSeconds = seconds < 10 ? '0' + seconds : String(seconds);
+
+    $('#qrCountdownText').text(formattedMinutes + ':' + formattedSeconds);
+}
+
+function startCheckingPaymentStatus(product) {
+    paymentStatusCheckTimer = setInterval(function () {
+        if (!currentPaymentOrderCode) {
+            return;
+        }
+
+        $.ajax({
+            url: '/api/Payment/check-and-speak/' + currentPaymentOrderCode,
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                // Nếu khách hàng vẫn chưa quét xong thì tiếp tục chờ
+                if (response.status === 'PENDING') {
+                    return;
+                }
+
+                // Đã có kết quả (Thành công hoặc Thất bại): Dừng bộ đếm và đóng Modal QR
+                stopAllPaymentTimers();
+                closePaymentQrModal();
+
+                if (response.status === 'PAID') {
+                    var successAmountText = formatMoney(product.price);
+                    HienModalThongTin('Thanh toán thành công số tiền ' + successAmountText + '!', 'bg-success');
+                } else {
+                    HienModalThongTin('Thanh toán thất bại hoặc giao dịch đã bị hủy.', 'bg-danger');
+                }
+
+                // Phát giọng đọc từ chuỗi Base64 do Gemini trả về
+                if (response.audioBase64) {
+                    playAudioFromBase64(response.audioBase64);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Lỗi khi kiểm tra trạng thái thanh toán:', status, error);
+            }
+        });
+    }, PAYMENT_CHECK_INTERVAL_MS);
+}
+
+function handlePaymentTimeoutExpired() {
+    var expiredOrderCode = currentPaymentOrderCode;
+    stopAllPaymentTimers();
+    closePaymentQrModal();
+
+    HienModalThongTin('Đã hết thời gian 5 phút chờ thanh toán. Giao dịch thất bại!', 'bg-danger');
+
+    // Gọi lên Server để hủy đơn quá hạn và lấy giọng đọc thông báo thanh toán thất bại từ Gemini
+    if (expiredOrderCode) {
+        $.ajax({
+            url: '/api/Payment/timeout-fail-speak/' + expiredOrderCode,
+            type: 'POST',
+            dataType: 'json',
+            success: function (response) {
+                if (response && response.audioBase64) {
+                    playAudioFromBase64(response.audioBase64);
+                }
+            }
+        });
+    }
+}
+
+function closePaymentQrModal() {
+    var paymentModalElement = document.getElementById('paymentQrModal');
+    if (paymentModalElement) {
+        var paymentModalInstance = bootstrap.Modal.getOrCreateInstance(paymentModalElement);
+        paymentModalInstance.hide();
+    }
+}
+
+function stopAllPaymentTimers() {
+    if (paymentStatusCheckTimer !== null) {
+        clearInterval(paymentStatusCheckTimer);
+        paymentStatusCheckTimer = null;
+    }
+
+    if (paymentTimeoutCountdownTimer !== null) {
+        clearInterval(paymentTimeoutCountdownTimer);
+        paymentTimeoutCountdownTimer = null;
+    }
+
+    currentPaymentOrderCode = null;
+}
+
+function playAudioFromBase64(base64AudioData) {
+    var audioSource = 'data:audio/wav;base64,' + base64AudioData;
+    var audioPlayer = new Audio(audioSource);
+    audioPlayer.play().catch(function (error) {
+        console.error('Không thể tự động phát âm thanh:', error);
+    });
 }

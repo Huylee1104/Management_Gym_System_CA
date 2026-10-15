@@ -130,9 +130,43 @@
     </div>
 </div>
 
+<div class="modal fade" id="paymentQrModal" tabindex="-1" aria-labelledby="paymentQrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content border-0 rounded-4 shadow">
+
+            <!-- Header có nút X ở góc phải phía trên để chủ động tắt Modal -->
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="paymentQrModalLabel">Thanh toán gói tập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+
+            <div class="modal-body px-4 pb-4 text-center">
+                <p class="text-secondary mb-1" id="qrPackageName">Gói tập</p>
+                <h3 class="fw-bold text-primary mb-3" id="qrPaymentAmount">0đ</h3>
+
+                <!-- Khung hiển thị mã QR -->
+                <div class="d-inline-block p-3 bg-white border rounded-4 shadow-sm mb-3">
+                    <div id="qrCodeContainer"></div>
+                </div>
+
+                <p class="text-muted mb-2" id="paymentStatusText">
+                    Vui lòng mở ứng dụng ngân hàng và quét mã QR để thanh toán
+                </p>
+
+                <!-- Đồng hồ đếm ngược 5 phút -->
+                <div class="badge bg-light text-dark border px-3 py-2 fs-6">
+                    Thời gian còn lại: <span class="fw-bold text-danger" id="qrCountdownText">05:00</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         const isAuthenticated = @ViewBag.IsAuthenticated.ToString().ToLower();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="~/dist/js/RegisterMembership.js" asp-append-version="true" defer></script>
 }
