@@ -31,7 +31,7 @@ namespace Management_Gym_System.Controllers.Api
         }
 
         [HttpPost("ExportPdf")]
-        public async Task<IActionResult> ExportPdf([FromQuery] AdviseFilterRequest filter)
+        public async Task<IActionResult> ExportPdf([FromBody] AdviseFilterRequest filter)
         {
             if (filter == null)
             {
@@ -44,7 +44,7 @@ namespace Management_Gym_System.Controllers.Api
 
         // ================= 3. XUẤT EXCEL (EPPlus) =================
         [HttpPost("ExportExcel")]
-        public async Task<IActionResult> ExportExcel([FromQuery] AdviseFilterRequest filter)
+        public async Task<IActionResult> ExportExcel([FromBody] AdviseFilterRequest filter)
         {
             if (filter == null)
             {
@@ -55,8 +55,8 @@ namespace Management_Gym_System.Controllers.Api
             return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
-
-        public async Task<List<AdviseCustomerDto>> QueryAdviseDataAsync(AdviseFilterRequest filter)
+        [HttpPost("GetList")]
+        public async Task<List<AdviseCustomerDto>> QueryAdviseDataAsync([FromBody]AdviseFilterRequest filter)
         {
             var result = await _memberAdviseService.GetListMemberAdviseAsync(filter);
             return result ?? new List<AdviseCustomerDto>();

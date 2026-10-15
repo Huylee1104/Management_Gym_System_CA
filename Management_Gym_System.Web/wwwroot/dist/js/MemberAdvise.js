@@ -117,9 +117,9 @@ function getFilterParams() {
         fromDate: $('#filterFromDate').val(),
         toDate: $('#filterToDate').val(),
         status: $('#filterStatus').val(),
-        productId: productVal || '',
+        productId: productVal || null,
         productName: productVal ? $('#filterProduct option:selected').text().trim() : '',
-        staffId: staffVal || '',
+        staffId: staffVal || null,
         staffName: staffVal ? $('#filterStaff option:selected').text().trim() : '',
         keyword: $('#filterKeyword').val().trim()
     };
@@ -127,60 +127,150 @@ function getFilterParams() {
 
 // 1. Hàm Load danh sách hiển thị lên Table
 function loadAdviseData() {
-    if (typeof LoadingData === 'function') LoadingData();
+    if (typeof LoadingData === "function") {
+        LoadingData();
+    }
 
-    const params = getFilterParams();
+    var filter = getFilterParams();
 
-    $.post(adviseListApiUrl, params, function (res) {
-        const $tbody = $('#adviseTableBody');
-        $tbody.empty();
+    $.ajax({
+        url: adviseListApiUrl,
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify(filter),
+        success: function (res) {
 
-        if (!res || res.length === 0) {
-            $tbody.append(`
-                <tr id="adviseEmptyRow">
-                    <td colspan="10" class="text-center text-muted py-4">Không có khách hàng nào</td>
-                </tr>
-            `);
-            $('#adviseTotalText').text('Tổng: 0 khách hàng');
-            return;
+            var tbody = $("#adviseTableBody");
+            tbody.empty();
+
+            if (res == null || res.length === 0) {
+
+                tbody.append(
+                    '<tr id="adviseEmptyRow">' +
+                    '<td colspan="10" class="text-center text-muted py-4">' +
+                    'Không có khách hàng nào' +
+                    '</td>' +
+                    '</tr>'
+                );
+
+                $("#adviseTotalText").text("Tổng: 0 khách hàng");
+                return;
+            }
+
+            var html = "";
+
+            for (var i = 0; i < res.length; i++) {
+
+                var item = res[i];
+
+                var registerStatus = "";
+
+                if (item.isRegistered) {
+                    registerStatus = '<span class="badge bg-success-lt">Đã đăng ký</span>';
+                }
+                else {
+                    registerStatus = '<span class="badge bg-secondary-lt">Chưa đăng ký</span>';
+                }
+
+                var lastContactDate = '<span class="text-muted">-</span>';
+
+                if (item.lastContactDate != null) {
+                    lastContactDate = formatDateTime(item.lastContactDate);
+                }
+
+                var staffName = item.staffName;
+
+                if (!staffName) {
+                    staffName = '<span class="text-muted">-</span>';
+                }
+
+                html +=
+                    '<tr>' +
+                        '<td class="text-center">' + formatDate(item.createdDate) + '</td>' +
+                        '<td class="fw-bold text-start">' + (item.customerName || "") + '</td>' +
+                        '<td class="text-center">' + (item.phone || "") + '</td>' +
+                        '<td class="text-start">' + (item.email || "") + '</td>' +
+                        '<td class="text-start">' + (item.productName || "") + '</td>' +
+                        '<td class="text-center">' + lastContactDate + '</td>' +
+                        '<td class="text-center">' + item.contactCount + '</td>' +
+                        '<td class="text-center">' + registerStatus + '</td>' +
+                        '<td class="text-start">' + staffName + '</td>' +
+                        '<td class="text-center">' +
+                            '<button type="button" class="btn btn-sm btn-primary me-1" ' +
+                                'onclick="ContactMember(' + item.id + ', \'' + (item.phone || "") + '\', \'' + (item.email || "") + '\')" ' +
+                                'title="Liên hệ khách hàng">' +
+                                '<i class="ti ti-phone"></i>' +
+                            '</button>' +
+                            '<button type="button" class="btn btn-sm btn-success" ' +
+                                'onclick="MemberRegistered(' + item.id + ')" ' +
+                                'title="Đánh dấu đã đăng ký">' +
+                                '<i class="ti ti-check"></i>' +
+                            '</button>' +
+                        '</td>' +
+                    '</tr>';
+            }
+
+            tbody.html(html);
+
+            $("#adviseTotalText").text("Tổng: " + res.length + " khách hàng");
+        },
+        error: function (xhr, status, error) {
+            console.error("Lỗi khi tải danh sách tư vấn:");
+            console.error(xhr);
+            console.error(status);
+            console.error(error);
+
+            showToast("Không thể tải danh sách khách hàng.", 500);
+        },
+        complete: function () {
+            if (typeof HidenLoadingData === "function") {
+                HidenLoadingData();
+            }
         }
-
-        const rows = res.map(item => `
-            <tr>
-                <td>${formatDate(item.createdDate)}</td>
-                <td class="fw-bold">${item.customerName || ''}</td>
-                <td>${item.phone || ''}</td>
-                <td>${item.email || ''}</td>
-                <td>${item.productName || ''}</td>
-                <td>${item.lastContactDate ? formatDateTime(item.lastContactDate) : '<span class="text-muted">-</span>'}</td>
-                <td class="text-center">${item.contactCount}</td>
-                <td class="text-center">
-                    ${item.isRegistered
-                ? '<span class="badge bg-success-lt">Đã đăng ký</span>'
-                : '<span class="badge bg-secondary-lt">Chưa đăng ký</span>'}
-                </td>
-                <td>${item.staffName || '<span class="text-muted">-</span>'}</td>
-                <td class="w-1">
-                    <button type="button" class="btn btn-sm btn-icon btn-ghost-primary" onclick="openAdviseModal(${item.id})" title="Cập nhật tư vấn">
-                        <i class="ti ti-edit"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
-
-        $tbody.html(rows); $('#adviseTotalText').text(`Tổng: ${res.length} khách hàng`);
-    })
-        .always(function () {
-            if (typeof HidenLoadingData === 'function') HidenLoadingData();
-        });
+    });
 }
 
 // 2. Hàm chung để xuất PDF / Excel
-function exportFile(baseUrl) {
-    const params = $.param(getFilterParams());
-    window.location.href = `${baseUrl}?${params}`;
-}
+function exportFile(url, extension) {
 
+    var filter = getFilterParams();
+
+    var fromDate = filter.fromDate ? filter.fromDate.replaceAll("-", "") : null;
+    var toDate = filter.toDate ? filter.toDate.replaceAll("-", "") : null;
+
+    if (!fromDate || !toDate){
+        showToast("Vui lòng chọn đủ từ ngày đến ngày");
+        return;
+    }
+
+    var fileName = "DanhSachKhachHang_" + fromDate + "_" + toDate + "." + extension;
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(filter),
+        xhrFields: {
+            responseType: "blob"
+        },
+        success: function (blob) {
+
+            var downloadUrl = URL.createObjectURL(blob);
+
+            var a = document.createElement("a");
+            a.href = downloadUrl;
+            a.download = fileName;
+            a.click();
+
+            URL.revokeObjectURL(downloadUrl);
+        },
+        error: function (xhr) {
+            console.error(xhr);
+            showToast("Không thể xuất file.", 500);
+        }
+    });
+}
 // Helper định dạng ngày DD/MM/YYYY
 function formatDate(dateStr) {
     if (!dateStr) return '';
