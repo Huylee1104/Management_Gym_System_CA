@@ -27,6 +27,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<MemberAdvise> MemberAdvises { get; set; }
     public DbSet<WorkoutSchedule> WorkoutSchedules { get; set; }
     public DbSet<WorkoutNoteDetail> WorkoutNoteDetails { get; set; }
+    public DbSet<NutritionGroup> NutritionGroups { get; set; }
+
+    public DbSet<NutritionDetail> NutritionDetails { get; set; }
+    public DbSet<NutritionAnalyzeHistory> NutritionAnalyzeHistorys { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -183,6 +187,50 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<NutritionGroup>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Name)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Description)
+                .HasMaxLength(1000);
+
+            entity.Property(x => x.ImageUrl)
+                .HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<NutritionDetail>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.Name)
+                .HasMaxLength(200)
+                .IsRequired();
+
+            entity.Property(x => x.Description)
+                .HasMaxLength(2000);
+
+            entity.Property(x => x.ImageUrl)
+                .HasMaxLength(500);
+
+            entity.Property(x => x.ServingUnit)
+                .HasMaxLength(20);
+
+            entity.Property(x => x.RecommendedTime)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.RecommendedTarget)
+                .HasMaxLength(200);
+
+            entity.HasOne(x => x.NutritionGroup)
+                  .WithMany(x => x.NutritionDetails)
+                  .HasForeignKey(x => x.NutritionGroupId)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

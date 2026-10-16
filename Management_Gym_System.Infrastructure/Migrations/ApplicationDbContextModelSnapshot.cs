@@ -322,6 +322,163 @@ namespace Management_Gym_System.Migrations
                     b.ToTable("InventoryLots");
                 });
 
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionAnalyzeHistory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AnalyzeResult")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("Confidence")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("EstimatedCalories")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("EstimatedCarb")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("EstimatedFat")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("EstimatedProtein")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("EstimatedWeight")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("FoodName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("MemberId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("WeightUnit")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MemberId");
+
+                    b.ToTable("NutritionAnalyzeHistorys");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("Calories")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Carb")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Cons")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<decimal>("Fat")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Fiber")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long>("NutritionGroupId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Pros")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Protein")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("RecommendedTarget")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("RecommendedTime")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal>("ServingSize")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("ServingUnit")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("Sodium")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Sugar")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NutritionGroupId");
+
+                    b.ToTable("NutritionDetails");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionGroup", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NutritionGroups");
+                });
+
             modelBuilder.Entity("Management_Gym_System.Domain.Entities.Product", b =>
                 {
                     b.Property<long>("ID")
@@ -907,6 +1064,26 @@ namespace Management_Gym_System.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionAnalyzeHistory", b =>
+                {
+                    b.HasOne("Management_Gym_System.Domain.Entities.User", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionDetail", b =>
+                {
+                    b.HasOne("Management_Gym_System.Domain.Entities.NutritionGroup", "NutritionGroup")
+                        .WithMany("NutritionDetails")
+                        .HasForeignKey("NutritionGroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("NutritionGroup");
+                });
+
             modelBuilder.Entity("Management_Gym_System.Domain.Entities.Product", b =>
                 {
                     b.HasOne("Management_Gym_System.Domain.Entities.ProductCategory", "Category")
@@ -1057,6 +1234,11 @@ namespace Management_Gym_System.Migrations
             modelBuilder.Entity("Management_Gym_System.Domain.Entities.ImportReceipt", b =>
                 {
                     b.Navigation("ImportReceiptDetails");
+                });
+
+            modelBuilder.Entity("Management_Gym_System.Domain.Entities.NutritionGroup", b =>
+                {
+                    b.Navigation("NutritionDetails");
                 });
 
             modelBuilder.Entity("Management_Gym_System.Domain.Entities.Product", b =>
