@@ -8,6 +8,7 @@ using Management_Gym_System.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Management_Gym_System.Application.Services.PayOs;
 using Management_Gym_System.Application.Services.TextToSpeed;
+using Management_Gym_System.Application.Services.Cloudinary;
 
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -40,6 +41,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<CurrentUserHelper>();
 builder.Services.AddHttpClient<PayOSService>();
 builder.Services.AddHttpClient<GeminiTextToSpeedService>();
+builder.Services.AddScoped<CloudinaryService>();
 
 ExcelPackage.License.SetNonCommercialPersonal("Le Quoc Huy");
 QuestPDF.Settings.License = LicenseType.Community;

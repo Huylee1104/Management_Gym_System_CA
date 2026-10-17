@@ -27,5 +27,5 @@ public class NutritionAnalyzeHistory
     //80%
     public decimal? Confidence { get; set; }
 
-    public virtual User Member { get; set; }
+    public virtual User Member { get; set; } = new User();
 }
