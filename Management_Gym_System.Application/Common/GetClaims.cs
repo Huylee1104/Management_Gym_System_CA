@@ -23,4 +23,18 @@ public class CurrentUserHelper
 
         return userId;
     }
+
+    public bool IsAdmin()
+    {
+        var userType = _httpContextAccessor.HttpContext?
+            .User?
+            .FindFirstValue("UserType");
+
+        var roleId = _httpContextAccessor.HttpContext?
+            .User?
+            .FindFirstValue("RoleId");
+
+        return string.IsNullOrEmpty(userType) &&
+               !string.IsNullOrEmpty(roleId);
+    }
 }
