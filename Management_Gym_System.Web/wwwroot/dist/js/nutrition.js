@@ -14,10 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
     loadGroups();
 });
 
-// ==========================================
-// ĐIỀU KHIỂN ĐÓNG / MỞ 2 THẺ LỚN
-// ==========================================
-
 function toggleAccordion(targetTab) {
     const headerGroups = document.getElementById("headerGroups");
     const panelGroups = document.getElementById("panelGroups");
