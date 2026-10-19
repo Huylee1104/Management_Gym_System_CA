@@ -178,10 +178,6 @@ function renderGroupDropdownInModal() {
     selectElement.innerHTML = optionsHtml;
 }
 
-// ==========================================
-// XỬ LÝ DỮ LIỆU: DANH SÁCH & CHI TIẾT THỰC PHẨM
-// ==========================================
-
 async function loadDetailsByGroup(groupId) {
     const container = document.getElementById("detailListContainer");
     container.innerHTML = `<div class="text-center py-3 text-secondary">Đang tải thực phẩm...</div>`;

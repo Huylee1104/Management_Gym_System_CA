@@ -9,14 +9,24 @@ namespace Management_Gym_System.Web.Controllers.Api
     [ApiController]
     public class NutritionController : Controller
     {
-        public NutritionController()
+        private readonly INutritionGroupService _nutritionGroupService;
+        private readonly INutritionDetailService _nutritionDetailService;
+        private readonly CurrentUserHelper _currentUserHelper;
+        public NutritionController(INutritionGroupService nutritionGroupService,
+            INutritionDetailService nutritionDetailService,
+            CurrentUserHelper currentUserHelper)
         {
+            _nutritionDetailService = nutritionDetailService;
+            _nutritionGroupService = nutritionGroupService;
+            _currentUserHelper = currentUserHelper;
         }
 
         public IActionResult Index()
         {
-            ViewBag.IsAdmin = true;
+            ViewBag.IsAdmin = _currentUserHelper.IsAdmin();
             return View("~/Views/Nutrition/Index.cshtml");
         }
+
+
     }
 }

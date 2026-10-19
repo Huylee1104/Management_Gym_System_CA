@@ -14,6 +14,30 @@ public class NutritionGroupRepository : INutritionGroupRepository
         _context = context;
     }
 
+    public async Task<List<NutritionGroup>> GetAllGroupsAsync(bool isAdmin)
+    {
+        var result = _context.NutritionGroups.AsNoTracking().AsQueryable();
+                // Hội viên chỉ xem được các nhóm đang hoạt động
+        if (isAdmin == false)
+        {
+            result = result.Where(g => g.IsActive == true);
+        }
+
+        List<NutritionGroup> groups = await result
+            .OrderBy(g => g.SortOrder ?? int.MaxValue)
+            .ThenBy(g => g.Name)
+            .ToListAsync();
+        return groups;
+    }
+
+    public async Task<NutritionGroup> GetGroupByIdAsync(long IdGroup)
+    {
+        var result = await _context.NutritionGroups.
+            Include(d => d.NutritionDetails)
+            .FirstOrDefaultAsync();
+        return result ?? new NutritionGroup();
+    }
+
     public async Task AddAsync(NutritionGroup NutritionGroup)
     {
         await _context.NutritionGroups.AddAsync(NutritionGroup);
@@ -32,5 +56,10 @@ public class NutritionGroupRepository : INutritionGroupRepository
     public async Task<bool> SaveChangesAsync()
     {
         return await _context.SaveChangesAsync() > 0;
+    }
+
+    public async Task DeleteRangeAsync(IEnumerable<NutritionDetail> details)
+    {
+        _context.RemoveRange(details);
     }
 }

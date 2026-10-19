@@ -14,6 +14,31 @@ public class NutritionDetailRepository : INutritionDetailRepository
         _context = context;
     }
 
+    public async Task<List<NutritionDetail>> GetDetailsByGroupIdAsync(long groupId, bool isAdmin)
+    {
+        var query = _context.NutritionDetails
+        .AsNoTracking()
+        .Where(x => x.NutritionGroupId == groupId);
+
+        if (isAdmin == false)
+        {
+            query = query.Where(d => d.IsPublished == true);
+        }
+
+        List<NutritionDetail> details = await query
+            .OrderBy(d => d.Name)
+            .ToListAsync();
+
+        return details;
+    }
+
+    public async Task<NutritionDetail> GetDetailByIdAsync(long IdNutrition)
+    {
+        var result = await _context.NutritionDetails.
+                Include(d => d.NutritionGroup).FirstOrDefaultAsync(x => x.Id == IdNutrition);
+        return result ?? new NutritionDetail();
+    }
+
     public async Task AddAsync(NutritionDetail NutritionDetail)
     {
         await _context.NutritionDetails.AddAsync(NutritionDetail);
