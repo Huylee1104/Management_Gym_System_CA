@@ -91,25 +91,12 @@ public class AccountController : Controller
 
         var claims = new List<Claim>
         {
-            new Claim(
-                ClaimTypes.NameIdentifier,
-                user.ID.ToString()),
-
-            new Claim(
-                ClaimTypes.Name,
-                user.Username),
-
-            new Claim(
-                "FullName",
-                user.FullName ?? string.Empty),
-
-            new Claim(
-                "RoleId",
-                user.RoleID?.ToString() ?? string.Empty),
-
-            new Claim(
-                ClaimTypes.Role,
-                user.Role?.RoleName ?? "User")
+            new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim("FullName", user.FullName ?? string.Empty),
+            new Claim("RoleId", user.RoleID?.ToString() ?? string.Empty),
+            new Claim("UserType", user.UserType?.ToString() ?? string.Empty),
+            new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "User")
         };
 
         // =========================================================
