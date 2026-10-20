@@ -32,6 +32,9 @@ public static class DependencyInjection
         services.AddScoped<IMembershipAuditLogRepository, MembershipAuditLogRepository>();
         services.AddScoped<IMemberAdviseRepository, MemberAdviseRepository>();
         services.AddScoped<IWorkoutScheduleRepository, WorkoutScheduleRepository>();
+        services.AddScoped<INutritionGroupRepository, NutritionGroupRepository>();
+        services.AddScoped<INutritionDetailRepository, NutritionDetailRepository>();
+        services.AddScoped<INutritionAnalyzeHistoryRepository, NutritionAnalyzeHistoryRepository>();
 
         services.AddScoped<IInventoryImportQueryService, InventoryImportQueryService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();

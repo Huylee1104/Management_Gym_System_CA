@@ -275,7 +275,16 @@
                             </ul>
                         </li>
                     }
-                </ul>
+                    @if (isAdmin)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Nutrition")" asp-controller="Nutrition" asp-action="Index">
+                                <i class="bi bi-egg-fried me-1"></i>
+                                Dinh dưỡng
+                            </a>
+                        </li>
+                    }
+                    </ul>
 
                 <!-- Menu bên phải -->
                 <ul class="navbar-nav ms-auto">

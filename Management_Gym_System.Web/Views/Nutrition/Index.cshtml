@@ -356,125 +356,122 @@
 
     <!-- MODAL 2: THÊM / SỬA THỰC PHẨM CHI TIẾT -->
     <div class="modal modal-blur fade" id="modalDetail" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+            <form class="modal-content" id="formDetail" onsubmit="saveDetail(event)">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalDetailTitle">Thêm thực phẩm</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="formDetail" onsubmit="saveDetail(event)">
-                    <div class="modal-body">
-                        <input type="hidden" id="detailId" name="Id" value="0" />
+                <div class="modal-body">
+                    <input type="hidden" id="detailId" name="Id" value="0" />
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Thuộc nhóm thực phẩm</label>
-                                <select class="form-select" id="detailGroupId" name="NutritionGroupId" required>
-                                    <option value="">-- Chọn nhóm thực phẩm --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label required">Tên thực phẩm</label>
-                                <input type="text" class="form-control" id="detailName" name="Name" required placeholder="Ví dụ: Ức gà phi lê, Khoai lang..." />
-                            </div>
+                    <!-- DÒNG 1: 5 phần tử thông tin cơ bản trên 1 hàng -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-lg-3 col-md-6">
+                            <label class="form-label required">Thuộc nhóm thực phẩm</label>
+                            <select class="form-select" id="detailGroupId" name="NutritionGroupId" required>
+                                <option value="">-- Chọn nhóm thực phẩm --</option>
+                            </select>
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Khối lượng khẩu phần</label>
-                                <input type="number" step="0.01" class="form-control" id="detailServingSize" name="ServingSize" value="100" required />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Đơn vị tính</label>
-                                <input type="text" class="form-control" id="detailServingUnit" name="ServingUnit" value="g" required />
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Trạng thái xuất bản</label>
-                                <select class="form-select" id="detailIsPublished" name="IsPublished">
-                                    <option value="true">Xuất bản (Hiển thị)</option>
-                                    <option value="false">Bản nháp (Ẩn)</option>
-                                </select>
-                            </div>
+                        <div class="col-lg-3 col-md-6">
+                            <label class="form-label required">Tên thực phẩm</label>
+                            <input type="text" class="form-control" id="detailName" name="Name" required placeholder="Ví dụ: Ức gà phi lê..." />
                         </div>
-
-                        <hr class="my-3" />
-                        <h4 class="mb-3 text-primary">Chỉ số dinh dưỡng trên mỗi khẩu phần</h4>
-
-                        <div class="row">
-                            <div class="col-md-3 col-6 mb-3">
-                                <label class="form-label">Calories (kcal)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailCalories" name="Calories" value="0" />
-                            </div>
-                            <div class="col-md-3 col-6 mb-3">
-                                <label class="form-label">Protein (g)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailProtein" name="Protein" value="0" />
-                            </div>
-                            <div class="col-md-3 col-6 mb-3">
-                                <label class="form-label">Carb (g)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailCarb" name="Carb" value="0" />
-                            </div>
-                            <div class="col-md-3 col-6 mb-3">
-                                <label class="form-label">Fat (g)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailFat" name="Fat" value="0" />
-                            </div>
-                            <div class="col-md-4 col-6 mb-3">
-                                <label class="form-label">Chất xơ - Fiber (g)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailFiber" name="Fiber" value="0" />
-                            </div>
-                            <div class="col-md-4 col-6 mb-3">
-                                <label class="form-label">Đường - Sugar (g)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailSugar" name="Sugar" value="0" />
-                            </div>
-                            <div class="col-md-4 col-12 mb-3">
-                                <label class="form-label">Muối - Sodium (mg)</label>
-                                <input type="number" step="0.01" class="form-control" id="detailSodium" name="Sodium" value="0" />
-                            </div>
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <label class="form-label">Khối lượng</label>
+                            <input type="number" step="0.01" class="form-control" id="detailServingSize" name="ServingSize" value="100" required />
                         </div>
-
-                        <hr class="my-3" />
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Thời điểm khuyên dùng</label>
-                                <input type="text" class="form-control" id="detailRecommendedTime" name="RecommendedTime" placeholder="Ví dụ: Trước tập 1-2 tiếng, Bữa trưa..." />
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Đối tượng phù hợp</label>
-                                <input type="text" class="form-control" id="detailRecommendedTarget" name="RecommendedTarget" placeholder="Ví dụ: Người tăng cơ giảm mỡ..." />
-                            </div>
+                        <div class="col-lg-2 col-md-4 col-6">
+                            <label class="form-label">Đơn vị tính</label>
+                            <input type="text" class="form-control" id="detailServingUnit" name="ServingUnit" value="g" required />
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Ưu điểm (Pros)</label>
-                                <textarea class="form-control" id="detailPros" name="Pros" rows="3"></textarea>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Lưu ý / Hạn chế (Cons)</label>
-                                <textarea class="form-control" id="detailCons" name="Cons" rows="3"></textarea>
-                            </div>
+                        <div class="col-lg-2 col-md-4">
+                            <label class="form-label">Trạng thái xuất bản</label>
+                            <select class="form-select" id="detailIsPublished" name="IsPublished">
+                                <option value="true">Xuất bản (Hiển thị)</option>
+                                <option value="false">Bản nháp (Ẩn)</option>
+                            </select>
                         </div>
+                    </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Ảnh thực phẩm (Tải lên Cloudinary)</label>
+                    <hr class="my-3" />
+                    <h4 class="mb-2 text-primary">Chỉ số dinh dưỡng trên mỗi khẩu phần</h4>
+
+                    <!-- DÒNG 2: 7 chỉ số chia đều trên 1 hàng ngang bằng class col-lg của Tabler -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-lg col-md-3 col-6">
+                            <label class="form-label text-nowrap">Calories (kcal)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailCalories" name="Calories" value="0" />
+                        </div>
+                        <div class="col-lg col-md-3 col-6">
+                            <label class="form-label text-nowrap">Protein (g)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailProtein" name="Protein" value="0" />
+                        </div>
+                        <div class="col-lg col-md-3 col-6">
+                            <label class="form-label text-nowrap">Carb (g)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailCarb" name="Carb" value="0" />
+                        </div>
+                        <div class="col-lg col-md-3 col-6">
+                            <label class="form-label text-nowrap">Fat (g)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailFat" name="Fat" value="0" />
+                        </div>
+                        <div class="col-lg col-md-4 col-6">
+                            <label class="form-label text-nowrap">Chất xơ (g)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailFiber" name="Fiber" value="0" />
+                        </div>
+                        <div class="col-lg col-md-4 col-6">
+                            <label class="form-label text-nowrap">Đường (g)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailSugar" name="Sugar" value="0" />
+                        </div>
+                        <div class="col-lg col-md-4 col-12">
+                            <label class="form-label text-nowrap">Muối (mg)</label>
+                            <input type="number" step="0.01" class="form-control" id="detailSodium" name="Sodium" value="0" />
+                        </div>
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <!-- DÒNG 3: Thời điểm, Đối tượng & Ảnh thực phẩm (3 phần tử trên 1 hàng) -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Thời điểm khuyên dùng</label>
+                            <input type="text" class="form-control" id="detailRecommendedTime" name="RecommendedTime" placeholder="Ví dụ: Trước tập 1-2 tiếng..." />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Đối tượng phù hợp</label>
+                            <input type="text" class="form-control" id="detailRecommendedTarget" name="RecommendedTarget" placeholder="Ví dụ: Người tăng cơ giảm mỡ..." />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Ảnh thực phẩm (Cloudinary)</label>
                             <input type="file" class="form-control" id="detailImageFile" name="imageFile" accept="image/*" />
                         </div>
+                    </div>
 
-                        <div class="mb-3">
+                    <!-- DÒNG 4: Ưu điểm, Hạn chế & Mô tả chi tiết (3 phần tử trên 1 hàng) -->
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Ưu điểm (Pros)</label>
+                            <textarea class="form-control" id="detailPros" name="Pros" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Lưu ý / Hạn chế (Cons)</label>
+                            <textarea class="form-control" id="detailCons" name="Cons" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-4">
                             <label class="form-label">Mô tả chi tiết</label>
                             <textarea class="form-control" id="detailDescription" name="Description" rows="3"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary ms-auto">Lưu thực phẩm</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary ms-auto">Lưu thực phẩm</button>
+                </div>
+            </form>
         </div>
     </div>
 }
 
 @section Scripts {
-    <script src="~dist/js/nutrition.js" asp-append-version="true" defer></script>
+    <script src="~/dist/js/Nutrition.js" asp-append-version="true" defer></script>
 }

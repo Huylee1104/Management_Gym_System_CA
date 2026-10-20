@@ -80,7 +80,9 @@ async function loadGroups() {
     const container = document.getElementById("groupListContainer");
 
     try {
-        const response = await fetch("/Nutrition/GetGroups");
+        const response = await fetch("/Nutrition/GetGroups", {
+            method: "POST"
+        });
         const result = await response.json();
 
         if (result.success === false) {
@@ -187,7 +189,13 @@ async function loadDetailsByGroup(groupId) {
     container.innerHTML = `<div class="text-center py-3 text-secondary">Đang tải thực phẩm...</div>`;
 
     try {
-        const response = await fetch(`/Nutrition/GetDetailsByGroup?groupId=${groupId}`);
+        const formData = new FormData();
+        formData.append("groupId", groupId);
+
+        const response = await fetch("/Nutrition/GetDetailsByGroup", {
+            method: "POST",
+            body: formData
+        });
         const result = await response.json();
 
         if (result.success === false) {
@@ -263,11 +271,17 @@ async function selectDetail(detailId) {
     }
 
     try {
-        const response = await fetch(`/Nutrition/GetDetailById?id=${detailId}`);
+        const formData = new FormData();
+        formData.append("id", detailId);
+
+        const response = await fetch("/Nutrition/GetDetailById", {
+            method: "POST",
+            body: formData
+        });
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -302,7 +316,7 @@ async function selectDetail(detailId) {
         document.getElementById("viewCons").textContent = data.cons || "Chưa cập nhật";
     } catch (error) {
         console.error(error);
-        alert("Không thể tải chi tiết thực phẩm.");
+        showToast("Không thể tải chi tiết thực phẩm.", 500);
     }
 }
 
@@ -326,11 +340,17 @@ async function openEditGroupModal(event, groupId) {
     event.stopPropagation();
 
     try {
-        const response = await fetch(`/Nutrition/GetGroupById?id=${groupId}`);
+        const formData = new FormData();
+        formData.append("id", groupId);
+
+        const response = await fetch("/Nutrition/GetGroupById", {
+            method: "POST",
+            body: formData
+        });
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -347,7 +367,7 @@ async function openEditGroupModal(event, groupId) {
         modal.show();
     } catch (error) {
         console.error(error);
-        alert("Lỗi khi tải thông tin nhóm thực phẩm.");
+        showToast("Lỗi khi tải thông tin nhóm thực phẩm.", 500);
     }
 }
 
@@ -368,7 +388,7 @@ async function saveGroup(event) {
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -380,7 +400,7 @@ async function saveGroup(event) {
         await loadGroups();
     } catch (error) {
         console.error(error);
-        alert("Có lỗi xảy ra khi lưu nhóm thực phẩm.");
+        showToast("Có lỗi xảy ra khi lưu nhóm thực phẩm.", 500);
     }
 }
 
@@ -403,7 +423,7 @@ async function deleteGroup(event, groupId) {
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -416,7 +436,7 @@ async function deleteGroup(event, groupId) {
         await loadGroups();
     } catch (error) {
         console.error(error);
-        alert("Không thể xóa nhóm thực phẩm.");
+        showToast("Không thể xóa nhóm thực phẩm.", 500);
     }
 }
 
@@ -446,11 +466,17 @@ async function openEditDetailModal(event, detailId) {
     event.stopPropagation();
 
     try {
-        const response = await fetch(`/Nutrition/GetDetailById?id=${detailId}`);
+        const formData = new FormData();
+        formData.append("id", detailId);
+
+        const response = await fetch("/Nutrition/GetDetailById", {
+            method: "POST",
+            body: formData
+        });
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -482,7 +508,7 @@ async function openEditDetailModal(event, detailId) {
         modal.show();
     } catch (error) {
         console.error(error);
-        alert("Lỗi khi tải thông tin thực phẩm.");
+        showToast("Lỗi khi tải thông tin thực phẩm.", 500);
     }
 }
 
@@ -504,7 +530,7 @@ async function saveDetail(event) {
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -522,7 +548,7 @@ async function saveDetail(event) {
         }
     } catch (error) {
         console.error(error);
-        alert("Có lỗi xảy ra khi lưu thực phẩm.");
+        showToast("Có lỗi xảy ra khi lưu thực phẩm.", 500);
     }
 }
 
@@ -545,7 +571,7 @@ async function deleteDetail(event, detailId) {
         const result = await response.json();
 
         if (result.success === false) {
-            alert(result.message);
+            showToast(result.message, 500);
             return;
         }
 
@@ -560,7 +586,7 @@ async function deleteDetail(event, detailId) {
         }
     } catch (error) {
         console.error(error);
-        alert("Không thể xóa thực phẩm.");
+        showToast("Không thể xóa thực phẩm.", 500);
     }
 }
 
