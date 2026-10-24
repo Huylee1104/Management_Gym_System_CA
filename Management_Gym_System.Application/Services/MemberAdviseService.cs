@@ -1,8 +1,10 @@
 using System.Globalization;
+using System.Security.Claims;
 using Management_Gym_System.Application.DTOs.MemberAdvise;
 using Management_Gym_System.Application.Services;
 using Management_Gym_System.Domain.Entities;
 using Management_Gym_System.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -14,10 +16,12 @@ public class MemberAdviseService : IMemberAdviseService
 {
     private readonly IMemberAdviseRepository _memberAdviseRepo;
     private readonly IProductRepository _productRepo;
-    public MemberAdviseService(IMemberAdviseRepository memberAdviseRepo, IProductRepository productRepo)
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public MemberAdviseService(IMemberAdviseRepository memberAdviseRepo, IProductRepository productRepo, IHttpContextAccessor httpContextAccessor)
     {
         _memberAdviseRepo = memberAdviseRepo;
         _productRepo = productRepo;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<AdviseCustomerDto>> GetListMemberAdviseAsync(AdviseFilterRequest filter)
@@ -79,25 +83,29 @@ public class MemberAdviseService : IMemberAdviseService
             .ToList();
     }
 
-    public async Task<ServiceResult> UpdateMemberAdviseAsync(MemberAdvise memberAdvise)
+    public async Task<ServiceResult> UpdateMemberAdviseAsync(long IdMember)
     {
         try
         {
-            if (memberAdvise.Id > 0)
+            if (IdMember > 0)
             {
-                var existingMemberAdvise = await _memberAdviseRepo.GetByIdAsync(memberAdvise.Id);
+                var existingMemberAdvise = await _memberAdviseRepo.GetByIdAsync(IdMember);
 
                 if (existingMemberAdvise == null)
                 {
                     return ServiceResult.Failure("Không tìm thấy thông tin tư vấn.");
                 }
 
-                existingMemberAdvise.FullName = memberAdvise.FullName;
-                existingMemberAdvise.PhoneNumber = memberAdvise.PhoneNumber;
-                existingMemberAdvise.Email = memberAdvise.Email;
-                existingMemberAdvise.IsContacted = memberAdvise.IsContacted;
-                existingMemberAdvise.ContactedDate = memberAdvise.ContactedDate;
-                existingMemberAdvise.ContactedCount = memberAdvise.ContactedCount;
+                var value = _httpContextAccessor.HttpContext?
+                    .User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (!long.TryParse(value, out var userId))
+                    return ServiceResult.Failure("Không xác định được nhân viên.");
+            
+                existingMemberAdvise.IsContacted = true;
+                existingMemberAdvise.ContactedDate = DateTime.UtcNow;
+                existingMemberAdvise.ContactedCount = existingMemberAdvise.ContactedCount += 1;
+                existingMemberAdvise.StaffId = userId;
 
                 await _memberAdviseRepo.UpdateAsync(existingMemberAdvise);
             }
@@ -106,7 +114,7 @@ public class MemberAdviseService : IMemberAdviseService
         }
         catch (Exception ex)
         {
-            return ServiceResult.Failure($"Tạo thẻ thất bại: {ex.Message}");
+            return ServiceResult.Failure($"Cập nhật thất bại: {ex.Message}");
         }
     }
 

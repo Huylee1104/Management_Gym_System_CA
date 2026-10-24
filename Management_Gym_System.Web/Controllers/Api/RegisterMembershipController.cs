@@ -48,13 +48,6 @@ namespace Management_Gym_System.Web.Controllers.Api
             return Ok(result);
         }
 
-        [HttpPost("UpdateMemberAdvise")]
-        public async Task<IActionResult> UpdateMemberAdvise(MemberAdvise memberAdvise)
-        {
-            var result = await _memberAdviseService.UpdateMemberAdviseAsync(memberAdvise);
-            return Ok(result);
-        }
-
         [HttpPost("ReviewProduct")]
         public async Task<IActionResult> ReviewProduct(long ProductId, string Review)
         {

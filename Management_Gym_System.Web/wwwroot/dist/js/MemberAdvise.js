@@ -202,11 +202,11 @@ function loadAdviseData() {
                                 'title="Liên hệ khách hàng">' +
                                 '<i class="ti ti-phone"></i>' +
                             '</button>' +
-                            '<button type="button" class="btn btn-sm btn-success" ' +
-                                'onclick="MemberRegistered(' + item.id + ')" ' +
-                                'title="Đánh dấu đã đăng ký">' +
-                                '<i class="ti ti-check"></i>' +
-                            '</button>' +
+                            // '<button type="button" class="btn btn-sm btn-success" ' +
+                            //     'onclick="MemberRegistered(' + item.id + ')" ' +
+                            //     'title="Đánh dấu đã đăng ký">' +
+                            //     '<i class="ti ti-check"></i>' +
+                            // '</button>' +
                         '</td>' +
                     '</tr>';
             }
@@ -282,4 +282,32 @@ function formatDateTime(dateStr) {
     if (!dateStr) return '';
     const d = new Date(dateStr);
     return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function ContactMember(id, phone, email){
+    if (!id){
+        showToast("Không xác định được khách hàng!", 500);
+        return;
+    }
+    $.ajax({
+        url: '/MemberAdvise/UpdateMemberAdvise',
+        type: "POST",
+        data: {
+            Id: id,
+            PhoneNumber: phone,
+            Email: email
+        },
+        success: function (response) {
+            if (response.isSuccess == true){
+                loadAdviseData();
+            }
+            else{
+                showToast(response.message, 500);
+            }
+        },
+        error: function (xhr) {
+            console.error(xhr);
+            showToast("Không thể cập nhật trạng thái.", 500);
+        }
+    });
 }

@@ -16,7 +16,7 @@ public class MemberAdviseRepository : IMemberAdviseRepository
 
     public async Task<List<MemberAdvise>> GetListAdviseAsync(DateTime? fromDate, DateTime? toDate)
     {
-        var query = _context.MemberAdvises.Include(p=>p.Product).AsQueryable();
+        var query = _context.MemberAdvises.Include(p=>p.Product).Include(u=>u.Staff).AsQueryable();
 
         if (fromDate.HasValue)
         {

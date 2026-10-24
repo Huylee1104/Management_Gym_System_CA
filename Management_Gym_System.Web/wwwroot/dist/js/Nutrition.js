@@ -381,6 +381,7 @@ async function saveGroup(event) {
     const url = groupId > 0 ? "/Nutrition/UpdateGroup" : "/Nutrition/CreateGroup";
 
     try {
+        LoadingData();
         const response = await fetch(url, {
             method: "POST",
             body: formData
@@ -388,6 +389,7 @@ async function saveGroup(event) {
         const result = await response.json();
 
         if (result.success === false) {
+            HidenLoadingData();
             showToast(result.message, 500);
             return;
         }
@@ -395,10 +397,12 @@ async function saveGroup(event) {
         const modal = bootstrap.Modal.getInstance(document.getElementById("modalGroup"));
         if (modal) {
             modal.hide();
+            HidenLoadingData();
         }
 
         await loadGroups();
     } catch (error) {
+        HidenLoadingData();
         console.error(error);
         showToast("Có lỗi xảy ra khi lưu nhóm thực phẩm.", 500);
     }
@@ -523,6 +527,7 @@ async function saveDetail(event) {
     const url = detailId > 0 ? "/Nutrition/UpdateDetail" : "/Nutrition/CreateDetail";
 
     try {
+        LoadingData();
         const response = await fetch(url, {
             method: "POST",
             body: formData
@@ -530,6 +535,7 @@ async function saveDetail(event) {
         const result = await response.json();
 
         if (result.success === false) {
+            HidenLoadingData();
             showToast(result.message, 500);
             return;
         }
@@ -537,6 +543,7 @@ async function saveDetail(event) {
         const modal = bootstrap.Modal.getInstance(document.getElementById("modalDetail"));
         if (modal) {
             modal.hide();
+            HidenLoadingData();
         }
 
         currentSelectedGroupId = selectedGroupId;
@@ -547,6 +554,7 @@ async function saveDetail(event) {
             await selectDetail(detailId);
         }
     } catch (error) {
+        HidenLoadingData();
         console.error(error);
         showToast("Có lỗi xảy ra khi lưu thực phẩm.", 500);
     }

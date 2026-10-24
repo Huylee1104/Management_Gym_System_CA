@@ -3,159 +3,255 @@
 }
 
 <style>
-    /* 1. Màu thương hiệu cho các class Bootstrap (xóa khối này nếu theme đã có màu cam) */
-    #gymPackages .text-primary {
-        color: var(--bs-primary) !important;
+    .home-page {
+        --tblr-primary: #FF9800;
+        --tblr-primary-rgb: 255, 152, 0;
+        --tblr-primary-fg: #fff;
+        --tblr-primary-lt: #FFF3E0;
+        --brand-hover: #FB8C00;
+        --brand-accent: #FF7043;
+        background: var(--tblr-bg-surface-secondary);
+        color: var(--tblr-body-color);
+        overflow-x: clip;
+        min-height: calc(100vh - 60px);
     }
 
-    #gymPackages .border-primary {
-        border-color: var(--bs-primary) !important;
+    /* 1. Đồng bộ màu thương hiệu màu cam cho trang và các Modal */
+    #gymPackages, #trialModal, #paymentQrModal {
+        --bs-primary: #FF9800;
+        --bs-primary-rgb: 255, 152, 0;
     }
 
-    #gymPackages .btn-primary {
-        background: var(--bs-primary);
-        border-color: var(--bs-primary);
-        color: #fff;
+    #gymPackages .text-primary,
+    #trialModal .text-primary,
+    #paymentQrModal .text-primary {
+        color: var(--tblr-primary) !important;
     }
 
-    #gymPackages .btn-primary:hover {
-        background: var(--bs-primary-hover);
-        border-color: var(--bs-primary-hover);
+    #gymPackages .bg-primary,
+    #trialModal .bg-primary,
+    #paymentQrModal .bg-primary {
+        background-color: var(--tblr-primary) !important;
+        color: var(--tblr-primary-fg) !important;
+    }
+
+    #gymPackages .bg-primary-lt,
+    #trialModal .bg-primary-lt,
+    #paymentQrModal .bg-primary-lt {
+        background-color: var(--tblr-primary-lt) !important;
+        color: var(--tblr-primary) !important;
+    }
+
+    #gymPackages .border-primary,
+    #trialModal .border-primary,
+    #paymentQrModal .border-primary {
+        border-color: var(--tblr-primary) !important;
+    }
+
+    /* 2. Nút bấm chính & nút viền */
+    #gymPackages .btn-primary,
+    #trialModal .btn-primary,
+    #paymentQrModal .btn-primary {
+        background: var(--tblr-primary) !important;
+        border-color: var(--tblr-primary) !important;
+        color: var(--tblr-primary-fg) !important;
+        transition: all 0.2s ease;
+    }
+
+    #gymPackages .btn-primary:hover,
+    #trialModal .btn-primary:hover,
+    #paymentQrModal .btn-primary:hover {
+        background: var(--brand-hover) !important;
+        border-color: var(--brand-hover) !important;
     }
 
     #gymPackages .btn-outline-primary {
-        color: var(--bs-primary);
-        border-color: var(--bs-primary);
+        color: var(--tblr-primary) !important;
+        border-color: var(--tblr-primary) !important;
+        transition: all 0.2s ease;
     }
 
     #gymPackages .btn-outline-primary:hover {
-        background: var(--bs-primary);
-        color: #fff;
+        background: var(--tblr-primary) !important;
+        border-color: var(--tblr-primary) !important;
+        color: var(--tblr-primary-fg) !important;
     }
 
-    /* 2. Card nổi lên khi rê chuột (Bootstrap không có sẵn) */
-    @@media (hover: hover) {
-        #gymPackages .gp-card {
-            transition: transform .25s, box-shadow .25s;
-        }
+    /* 3. Nâng cấp cỡ chữ & đệm cho các Card gói tập tạo từ JS */
+    #gymPackages .gp-card {
+        border-radius: 1rem;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
 
+    @@media (hover: hover) {
         #gymPackages .gp-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .15) !important;
+            box-shadow: 0 0.85rem 1.75rem rgba(255, 152, 0, 0.18) !important;
         }
+    }
+
+    #gymPackages .gp-card .card-title,
+    #gymPackages .gp-card h3,
+    #gymPackages .gp-card h4 {
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    #gymPackages .gp-card .price,
+    #gymPackages .gp-card .fs-1,
+    #gymPackages .gp-card .fs-2 {
+        font-size: 1.75rem !important;
+        font-weight: 800;
+        color: var(--tblr-primary);
+    }
+
+    #gymPackages .gp-card p,
+    #gymPackages .gp-card li,
+    #gymPackages .gp-card .text-muted,
+    #gymPackages .gp-card .text-secondary {
+        font-size: 1.05rem;
+        line-height: 1.6;
+    }
+
+    #gymPackages .gp-card .btn {
+        font-size: 1.05rem;
+        padding: 0.65rem 1.25rem;
+        font-weight: 600;
+        border-radius: 0.6rem;
+    }
+
+    /* 4. Khung xem chi tiết gói tập (Panel bên phải) */
+    #gpPanel {
+        border-radius: 1.25rem;
+        padding: 1.75rem;
+        font-size: 1.1rem;
+    }
+
+    #gpPanel h2, #gpPanel h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+    }
+
+    #gpPanel p, #gpPanel li {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    #gpPanel .btn {
+        font-size: 1.15rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 700;
     }
 </style>
 
 <div class="home-page" id="gymPackages">
-    <div class="container-xl py-4">
+    <!-- Trải rộng lề ngang để lấp đầy không gian màn hình laptop -->
+    <div class="container-fluid px-lg-4 px-xl-5 py-4">
 
         <div class="mb-4">
-            <h1 class="h2 fw-bold mb-1">Đăng ký gói tập</h1>
-            <p class="text-secondary mb-0">Chọn gói phù hợp với mục tiêu của bạn</p>
+            <h1 class="display-6 fw-bold mb-2">Đăng ký gói tập</h1>
+            <p class="text-secondary fs-4 mb-0">Chọn gói tập phù hợp với mục tiêu và thể trạng của bạn</p>
         </div>
 
         <div class="row g-4">
-            <!-- Danh sách gói: laptop 4 cột, khi mở chi tiết thì còn 2 cột nằm bên trái -->
+            <!-- Danh sách gói: laptop 4 cột, khi mở chi tiết thì co lại thành 2 cột bên trái -->
             <div class="col-12" id="gpListCol">
                 <div class="row g-3 row-cols-1 row-cols-lg-4" id="gpList">
-                    <div class="col-12 text-center text-secondary py-5">Đang tải gói tập...</div>
+                    <div class="col-12 text-center text-secondary py-5 fs-4">Đang tải gói tập...</div>
                 </div>
             </div>
 
-            <!-- Chi tiết gói (chỉ dùng trên laptop; trên điện thoại chi tiết nằm ngay dưới item) -->
+            <!-- Chi tiết gói tập bên phải trên laptop -->
             <div class="col-lg-6 d-none" id="gpSide">
-                <div class="card border-0 shadow sticky-top overflow-y-auto" id="gpPanel"
-                     style="top:1rem; max-height:calc(80vh - 2rem)"></div>
+                <div class="card border shadow-sm sticky-top overflow-y-auto" id="gpPanel"
+                     style="top:1.5rem; max-height:calc(85vh - 2rem)"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Đăng ký tập thử -->
 <div class="modal fade" id="trialModal" tabindex="-1" aria-labelledby="trialModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 rounded-4">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
 
             <div class="modal-header border-0 pb-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
 
-            <div class="modal-body px-4 pb-4">
-
+            <div class="modal-body px-4 px-md-5 pb-5">
                 <div class="text-center mb-4">
-                    <h4 class="fw-bold mb-2">Đăng ký tập thử miễn phí</h4>
-                    <p class="text-muted mb-0">
+                    <h3 class="display-6 fw-bold mb-2" id="trialModalLabel">Đăng ký tập thử miễn phí</h3>
+                    <p class="text-muted fs-5 mb-0">
                         Để lại thông tin, chúng tôi sẽ liên hệ bạn sớm nhất.
                     </p>
                 </div>
 
                 <form>
-
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">
+                        <label class="form-label fs-5 fw-semibold" for="tvtfullName">
                             Họ và tên
                         </label>
                         <input type="text" id="tvtfullName"
-                               class="form-control form-control-lg"
+                               class="form-control form-control-lg fs-5"
                                placeholder="Nguyễn Văn A">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">
+                        <label class="form-label fs-5 fw-semibold" for="tvtphone">
                             Số điện thoại
                         </label>
                         <input type="tel" id="tvtphone"
-                               class="form-control form-control-lg"
+                               class="form-control form-control-lg fs-5"
                                placeholder="0901234567">
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-semibold">
+                        <label class="form-label fs-5 fw-semibold" for="tvtemail">
                             Email
                         </label>
                         <input type="email" id="tvtemail"
-                               class="form-control form-control-lg"
+                               class="form-control form-control-lg fs-5"
                                placeholder="ban@email.com">
                     </div>
 
-                    <button type="button" class="btn btn-warning w-100 py-3 fw-bold text-white" onclick="registerTrial()">
+                    <button type="button" class="btn btn-primary w-100 py-3 fs-5 fw-bold rounded-3 shadow-sm" onclick="registerTrial()">
                         Đăng ký ngay
                     </button>
-
                 </form>
-
             </div>
 
         </div>
     </div>
 </div>
 
+<!-- Modal Thanh toán QR Code -->
 <div class="modal fade" id="paymentQrModal" tabindex="-1" aria-labelledby="paymentQrModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content border-0 rounded-4 shadow">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
 
-            <!-- Header có nút X ở góc phải phía trên để chủ động tắt Modal -->
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold" id="paymentQrModalLabel">Thanh toán gói tập</h5>
+                <h4 class="modal-title fw-bold fs-3" id="paymentQrModalLabel">Thanh toán gói tập</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
 
-            <div class="modal-body px-4 pb-4 text-center">
-                <p class="text-secondary mb-1" id="qrPackageName">Gói tập</p>
-                <h3 class="fw-bold text-primary mb-3" id="qrPaymentAmount">0đ</h3>
+            <div class="modal-body px-4 px-md-5 pb-5 text-center">
+                <p class="text-secondary fs-4 mb-1" id="qrPackageName">Gói tập</p>
+                <h2 class="display-6 fw-bold text-primary mb-3" id="qrPaymentAmount">0đ</h2>
 
                 <!-- Khung hiển thị mã QR -->
-                <div class="d-inline-block p-3 bg-white border rounded-4 shadow-sm mb-3">
+                <div class="d-inline-block p-3 bg-white border border-2 rounded-4 shadow-sm mb-3">
                     <div id="qrCodeContainer"></div>
                 </div>
 
-                <p class="text-muted mb-2" id="paymentStatusText">
+                <p class="text-muted fs-5 mb-3" id="paymentStatusText">
                     Vui lòng mở ứng dụng ngân hàng và quét mã QR để thanh toán
                 </p>
 
-                <!-- Đồng hồ đếm ngược 5 phút -->
-                <div class="badge bg-light text-dark border px-3 py-2 fs-6">
-                    Thời gian còn lại: <span class="fw-bold text-danger" id="qrCountdownText">05:00</span>
+                <!-- Đồng hồ đếm ngược -->
+                <div class="badge bg-primary-lt border border-primary px-4 py-2 fs-5 rounded-pill">
+                    Thời gian còn lại: <span class="fw-bold text-danger ms-1" id="qrCountdownText">05:00</span>
                 </div>
             </div>
 

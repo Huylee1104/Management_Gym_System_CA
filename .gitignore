@@ -12,3 +12,5 @@ node_modules/
 
 **/appsettings.json
 **/appsettings.*.json
+
+.vscode/settings.json

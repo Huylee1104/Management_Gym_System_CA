@@ -40,5 +40,5 @@ public class NutritionDetail
 
     public bool? IsPublished { get; set; }
 
-    public virtual NutritionGroup NutritionGroup { get; set; } = new NutritionGroup();
+    public virtual NutritionGroup? NutritionGroup { get; set; }
 }

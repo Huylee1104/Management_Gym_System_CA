@@ -61,5 +61,15 @@ namespace Management_Gym_System.Controllers.Api
             var result = await _memberAdviseService.GetListMemberAdviseAsync(filter);
             return result ?? new List<AdviseCustomerDto>();
         }
+
+        [HttpPost("UpdateMemberAdvise")]
+        public async Task<IActionResult> UpdateMemberAdvise(
+            [FromForm] long Id,
+            [FromForm] string? PhoneNumber,
+            [FromForm] string? Email)
+        {
+            var result = await _memberAdviseService.UpdateMemberAdviseAsync(Id);
+            return Ok(result);
+        }
     }
 }

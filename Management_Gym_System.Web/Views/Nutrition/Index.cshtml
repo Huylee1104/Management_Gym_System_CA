@@ -17,12 +17,12 @@
         min-height: calc(100vh - 60px);
     }
 
-    /* Thẻ tiêu đề đóng/mở bên trái */
+    /* Thẻ accordion bên trái */
     .nutrition-accordion-header {
         background-color: var(--tblr-primary);
         color: var(--tblr-primary-fg);
         border-radius: 50rem;
-        padding: 0.75rem 1.25rem;
+        padding: 0.85rem 1.35rem;
         cursor: pointer;
         transition: background-color 0.2s ease;
         user-select: none;
@@ -40,24 +40,25 @@
         transform: rotate(180deg);
     }
 
-    /* Khung chứa danh sách item khi mở */
+    /* Khung danh sách item cuộn */
     .nutrition-list-wrapper {
         background-color: var(--tblr-primary-lt);
         border: 1px solid rgba(var(--tblr-primary-rgb), 0.25);
         border-radius: 1.25rem;
-        padding: 0.75rem;
-        max-height: 500px;
+        padding: 0.85rem;
+        max-height: calc(100vh - 240px);
         overflow-y: auto;
     }
 
-    /* Từng item bên trong danh sách */
+    /* Từng item thực phẩm/nhóm */
     .nutrition-list-item {
         background-color: #ffffff;
         border: 1px solid rgba(var(--tblr-primary-rgb), 0.2);
         border-radius: 50rem;
-        padding: 0.6rem 1.1rem;
+        padding: 0.75rem 1.25rem;
         margin-bottom: 0.5rem;
         cursor: pointer;
+        font-size: 1rem;
         transition: all 0.15s ease;
     }
 
@@ -76,223 +77,211 @@
         color: rgba(255, 255, 255, 0.85) !important;
     }
 
+    /* Ảnh thực phẩm */
     .detail-image-box {
-        max-height: 280px;
+        width: 100%;
+        max-height: 350px;
+        min-height: 240px;
         object-fit: cover;
         border-radius: 1rem;
     }
+
+    .sticky-sidebar {
+        position: sticky;
+        top: 1rem;
+    }
 </style>
 
-<div class="page-wrapper home-page py-4">
-    <div class="container-xl">
-        <!-- Cờ lưu trạng thái Admin cho JS đọc -->
+<div class="page-wrapper home-page py-3">
+    <!-- Mở rộng toàn bộ chiều ngang hai bên lề -->
+    <div class="container-fluid px-lg-4 px-xl-5">
         <input type="hidden" id="isAdminFlag" value="@(isAdmin ? "true" : "false")" />
 
         <div class="row g-4">
-            <!-- CỘT TRÁI: 2 THẺ ĐÓNG MỞ -->
-            <div class="col-lg-4 col-md-5">
-                
-                <!-- THẺ 1: QUẢN LÝ NHÓM THỰC PHẨM -->
-                <div class="mb-3">
-                    <div id="headerGroups" class="nutrition-accordion-header is-open d-flex align-items-center justify-content-between shadow-sm" onclick="toggleAccordion('groups')">
-                        <span class="fw-bold fs-3">Quản lý nhóm thực phẩm</span>
-                        <div class="d-flex align-items-center gap-2">
-                            @if (isAdmin)
-                            {
-                                <button type="button" class="btn btn-sm btn-light btn-icon rounded-circle" title="Thêm nhóm thực phẩm" onclick="openCreateGroupModal(event)">
-                                    <!-- Dấu + -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M12 5l0 14" />
-                                        <path d="M5 12l14 0" />
-                                    </svg>
-                                </button>
-                            }
-                            <span class="chevron-icon">▼</span>
+            <!-- CỘT TRÁI: QUẢN LÝ DANH SÁCH -->
+            <div class="col-lg-4 col-xl-3">
+                <div class="sticky-sidebar">
+                    <!-- THẺ 1: QUẢN LÝ NHÓM -->
+                    <div class="mb-3">
+                        <div id="headerGroups" class="nutrition-accordion-header is-open d-flex align-items-center justify-content-between shadow-sm" onclick="toggleAccordion('groups')">
+                            <span class="fw-bold fs-3">Quản lý nhóm thực phẩm</span>
+                            <div class="d-flex align-items-center gap-2">
+                                @if (isAdmin)
+                                {
+                                    <button type="button" class="btn btn-sm btn-light btn-icon rounded-circle" title="Thêm nhóm thực phẩm" onclick="openCreateGroupModal(event)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary" width="22" height="22" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+                                    </button>
+                                }
+                                <span class="chevron-icon">▼</span>
+                            </div>
+                        </div>
+
+                        <div id="panelGroups" class="nutrition-list-wrapper mt-2 shadow-sm">
+                            <div id="groupListContainer">
+                                <div class="text-center py-3 text-secondary">Đang tải nhóm thực phẩm...</div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Nội dung trải xuống của Nhóm thực phẩm (Mặc định mở) -->
-                    <div id="panelGroups" class="nutrition-list-wrapper mt-2 shadow-sm">
-                        <div id="groupListContainer">
-                            <div class="text-center py-3 text-secondary">Đang tải nhóm thực phẩm...</div>
+                    <!-- THẺ 2: QUẢN LÝ THỰC PHẨM -->
+                    <div class="mb-3">
+                        <div id="headerDetails" class="nutrition-accordion-header d-flex align-items-center justify-content-between shadow-sm" onclick="toggleAccordion('details')">
+                            <div>
+                                <span class="fw-bold fs-3 d-block">Quản lý thực phẩm</span>
+                                <small id="selectedGroupSubtitle" class="opacity-75">Chưa chọn nhóm</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                @if (isAdmin)
+                                {
+                                    <button type="button" class="btn btn-sm btn-light btn-icon rounded-circle" title="Thêm thực phẩm" onclick="openCreateDetailModal(event)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary" width="22" height="22" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+                                    </button>
+                                }
+                                <span class="chevron-icon">▼</span>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- THẺ 2: QUẢN LÝ THỰC PHẨM -->
-                <div class="mb-3">
-                    <div id="headerDetails" class="nutrition-accordion-header d-flex align-items-center justify-content-between shadow-sm" onclick="toggleAccordion('details')">
-                        <div>
-                            <span class="fw-bold fs-3 d-block">Quản lý thực phẩm</span>
-                            <small id="selectedGroupSubtitle" class="opacity-75">Chưa chọn nhóm</small>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            @if (isAdmin)
-                            {
-                                <button type="button" class="btn btn-sm btn-light btn-icon rounded-circle" title="Thêm thực phẩm" onclick="openCreateDetailModal(event)">
-                                    <!-- Dấu + -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M12 5l0 14" />
-                                        <path d="M5 12l14 0" />
-                                    </svg>
-                                </button>
-                            }
-                            <span class="chevron-icon">▼</span>
-                        </div>
-                    </div>
-
-                    <!-- Nội dung trải xuống của Thực phẩm (Mặc định đóng) -->
-                    <div id="panelDetails" class="nutrition-list-wrapper mt-2 shadow-sm d-none">
-                        <div id="detailListContainer">
-                            <div class="text-center py-3 text-secondary">Vui lòng chọn một nhóm thực phẩm trước.</div>
+                        <div id="panelDetails" class="nutrition-list-wrapper mt-2 shadow-sm d-none">
+                            <div id="detailListContainer">
+                                <div class="text-center py-3 text-secondary">Vui lòng chọn một nhóm thực phẩm trước.</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- CỘT PHẢI: NỘI DUNG PHÂN TÍCH CHI TIẾT -->
-            <div class="col-lg-8 col-md-7">
-                <div class="card rounded-4 shadow-sm h-100 border-2">
-                    <div class="card-body p-4">
+            <!-- CỘT PHẢI: CHI TIẾT THỰC PHẨM -->
+            <div class="col-lg-8 col-xl-9">
+                <div class="card rounded-3 shadow-sm border h-100">
+                    <div class="card-body p-4 p-xl-5">
 
-                        <!-- Trạng thái chưa chọn thực phẩm -->
+                        <!-- Trạng thái trống -->
                         <div id="detailEmptyState" class="empty py-5 my-5">
                             <div class="empty-img">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-primary" width="64" height="64" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-primary" width="64" height="64" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none">
                                     <path d="M12 21a9 9 0 0 1 0 -18c4.97 0 9 3.582 9 8c0 1.06 -.474 2.078 -1.318 2.828c-.844 .75 -1.989 1.172 -3.182 1.172h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
                                     <path d="M8.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                                     <path d="M12.5 7.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                                     <path d="M16.5 10.5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
                                 </svg>
                             </div>
-                            <p class="empty-title">Chưa có thực phẩm nào được chọn</p>
-                            <p class="empty-subtitle text-secondary">
-                                Hãy chọn một nhóm thực phẩm ở danh sách bên trái, sau đó bấm vào một thực phẩm cụ thể để xem phân tích dinh dưỡng.
+                            <p class="empty-title fs-2">Chưa có thực phẩm nào được chọn</p>
+                            <p class="empty-subtitle text-secondary fs-3">
+                                Hãy chọn nhóm và một thực phẩm cụ thể ở cột bên trái để xem bảng dinh dưỡng.
                             </p>
                         </div>
 
-                        <!-- Trạng thái hiển thị chi tiết thực phẩm -->
+                        <!-- Khung chi tiết bố cục 2 cột con -->
                         <div id="detailContentArea" class="d-none">
-                            <!-- Ảnh thực phẩm ở trên cùng theo mẫu thiết kế -->
-                            <div class="text-center mb-4">
-                                <img id="viewDetailImage" src="https://placehold.co/600x320/FFF3E0/FF9800?text=Hinh+Anh+Thuc+Pham" alt="Ảnh thực phẩm" class="img-fluid detail-image-box shadow-sm" />
-                            </div>
+                            <div class="row g-4 g-xl-5">
 
-                            <!-- Tiêu đề & Khẩu phần -->
-                            <div class="d-flex flex-wrap align-items-center justify-content-between border-bottom pb-3 mb-4">
-                                <div>
-                                    <span id="viewDetailGroupBadge" class="badge bg-primary-lt text-primary mb-2">Nhóm thực phẩm</span>
-                                    <h1 id="viewDetailName" class="mb-0 fw-bold">Tên thực phẩm</h1>
-                                </div>
-                                <div class="text-end">
-                                    <div class="text-secondary small">Khẩu phần tiêu chuẩn</div>
-                                    <div id="viewDetailServing" class="fs-2 fw-bold text-primary">100 g</div>
-                                </div>
-                            </div>
+                                <!-- CỘT CON TRÁI: ẢNH THỰC PHẨM & CỤM TÊN + KHẨU PHẦN -->
+                                <div class="col-xl-5 col-lg-5">
+                                    <img id="viewDetailImage" src="https://placehold.co/600x320/FFF3E0/FF9800?text=Hinh+Anh" alt="Ảnh thực phẩm" class="detail-image-box shadow-sm mb-3" />
 
-                            <!-- Mô tả chung -->
-                            <div class="mb-4">
-                                <h3 class="card-title text-uppercase text-secondary fs-4">Mô tả thực phẩm</h3>
-                                <p id="viewDetailDescription" class="text-body fs-3 mb-0"></p>
-                            </div>
+                                    <!-- Cụm Tên và Khẩu phần chuyển xuống dưới ảnh -->
+                                    <div class="pt-2">
+                                        <span id="viewDetailGroupBadge" class="badge bg-primary-lt text-primary fs-4 px-3 py-2 mb-2">Nhóm</span>
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                            <h1 id="viewDetailName" class="mb-0 fw-bold display-6">Tên thực phẩm</h1>
+                                            <div class="text-end">
+                                                <div class="text-secondary small">Khẩu phần chuẩn</div>
+                                                <div id="viewDetailServing" class="display-6 fw-bold text-primary">100 g</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <!-- Bảng chỉ số Dinh dưỡng (Macro & Micro) -->
-                            <h3 class="card-title text-uppercase text-secondary fs-4 mb-3">Thành phần dinh dưỡng</h3>
-                            <div class="row g-3 mb-4">
-                                <div class="col-6 col-sm-3">
-                                    <div class="card card-sm bg-primary-lt border-0">
-                                        <div class="card-body text-center">
-                                            <div class="text-secondary small fw-medium">Calories</div>
-                                            <div id="viewCalories" class="fs-2 fw-bold text-primary">0 kcal</div>
-                                        </div>
+                                <!-- CỘT CON PHẢI: MÔ TẢ, THỜI ĐIỂM/ĐỐI TƯỢNG, DINH DƯỠNG & PROS/CONS -->
+                                <div class="col-xl-7 col-lg-7">
+                                    <!-- 1. Mô tả thực phẩm đưa lên trên cùng -->
+                                    <div class="mb-4">
+                                        <div class="text-uppercase text-secondary fw-bold fs-4 mb-2">Mô tả thực phẩm</div>
+                                        <p id="viewDetailDescription" class="text-body fs-3 mb-0" style="line-height: 1.6;"></p>
                                     </div>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body text-center">
-                                            <div class="text-secondary small fw-medium">Protein (Đạm)</div>
-                                            <div id="viewProtein" class="fs-2 fw-bold">0 g</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body text-center">
-                                            <div class="text-secondary small fw-medium">Carb (Tinh bột)</div>
-                                            <div id="viewCarb" class="fs-2 fw-bold">0 g</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-sm-3">
-                                    <div class="card card-sm">
-                                        <div class="card-body text-center">
-                                            <div class="text-secondary small fw-medium">Fat (Chất béo)</div>
-                                            <div id="viewFat" class="fs-2 fw-bold">0 g</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="card card-sm bg-surface-secondary">
-                                        <div class="card-body text-center py-2">
-                                            <div class="text-secondary small">Chất xơ (Fiber)</div>
-                                            <div id="viewFiber" class="fw-bold">0 g</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="card card-sm bg-surface-secondary">
-                                        <div class="card-body text-center py-2">
-                                            <div class="text-secondary small">Đường (Sugar)</div>
-                                            <div id="viewSugar" class="fw-bold">0 g</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="card card-sm bg-surface-secondary">
-                                        <div class="card-body text-center py-2">
-                                            <div class="text-secondary small">Muối (Sodium)</div>
-                                            <div id="viewSodium" class="fw-bold">0 mg</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Khuyến nghị sử dụng -->
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded-3 border bg-surface-secondary h-100">
-                                        <div class="fw-bold mb-1 text-primary">Thời điểm khuyên dùng</div>
-                                        <div id="viewRecommendedTime" class="text-body">Chưa cập nhật</div>
+                                    <!-- 2. Thời điểm khuyên dùng & Đối tượng phù hợp chuyển sang phải -->
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 border bg-surface-secondary shadow-sm h-100">
+                                                <div class="fw-bold fs-4 text-primary mb-1">Thời điểm khuyên dùng</div>
+                                                <div id="viewRecommendedTime" class="text-body fs-3">Chưa cập nhật</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded-3 border bg-surface-secondary shadow-sm h-100">
+                                                <div class="fw-bold fs-4 text-primary mb-1">Đối tượng phù hợp</div>
+                                                <div id="viewRecommendedTarget" class="text-body fs-3">Chưa cập nhật</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="p-3 rounded-3 border bg-surface-secondary h-100">
-                                        <div class="fw-bold mb-1 text-primary">Đối tượng phù hợp</div>
-                                        <div id="viewRecommendedTarget" class="text-body">Chưa cập nhật</div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <!-- Ưu điểm & Nhược điểm / Lưu ý -->
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="alert alert-success mb-0 h-100">
-                                        <h4 class="alert-title">Lợi ích / Ưu điểm (Pros)</h4>
-                                        <div id="viewPros" class="text-secondary" style="white-space: pre-line;">Chưa cập nhật</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="alert alert-warning mb-0 h-100">
-                                        <h4 class="alert-title">Lưu ý / Hạn chế (Cons)</h4>
-                                        <div id="viewCons" class="text-secondary" style="white-space: pre-line;">Chưa cập nhật</div>
-                                    </div>
-                                </div>
-                            </div>
+                                    <!-- 3. Thành phần dinh dưỡng -->
+                                    <div class="text-uppercase text-secondary fw-bold fs-4 mb-3">Thành phần dinh dưỡng</div>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-3">
+                                            <div class="card card-sm bg-primary-lt border-0 text-center py-3 shadow-none">
+                                                <div class="text-secondary fw-medium fs-4">Calories</div>
+                                                <div id="viewCalories" class="display-6 fw-bold text-primary">0 kcal</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="card card-sm text-center py-3 shadow-none">
+                                                <div class="text-secondary fw-medium fs-4">Protein</div>
+                                                <div id="viewProtein" class="display-6 fw-bold">0 g</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="card card-sm text-center py-3 shadow-none">
+                                                <div class="text-secondary fw-medium fs-4">Carb</div>
+                                                <div id="viewCarb" class="display-6 fw-bold">0 g</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="card card-sm text-center py-3 shadow-none">
+                                                <div class="text-secondary fw-medium fs-4">Fat</div>
+                                                <div id="viewFat" class="display-6 fw-bold">0 g</div>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-4">
+                                            <div class="card card-sm bg-surface-secondary text-center py-2 shadow-none">
+                                                <div class="text-secondary fs-4">Chất xơ</div>
+                                                <div id="viewFiber" class="fw-bold fs-2">0 g</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="card card-sm bg-surface-secondary text-center py-2 shadow-none">
+                                                <div class="text-secondary fs-4">Đường</div>
+                                                <div id="viewSugar" class="fw-bold fs-2">0 g</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="card card-sm bg-surface-secondary text-center py-2 shadow-none">
+                                                <div class="text-secondary fs-4">Muối</div>
+                                                <div id="viewSodium" class="fw-bold fs-2">0 mg</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 4. Ưu điểm & Nhược điểm -->
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <div class="alert alert-success mb-0 p-3 h-100">
+                                                <div class="alert-title fs-4 fw-bold mb-2">Ưu điểm (Pros)</div>
+                                                <div id="viewPros" class="text-secondary fs-4" style="white-space: pre-line;">Chưa cập nhật</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="alert alert-warning mb-0 p-3 h-100">
+                                                <div class="alert-title fs-4 fw-bold mb-2">Lưu ý (Cons)</div>
+                                                <div id="viewCons" class="text-secondary fs-4" style="white-space: pre-line;">Chưa cập nhật</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
 
                     </div>
@@ -301,6 +290,7 @@
         </div>
     </div>
 </div>
+
 
 @if (isAdmin)
 {
