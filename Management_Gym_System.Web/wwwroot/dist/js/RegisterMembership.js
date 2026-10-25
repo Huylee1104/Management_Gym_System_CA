@@ -262,12 +262,14 @@ function buildCard(product) {
     var durationBadge = buildDurationBadge(product.days);
     var firstLine = escapeHtml(getFirstLine(product.description));
 
+    // Đã bỏ <div class="ratio ratio-4x3"> và thêm onerror chống vỡ ảnh
     return `
         <div class="col" data-id="${id}">
             <div class="card h-100 shadow-sm gp-card">
                 <div role="button" tabindex="0" data-action="toggle">
-                    <div class="ratio ratio-4x3">
-                        <img class="object-fit-cover rounded-top" src="${imageSrc}" alt="${name}">
+                    <div class="gp-card-img-wrapper">
+                        <img class="card-img-top" src="${imageSrc}" alt="${name}"
+                             onerror="this.onerror=null; this.src='https://placehold.co/400x300/FFF3E0/FF9800?text=Gym+Fit';">
                     </div>
                     <div class="card-body">
                         <h5 class="fw-bold">${name}</h5>
@@ -382,11 +384,11 @@ function buildDetail(product, withImage) {
 
     var imageHtml = '';
     if (withImage) {
+        // Đã bỏ <div class="ratio ratio-16x9"> gây ra khoảng trắng
         imageHtml = `
             <div class="position-relative">
-                <div class="ratio ratio-16x9">
-                    <img class="object-fit-cover" src="${escapeHtml(buildImageSrc(product.image))}" alt="${name}">
-                </div>
+                <img class="card-img-top" src="${escapeHtml(buildImageSrc(product.image))}" alt="${name}"
+                     onerror="this.onerror=null; this.src='https://placehold.co/600x300/FFF3E0/FF9800?text=Gym+Fit';">
                 <button type="button" class="btn-close position-absolute top-0 end-0 m-3 p-2 bg-white rounded-circle shadow"
                         data-action="close" aria-label="Đóng"></button>
             </div>`;
@@ -796,6 +798,9 @@ function startCheckingPaymentStatus(product) {
         $.ajax({
             url: '/api/Payment/check-and-speak/' + currentPaymentOrderCode,
             type: 'GET',
+            data: { 
+                productId: product.id
+            },
             dataType: 'json',
             success: function (response) {
                 // Nếu khách hàng vẫn chưa quét xong thì tiếp tục chờ

@@ -1,0 +1,155 @@
+.home-page {
+    --tblr-primary: #FF9800;
+    --tblr-primary-rgb: 255, 152, 0;
+    --tblr-primary-fg: #fff;
+    --tblr-primary-lt: #FFF3E0;
+    --brand-hover: #FB8C00;
+    --brand-accent: #FF7043;
+    background: var(--tblr-bg-surface-secondary);
+    color: var(--tblr-body-color);
+    overflow-x: clip;
+    min-height: calc(100vh - 60px);
+}
+
+/* 1. Đồng bộ màu thương hiệu màu cam cho trang và các Modal */
+#gymPackages,
+#trialModal,
+#paymentQrModal {
+    --bs-primary: #FF9800;
+    --bs-primary-rgb: 255, 152, 0;
+}
+
+#gymPackages .text-primary,
+#trialModal .text-primary,
+#paymentQrModal .text-primary {
+    color: var(--tblr-primary) !important;
+}
+
+#gymPackages .bg-primary,
+#trialModal .bg-primary,
+#paymentQrModal .bg-primary {
+    background-color: var(--tblr-primary) !important;
+    color: var(--tblr-primary-fg) !important;
+}
+
+#gymPackages .bg-primary-lt,
+#trialModal .bg-primary-lt,
+#paymentQrModal .bg-primary-lt {
+    background-color: var(--tblr-primary-lt) !important;
+    color: var(--tblr-primary) !important;
+}
+
+#gymPackages .border-primary,
+#trialModal .border-primary,
+#paymentQrModal .border-primary {
+    border-color: var(--tblr-primary) !important;
+}
+
+/* 2. Nút bấm chính & nút viền */
+#gymPackages .btn-primary,
+#trialModal .btn-primary,
+#paymentQrModal .btn-primary {
+    background: var(--tblr-primary) !important;
+    border-color: var(--tblr-primary) !important;
+    color: var(--tblr-primary-fg) !important;
+    transition: all 0.2s ease;
+}
+
+#gymPackages .btn-primary:hover,
+#trialModal .btn-primary:hover,
+#paymentQrModal .btn-primary:hover {
+    background: var(--brand-hover) !important;
+    border-color: var(--brand-hover) !important;
+}
+
+#gymPackages .btn-outline-primary {
+    color: var(--tblr-primary) !important;
+    border-color: var(--tblr-primary) !important;
+    transition: all 0.2s ease;
+}
+
+#gymPackages .btn-outline-primary:hover {
+    background: var(--tblr-primary) !important;
+    border-color: var(--tblr-primary) !important;
+    color: var(--tblr-primary-fg) !important;
+}
+
+/* 3. Nâng cấp cỡ chữ & đệm cho các Card gói tập tạo từ JS */
+#gymPackages .gp-card {
+    border-radius: 1rem;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (hover: hover) {
+    #gymPackages .gp-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 0.85rem 1.75rem rgba(255, 152, 0, 0.18) !important;
+    }
+}
+
+#gymPackages .gp-card .card-title,
+#gymPackages .gp-card h3,
+#gymPackages .gp-card h4 {
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+#gymPackages .gp-card .price,
+#gymPackages .gp-card .fs-1,
+#gymPackages .gp-card .fs-2 {
+    font-size: 1.75rem !important;
+    font-weight: 800;
+    color: var(--tblr-primary);
+}
+
+#gymPackages .gp-card p,
+#gymPackages .gp-card li,
+#gymPackages .gp-card .text-muted,
+#gymPackages .gp-card .text-secondary {
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+#gymPackages .gp-card .btn {
+    font-size: 1.05rem;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    border-radius: 0.6rem;
+}
+
+#gpPanel {
+    border-radius: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    font-size: 1rem;
+    height: fit-content !important; /* Không cho card tự kéo giãn chiều cao thừa */
+}
+
+/* Ép cả khung bọc ảnh lẫn thẻ img không được cao quá 180px */
+#gpPanel > div:first-child {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 180px !important;
+}
+
+#gpPanel img,
+#gpPanel .card-img-top {
+    width: 100% !important;
+    height: 160px !important;
+    max-height: 160px !important;
+    object-fit: contain !important;
+    background-color: #f8fafc;
+    border-radius: 0.75rem;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+#gpList .card-img-top,
+#gpList .card img {
+    width: 100%;
+    height: 180px; /* Có thể chỉnh xuống 150px - 160px nếu muốn gọn hơn nữa */
+    object-fit: contain; /* Hoặc dùng 'cover' nếu muốn ảnh tràn kín khung */
+    background-color: #ffffff;
+    padding: 0.75rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}

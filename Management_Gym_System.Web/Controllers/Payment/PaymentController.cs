@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using Management_Gym_System.Application.Services.PayOs;
 using Management_Gym_System.Application.Services.TextToSpeed;
@@ -24,11 +25,14 @@ namespace Management_Gym_System.Controllers
     {
         private readonly PayOSService _payOSService;
         private readonly GeminiTextToSpeedService _geminiTextToSpeedService;
+        private static readonly ConcurrentDictionary<string, SemaphoreSlim> _userPaymentLocks = new();
 
-        public PaymentController(PayOSService payOSService, GeminiTextToSpeedService geminiTextToSpeedService)
+        private readonly CurrentUserHelper _currentUserHelper;
+        public PaymentController(PayOSService payOSService, GeminiTextToSpeedService geminiTextToSpeedService, CurrentUserHelper currentUserHelper)
         {
             _payOSService = payOSService;
             _geminiTextToSpeedService = geminiTextToSpeedService;
+            _currentUserHelper = currentUserHelper;
         }
 
         // Bước 1: Nhận số tiền từ JS, gọi PayOS lấy dữ liệu vẽ mã QR
@@ -51,18 +55,38 @@ namespace Management_Gym_System.Controllers
 
         // Bước 2: Endpoint để JS hỏi trạng thái thanh toán và nhận chuỗi âm thanh Base64
         [HttpGet("check-and-speak/{orderCode}")]
-        public async Task<IActionResult> CheckPaymentStatusAndSpeak(long orderCode)
+        public async Task<IActionResult> CheckPaymentStatusAndSpeak(long orderCode, [FromQuery] long productId)
         {
-            PaymentIntegrationResponse result = await ProcessPaymentAndGenerateSpeechAsync(orderCode);
-            return Ok(result);
+            var key = _currentUserHelper.GetIdAccountLogin();
+            SemaphoreSlim userLock = _userPaymentLocks.GetOrAdd(key.ToString(), _ => new SemaphoreSlim(1, 1));
+
+            bool isLockAcquired = await userLock.WaitAsync(0);
+            if (!isLockAcquired)
+            {
+                return Ok(new PaymentIntegrationResponse
+                {
+                    Status = "PENDING",
+                    MessageText = "Hệ thống đang xử lý giao dịch của bạn, vui lòng đợi...",
+                    AudioBase64 = null
+                });
+            }
+
+            try
+            {
+                PaymentIntegrationResponse result = await ProcessPaymentAndGenerateSpeechAsync(orderCode, productId, key.ToString());
+                return Ok(result);
+            }
+            finally
+            {
+                userLock.Release();
+            }
         }
 
         // HÀM TÍCH HỢP 2 SERVICE: Kiểm tra PayOS -> Nếu Thành công hoặc Thất bại thì gọi Gemini đọc thành Base64
-        private async Task<PaymentIntegrationResponse> ProcessPaymentAndGenerateSpeechAsync(long orderCode)
+        private async Task<PaymentIntegrationResponse> ProcessPaymentAndGenerateSpeechAsync(long orderCode, long productId, string key)
         {
             PayOSStatusResult paymentStatus = await _payOSService.GetPaymentStatusAsync(orderCode);
 
-            // Nếu khách vẫn đang quét mã (chưa chuyển khoản xong), báo về cho JS tiếp tục đợi, chưa gọi Gemini
             if (paymentStatus.Status == "PENDING" || paymentStatus.Status == "PROCESSING")
             {
                 return new PaymentIntegrationResponse
@@ -73,11 +97,15 @@ namespace Management_Gym_System.Controllers
                 };
             }
 
-            // Khi giao dịch đã có kết quả (Thành công hoặc Thất bại/Hủy), tạo nội dung để Gemini đọc
             string textForGeminiToRead;
 
             if (paymentStatus.Status == "PAID")
             {
+
+                // --- BẮT ĐẦU LƯU GÓI TẬP CHO USERID VÀ PRODUCTID VÀO DATABASE TẠI ĐÂY ---
+                // ... (Code lưu Entity Framework Core của bạn)
+                // await _dbContext.SaveChangesAsync();
+
                 textForGeminiToRead = $"Thanh toán thành công số tiền {paymentStatus.Amount:N0} đồng. Xin cảm ơn quý khách.";
             }
             else
