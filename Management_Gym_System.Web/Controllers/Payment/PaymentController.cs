@@ -26,13 +26,18 @@ namespace Management_Gym_System.Controllers
         private readonly PayOSService _payOSService;
         private readonly GeminiTextToSpeedService _geminiTextToSpeedService;
         private static readonly ConcurrentDictionary<string, SemaphoreSlim> _userPaymentLocks = new();
+        private readonly IUsersService _usersService;
 
         private readonly CurrentUserHelper _currentUserHelper;
-        public PaymentController(PayOSService payOSService, GeminiTextToSpeedService geminiTextToSpeedService, CurrentUserHelper currentUserHelper)
+        public PaymentController(PayOSService payOSService,
+            GeminiTextToSpeedService geminiTextToSpeedService,
+            CurrentUserHelper currentUserHelper,
+            IUsersService usersService)
         {
             _payOSService = payOSService;
             _geminiTextToSpeedService = geminiTextToSpeedService;
             _currentUserHelper = currentUserHelper;
+            _usersService = usersService;
         }
 
         // Bước 1: Nhận số tiền từ JS, gọi PayOS lấy dữ liệu vẽ mã QR
@@ -101,12 +106,17 @@ namespace Management_Gym_System.Controllers
 
             if (paymentStatus.Status == "PAID")
             {
+                var IdUser = _currentUserHelper.GetIdAccountLogin();
+                var card = await _usersService.UpdateUserSeft(IdUser, productId);
+                if (card.IsSuccess)
+                {
+                    textForGeminiToRead = $"Thanh toán thành công số tiền {paymentStatus.Amount:N0} đồng. Xin cảm ơn quý khách.";
 
-                // --- BẮT ĐẦU LƯU GÓI TẬP CHO USERID VÀ PRODUCTID VÀO DATABASE TẠI ĐÂY ---
-                // ... (Code lưu Entity Framework Core của bạn)
-                // await _dbContext.SaveChangesAsync();
-
-                textForGeminiToRead = $"Thanh toán thành công số tiền {paymentStatus.Amount:N0} đồng. Xin cảm ơn quý khách.";
+                }
+                else
+                {
+                    textForGeminiToRead = card.Message ?? "Cập nhật thẻ thất bại";
+                }
             }
             else
             {

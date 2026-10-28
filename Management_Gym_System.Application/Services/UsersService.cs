@@ -506,6 +506,77 @@ public class UsersService : IUsersService
         return true;
     }
 
+    public async Task<ServiceResult> UpdateUserSeft(long UserId, long ProductId)
+    {
+        await _unitOfWork.BeginTransactionAsync();
+        try
+        {
+            var membership = await _usersRepo.GetGymMembershipCardByIdAsync();
+            var user = await _usersRepo.GetUserByIdAsync(UserId);
+            var goiTap = await _productRepo.GetByIdAsync(ProductId);
+
+            // Không còn thẻ trống
+            if (membership == null)
+            {
+                await _unitOfWork.RollbackAsync();
+                return ServiceResult.Failure("Không còn thẻ trống để gán cho hội viên mới.");
+            }
+
+            var startDate = DateTime.UtcNow;
+
+            membership.UserID = UserId;
+            membership.ProductID = ProductId;
+            membership.StartDate = startDate;
+            membership.EndDate = goiTap?.ThoiHan > 0
+                ? startDate.AddDays(Convert.ToDouble(goiTap.ThoiHan))
+                : null;
+
+            await _usersRepo.UpdateAsync(membership);
+
+            var changes = new List<object>();
+
+            if (user?.FullName != null)
+            {
+                changes.Add(new
+                {
+                    Field = "FullName",
+                    Display = "Họ và tên",
+                    Old = "",
+                    New = user?.FullName
+                });
+            }
+
+            changes.Add(new
+            {
+                Field = "GoiTapID",
+                Display = "Gói tập",
+                Old = "",
+                New = goiTap?.ProductName ?? "Không có gói tập"
+            });
+
+            var audit = new MembershipAuditLog
+            {
+                Date = DateTime.UtcNow,
+                StaffId = null,
+                Action = "Register",
+                MemberId = UserId,
+                Note = "Hội viên tự đăng ký thành công: " + user?.FullName,
+                DataEdited = System.Text.Json.JsonSerializer.Serialize(changes)
+            };
+
+            await _auditlog.AddAsync(audit);
+
+            await _unitOfWork.CommitAsync();
+
+            return ServiceResult.Success("Đăng ký thành công.");
+        }
+        catch (Exception ex)
+        {
+            await _unitOfWork.RollbackAsync();
+            return ServiceResult.Failure("Đã xảy ra lỗi khi tạo user: " + ex.Message);
+        }
+    }
+
     private static string RemoveVietnameseAccent(string text)
     {
         text = text.Normalize(NormalizationForm.FormD);
